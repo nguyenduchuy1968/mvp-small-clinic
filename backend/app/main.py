@@ -4,7 +4,7 @@
 
 # D:\Courses--2026\MVP Small Clinic\MVP-small-clinic>docker compose up ps
 
-#
+# cd backend && uv run fastapi dev app/main.py
 
 
 import sentry_sdk

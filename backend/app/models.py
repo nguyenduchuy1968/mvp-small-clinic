@@ -78,6 +78,8 @@ class DoctorBase(SQLModel):
     experience_years: int | None = Field(default=None, ge=0)
     bio: str | None = Field(default=None, max_length=2000)
     photo_url: str | None = Field(default=None, max_length=500)
+    phone: str | None = Field(default=None, max_length=50)
+    consultation_duration: int | None = Field(default=None, ge=5, le=180)
     is_active: bool = True
 
 
@@ -87,7 +89,10 @@ class DoctorCreate(DoctorBase):
 
 class DoctorUpdate(DoctorBase):
     full_name: str | None = Field(default=None, max_length=255)  # type: ignore[assignment]
+    specialty: str | None = Field(default=None, max_length=255)  # type: ignore[assignment]
     is_active: bool | None = None  # type: ignore[assignment]
+    phone: str | None = Field(default=None, max_length=50)  # type: ignore[assignment]
+    consultation_duration: int | None = Field(default=None, ge=5, le=180)  # type: ignore[assignment]
 
 
 class Doctor(DoctorBase, table=True):
@@ -117,6 +122,24 @@ class DoctorPublic(DoctorBase):
 class DoctorsPublic(SQLModel):
     data: list[DoctorPublic]
     count: int
+
+
+class DoctorCreateWithUser(SQLModel):
+    """Schema for creating a doctor with automatic user creation.
+    
+    This is the business-oriented input schema that combines
+    user credentials with doctor profile information.
+    The specialization field maps to the internal specialty column.
+    """
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=128)
+    full_name: str = Field(max_length=255)
+    specialization: str | None = Field(default=None, max_length=255)
+    phone: str | None = Field(default=None, max_length=50)
+    bio: str | None = Field(default=None, max_length=2000)
+    experience_years: int | None = Field(default=None, ge=0)
+    consultation_duration: int | None = Field(default=None, ge=5, le=180)
+    is_active: bool = True
 
 
 # Generic message

@@ -1,0 +1,113 @@
+# MVP Small Clinic
+
+## Project Vision
+
+MVP Small Clinic is a lightweight AI-powered appointment booking platform designed specifically for small private clinics with 1–2 doctors.
+
+The primary objective is not to build a large healthcare SaaS platform.
+
+The objective is:
+
+* Launch quickly
+* Acquire first paying clinics
+* Keep infrastructure simple
+* Minimize operational costs
+* Validate market demand
+
+---
+
+## Target Customers
+
+* Dental Clinics
+* Cosmetology Clinics
+* Psychologists
+* Massage Clinics
+* Family Doctors
+* Small Private Medical Practices
+
+Typical size:
+
+* 1–2 doctors
+* 1 receptionist (optional)
+* Less than 100 appointments per day
+
+---
+
+## Core Product Value
+
+Patient can:
+
+* Find doctor
+* Find service
+* View available slots
+* Book appointment
+* Receive confirmation
+
+Doctor can:
+
+* Manage schedule
+* View appointments
+* Receive notifications
+
+---
+
+## MVP Principles
+
+1. Simplicity over flexibility
+2. Revenue before features
+3. Single-clinic architecture
+4. No multi-tenancy
+5. No patient registration
+6. AI assists booking only
+7. Every feature must support customer acquisition
+
+---
+
+## Technology Stack
+
+Frontend:
+
+* React
+* TypeScript
+* Vite
+* Tailwind
+* shadcn/ui
+
+Backend:
+
+* FastAPI
+* SQLModel
+* Pydantic
+
+Database:
+
+* PostgreSQL
+
+Authentication:
+
+* JWT
+
+AI:
+
+* OpenAI
+
+Deployment:
+
+* Docker
+* Docker Compose
+
+Future:
+
+* Hetzner Cloud
+
+---
+
+## Supported Languages
+
+* English
+* Ukrainian
+* Vietnamese
+
+Default:
+
+* English

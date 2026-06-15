@@ -1,0 +1,10 @@
+00_Project_Management
+01_Architecture
+02_Database
+03_Backend
+04_Frontend
+05_Appointment_System
+06_Patient_Portal
+07_Admin_Panel
+08_Testing
+09_Deployment

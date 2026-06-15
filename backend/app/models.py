@@ -1,5 +1,7 @@
+import enum
 import uuid
 from datetime import datetime, timezone
+from typing import Optional
 
 from pydantic import EmailStr
 from sqlalchemy import DateTime
@@ -10,23 +12,23 @@ def get_datetime_utc() -> datetime:
     return datetime.now(timezone.utc)
 
 
+class UserRole(str, enum.Enum):
+    ADMIN = "admin"
+    DOCTOR = "doctor"
+
+
 # Shared properties
 class UserBase(SQLModel):
     email: EmailStr = Field(unique=True, index=True, max_length=255)
     is_active: bool = True
     is_superuser: bool = False
     full_name: str | None = Field(default=None, max_length=255)
+    role: UserRole = Field(default=UserRole.DOCTOR)
 
 
 # Properties to receive via API on creation
 class UserCreate(UserBase):
     password: str = Field(min_length=8, max_length=128)
-
-
-class UserRegister(SQLModel):
-    email: EmailStr = Field(max_length=255)
-    password: str = Field(min_length=8, max_length=128)
-    full_name: str | None = Field(default=None, max_length=255)
 
 
 # Properties to receive via API on update, all are optional
@@ -53,7 +55,9 @@ class User(UserBase, table=True):
         default_factory=get_datetime_utc,
         sa_type=DateTime(timezone=True),  # type: ignore
     )
-    items: list["Item"] = Relationship(back_populates="owner", cascade_delete=True)
+    doctor: Optional["Doctor"] = Relationship(
+        back_populates="user", sa_relationship_kwargs={"uselist": False}
+    )
 
 
 # Properties to return via API, id is always required
@@ -67,44 +71,51 @@ class UsersPublic(SQLModel):
     count: int
 
 
-# Shared properties
-class ItemBase(SQLModel):
-    title: str = Field(min_length=1, max_length=255)
-    description: str | None = Field(default=None, max_length=255)
+# Doctor model
+class DoctorBase(SQLModel):
+    full_name: str = Field(max_length=255)
+    specialty: str | None = Field(default=None, max_length=255)
+    experience_years: int | None = Field(default=None, ge=0)
+    bio: str | None = Field(default=None, max_length=2000)
+    photo_url: str | None = Field(default=None, max_length=500)
+    is_active: bool = True
 
 
-# Properties to receive on item creation
-class ItemCreate(ItemBase):
+class DoctorCreate(DoctorBase):
     pass
 
 
-# Properties to receive on item update
-class ItemUpdate(ItemBase):
-    title: str | None = Field(default=None, min_length=1, max_length=255)  # type: ignore[assignment]
+class DoctorUpdate(DoctorBase):
+    full_name: str | None = Field(default=None, max_length=255)  # type: ignore[assignment]
+    is_active: bool | None = None  # type: ignore[assignment]
 
 
-# Database model, database table inferred from class name
-class Item(ItemBase, table=True):
+class Doctor(DoctorBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(
+        foreign_key="user.id", nullable=False, unique=True, ondelete="CASCADE"
+    )
     created_at: datetime | None = Field(
         default_factory=get_datetime_utc,
         sa_type=DateTime(timezone=True),  # type: ignore
     )
-    owner_id: uuid.UUID = Field(
-        foreign_key="user.id", nullable=False, ondelete="CASCADE"
+    updated_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+        sa_column_kwargs={"onupdate": get_datetime_utc},
     )
-    owner: User | None = Relationship(back_populates="items")
+    user: Optional["User"] = Relationship(back_populates="doctor")
 
 
-# Properties to return via API, id is always required
-class ItemPublic(ItemBase):
+class DoctorPublic(DoctorBase):
     id: uuid.UUID
-    owner_id: uuid.UUID
+    user_id: uuid.UUID
     created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
-class ItemsPublic(SQLModel):
-    data: list[ItemPublic]
+class DoctorsPublic(SQLModel):
+    data: list[DoctorPublic]
     count: int
 
 

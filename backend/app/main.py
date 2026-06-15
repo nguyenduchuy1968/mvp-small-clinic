@@ -4,6 +4,8 @@
 
 # D:\Courses--2026\MVP Small Clinic\MVP-small-clinic>docker compose up ps
 
+# .venv\Scripts\activate
+
 # cd backend && uv run fastapi dev app/main.py
 
 

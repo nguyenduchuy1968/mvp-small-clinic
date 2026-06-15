@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from pydantic import EmailStr
+import sqlalchemy as sa
 from sqlalchemy import DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -110,6 +111,84 @@ class Doctor(DoctorBase, table=True):
         sa_column_kwargs={"onupdate": get_datetime_utc},
     )
     user: Optional["User"] = Relationship(back_populates="doctor")
+    availability: list["DoctorAvailability"] = Relationship(
+        back_populates="doctor",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
+    )
+
+
+class Weekday(str, enum.Enum):
+    MONDAY = "monday"
+    TUESDAY = "tuesday"
+    WEDNESDAY = "wednesday"
+    THURSDAY = "thursday"
+    FRIDAY = "friday"
+    SATURDAY = "saturday"
+    SUNDAY = "sunday"
+
+
+class DoctorAvailabilityBase(SQLModel):
+    weekday: Weekday = Field(
+        sa_type=sa.Enum(
+            Weekday,
+            values_callable=lambda enum_type: [e.value for e in enum_type],
+        ),
+    )
+    start_time: str = Field(max_length=5, regex=r"^([01]\d|2[0-3]):[0-5]\d$")
+    end_time: str = Field(max_length=5, regex=r"^([01]\d|2[0-3]):[0-5]\d$")
+    duration_minutes: int = Field(default=30, ge=5, le=480)
+    is_active: bool = True
+
+
+class DoctorAvailabilityCreate(DoctorAvailabilityBase):
+    pass
+
+
+class DoctorAvailabilityUpdate(DoctorAvailabilityBase):
+    weekday: Weekday | None = None  # type: ignore[assignment]
+    start_time: str | None = Field(default=None, max_length=5, regex=r"^([01]\d|2[0-3]):[0-5]\d$")  # type: ignore[assignment]
+    end_time: str | None = Field(default=None, max_length=5, regex=r"^([01]\d|2[0-3]):[0-5]\d$")  # type: ignore[assignment]
+    duration_minutes: int | None = Field(default=None, ge=5, le=480)  # type: ignore[assignment]
+    is_active: bool | None = None  # type: ignore[assignment]
+
+
+class DoctorAvailability(DoctorAvailabilityBase, table=True):
+    __tablename__ = "doctor_availability"  # type: ignore[assignment]
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    doctor_id: uuid.UUID = Field(
+        foreign_key="doctor.id", nullable=False, ondelete="CASCADE",
+        index=True,
+    )
+    created_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    updated_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+        sa_column_kwargs={"onupdate": get_datetime_utc},
+    )
+    doctor: Optional["Doctor"] = Relationship(back_populates="availability")
+
+    __table_args__ = (
+        # Prevent duplicate intervals for the same doctor on the same weekday
+        sa.UniqueConstraint(
+            "doctor_id", "weekday", "start_time", "end_time",
+            name="uq_doctor_availability_interval",
+        ),
+    )
+
+
+class DoctorAvailabilityPublic(DoctorAvailabilityBase):
+    id: uuid.UUID
+    doctor_id: uuid.UUID
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
+class DoctorAvailabilitiesPublic(SQLModel):
+    data: list[DoctorAvailabilityPublic]
+    count: int
 
 
 class DoctorPublic(DoctorBase):
@@ -129,11 +208,14 @@ class DoctorCreateWithUser(SQLModel):
     
     This is the business-oriented input schema that combines
     user credentials with doctor profile information.
-    The specialization field maps to the internal specialty column.
+    
+    The canonical field is `specialty`. The legacy field `specialization`
+    is also accepted for backward compatibility.
     """
     email: EmailStr
     password: str = Field(min_length=8, max_length=128)
     full_name: str = Field(max_length=255)
+    specialty: str | None = Field(default=None, max_length=255)
     specialization: str | None = Field(default=None, max_length=255)
     phone: str | None = Field(default=None, max_length=50)
     bio: str | None = Field(default=None, max_length=2000)

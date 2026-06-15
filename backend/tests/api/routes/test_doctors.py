@@ -20,7 +20,7 @@ def create_test_doctor(
         "email": email,
         "password": password,
         "full_name": "Test Doctor",
-        "specialization": "Cardiology",
+        "specialty": "Cardiology",
         "experience_years": 10,
         "bio": "Experienced cardiologist",
         "phone": "+380501234567",
@@ -51,7 +51,7 @@ class TestCreateDoctor:
             "email": email,
             "password": password,
             "full_name": "Dr. Smith",
-            "specialization": "Cardiology",
+            "specialty": "Cardiology",
             "experience_years": 15,
             "bio": "Senior cardiologist",
             "phone": "+380501234568",
@@ -100,7 +100,7 @@ class TestCreateDoctor:
             "email": email,
             "password": password,
             "full_name": "Dr. Smith",
-            "specialization": "Cardiology",
+            "specialty": "Cardiology",
         }
 
         # First creation succeeds
@@ -129,7 +129,7 @@ class TestCreateDoctor:
             "email": random_email(),
             "password": random_lower_string(),
             "full_name": "Dr. Smith",
-            "specialization": "Cardiology",
+            "specialty": "Cardiology",
         }
 
         r = client.post(
@@ -148,7 +148,7 @@ class TestCreateDoctor:
             "email": random_email(),
             "password": random_lower_string(),
             "full_name": "Dr. Smith",
-            "specialization": "Cardiology",
+            "specialty": "Cardiology",
         }
 
         r = client.post(
@@ -172,7 +172,7 @@ class TestCreateDoctor:
             "email": email,
             "password": password,
             "full_name": "Dr. Role Test",
-            "specialization": "Neurology",
+            "specialty": "Neurology",
         }
 
         r = client.post(
@@ -201,7 +201,7 @@ class TestCreateDoctor:
             "email": email,
             "password": password,
             "full_name": "Dr. Link Test",
-            "specialization": "Pediatrics",
+            "specialty": "Pediatrics",
         }
 
         r = client.post(
@@ -218,6 +218,125 @@ class TestCreateDoctor:
         assert doctor.user is not None
         assert doctor.user.email == email
         assert doctor.user.role == UserRole.DOCTOR
+
+    def test_create_doctor_with_specialty_field(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Verify the canonical 'specialty' field is accepted and stored correctly."""
+        email = random_email()
+        password = random_lower_string()
+
+        doctor_data = {
+            "email": email,
+            "password": password,
+            "full_name": "Dr. Specialty Test",
+            "specialty": "THERAPIST",
+        }
+
+        r = client.post(
+            f"{settings.API_V1_STR}/doctors/",
+            headers=superuser_token_headers,
+            json=doctor_data,
+        )
+        assert r.status_code == 201
+        created = r.json()
+        assert created["specialty"] == "THERAPIST"
+
+        # Verify in database
+        doctor = db.get(Doctor, uuid.UUID(created["id"]))
+        assert doctor is not None
+        assert doctor.specialty == "THERAPIST"
+
+    def test_create_doctor_with_specialization_field(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Verify the legacy 'specialization' field is still accepted (backward compat)."""
+        email = random_email()
+        password = random_lower_string()
+
+        doctor_data = {
+            "email": email,
+            "password": password,
+            "full_name": "Dr. Legacy Test",
+            "specialization": "NEUROLOGY",
+        }
+
+        r = client.post(
+            f"{settings.API_V1_STR}/doctors/",
+            headers=superuser_token_headers,
+            json=doctor_data,
+        )
+        assert r.status_code == 201
+        created = r.json()
+        assert created["specialty"] == "NEUROLOGY"
+
+        # Verify in database
+        doctor = db.get(Doctor, uuid.UUID(created["id"]))
+        assert doctor is not None
+        assert doctor.specialty == "NEUROLOGY"
+
+    def test_create_doctor_specialty_preferred_over_specialization(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """When both 'specialty' and 'specialization' are provided, 'specialty' wins."""
+        email = random_email()
+        password = random_lower_string()
+
+        doctor_data = {
+            "email": email,
+            "password": password,
+            "full_name": "Dr. Priority Test",
+            "specialty": "CARDIOLOGY",
+            "specialization": "NEUROLOGY",
+        }
+
+        r = client.post(
+            f"{settings.API_V1_STR}/doctors/",
+            headers=superuser_token_headers,
+            json=doctor_data,
+        )
+        assert r.status_code == 201
+        created = r.json()
+        assert created["specialty"] == "CARDIOLOGY"
+
+        # Verify in database
+        doctor = db.get(Doctor, uuid.UUID(created["id"]))
+        assert doctor is not None
+        assert doctor.specialty == "CARDIOLOGY"
+
+    def test_create_doctor_without_specialty(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Verify doctor can be created without specialty (NULL is allowed)."""
+        email = random_email()
+        password = random_lower_string()
+
+        doctor_data = {
+            "email": email,
+            "password": password,
+            "full_name": "Dr. No Specialty",
+        }
+
+        r = client.post(
+            f"{settings.API_V1_STR}/doctors/",
+            headers=superuser_token_headers,
+            json=doctor_data,
+        )
+        assert r.status_code == 201
+        created = r.json()
+        assert created["specialty"] is None
 
 
 class TestReadDoctors:
@@ -271,7 +390,7 @@ class TestReadDoctors:
                 "email": email2,
                 "password": password2,
                 "full_name": "Dr. Jones",
-                "specialization": "Dermatology",
+                "specialty": "Dermatology",
             },
         )
 

@@ -1,6 +1,6 @@
 import enum
 import uuid
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Optional
 
 from pydantic import EmailStr
@@ -16,6 +16,21 @@ def get_datetime_utc() -> datetime:
 class UserRole(str, enum.Enum):
     ADMIN = "admin"
     DOCTOR = "doctor"
+
+
+class AppointmentStatus(str, enum.Enum):
+    PENDING = "pending"
+    CONFIRMED = "confirmed"
+    CANCELLED = "cancelled"
+
+
+class ContactMethod(str, enum.Enum):
+    PHONE = "phone"
+    EMAIL = "email"
+    WHATSAPP = "whatsapp"
+    VIBER = "viber"
+    ZALO = "zalo"
+    TELEGRAM = "telegram"
 
 
 # Shared properties
@@ -112,6 +127,10 @@ class Doctor(DoctorBase, table=True):
     )
     user: Optional["User"] = Relationship(back_populates="doctor")
     availability: list["DoctorAvailability"] = Relationship(
+        back_populates="doctor",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
+    )
+    appointments: list["Appointment"] = Relationship(
         back_populates="doctor",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"},
     )
@@ -222,6 +241,96 @@ class DoctorCreateWithUser(SQLModel):
     experience_years: int | None = Field(default=None, ge=0)
     consultation_duration: int | None = Field(default=None, ge=5, le=180)
     is_active: bool = True
+
+
+# Appointment model
+class AppointmentBase(SQLModel):
+    doctor_id: uuid.UUID = Field(foreign_key="doctor.id", nullable=False, index=True)
+    patient_name: str = Field(max_length=255)
+    patient_phone: str = Field(max_length=20)
+    patient_email: str | None = Field(default=None, max_length=255)
+    contact_method: ContactMethod = Field(
+        default=ContactMethod.PHONE,
+        sa_type=sa.Enum(
+            ContactMethod,
+            values_callable=lambda enum_type: [e.value for e in enum_type],
+        ),
+    )
+    appointment_date: date
+    appointment_time: str = Field(max_length=5, regex=r"^([01]\d|2[0-3]):[0-5]\d$")
+    status: AppointmentStatus = Field(
+        default=AppointmentStatus.PENDING,
+        sa_type=sa.Enum(
+            AppointmentStatus,
+            values_callable=lambda enum_type: [e.value for e in enum_type],
+        ),
+    )
+    notes: str | None = Field(default=None, max_length=2000)
+
+
+class AppointmentCreate(SQLModel):
+    doctor_id: uuid.UUID
+    patient_name: str = Field(max_length=255)
+    patient_phone: str = Field(max_length=20)
+    patient_email: str | None = Field(default=None, max_length=255)
+    contact_method: ContactMethod = Field(default=ContactMethod.PHONE)
+    appointment_date: date
+    appointment_time: str = Field(max_length=5, regex=r"^([01]\d|2[0-3]):[0-5]\d$")
+    notes: str | None = Field(default=None, max_length=2000)
+
+
+class AppointmentStatusUpdate(SQLModel):
+    status: AppointmentStatus
+
+
+class Appointment(AppointmentBase, table=True):
+    __tablename__ = "appointment"  # type: ignore[assignment]
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    created_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    updated_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+        sa_column_kwargs={"onupdate": get_datetime_utc},
+    )
+    doctor: Optional["Doctor"] = Relationship(back_populates="appointments")
+
+    __table_args__ = (
+        # Prevent double booking: same doctor, same date, same time
+        sa.UniqueConstraint(
+            "doctor_id", "appointment_date", "appointment_time",
+            name="uq_appointment_slot",
+        ),
+    )
+
+
+class AppointmentPublic(AppointmentBase):
+    id: uuid.UUID
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
+class AppointmentsPublic(SQLModel):
+    data: list[AppointmentPublic]
+    count: int
+
+
+# Slot Generator schemas
+class AvailableSlot(SQLModel):
+    """A single available booking slot."""
+
+    time: str  # HH:MM format
+
+
+class AvailableSlotsResponse(SQLModel):
+    """Response containing all available slots for a doctor on a given date."""
+
+    doctor_id: uuid.UUID
+    date: date
+    slots: list[AvailableSlot]
+    count: int
 
 
 # Generic message

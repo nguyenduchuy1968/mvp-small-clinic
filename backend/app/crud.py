@@ -1,10 +1,16 @@
 import uuid
+from datetime import date, datetime, timezone
 from typing import Any
 
 from sqlmodel import Session, select
 
 from app.core.security import get_password_hash, verify_password
 from app.models import (
+    Appointment,
+    AppointmentCreate,
+    AppointmentStatus,
+    AppointmentStatusUpdate,
+    ContactMethod,
     Doctor,
     DoctorAvailability,
     DoctorAvailabilityCreate,
@@ -472,4 +478,410 @@ def delete_doctor_availability(
 ) -> None:
     """Delete a doctor availability record."""
     session.delete(db_availability)
+    session.commit()
+
+
+# =============================================================================
+# Appointment CRUD
+# =============================================================================
+
+
+def _get_today_utc() -> date:
+    """Get today's date in UTC."""
+    return datetime.now(timezone.utc).date()
+
+
+def _time_to_minutes(time_str: str) -> int:
+    """Convert HH:MM string to total minutes since midnight."""
+    parts = time_str.split(":")
+    return int(parts[0]) * 60 + int(parts[1])
+
+
+def _format_time(minutes: int) -> str:
+    """Convert total minutes since midnight to HH:MM string."""
+    h = minutes // 60
+    m = minutes % 60
+    return f"{h:02d}:{m:02d}"
+
+
+def _validate_doctor_active(*, session: Session, doctor_id: uuid.UUID) -> Doctor:
+    """Validate doctor exists and is active.
+
+    Raises ValueError if doctor not found or not active.
+    Returns the doctor object.
+    """
+    doctor = session.get(Doctor, doctor_id)
+    if not doctor:
+        raise ValueError(f"Doctor with id {doctor_id} not found")
+    if not doctor.is_active:
+        raise ValueError(f"Doctor with id {doctor_id} is not active")
+    return doctor
+
+
+def _validate_appointment_date(*, appointment_date: date, appointment_time: str) -> None:
+    """Validate that the appointment date/time is not in the past.
+
+    Raises ValueError if the appointment is in the past.
+    """
+    today = _get_today_utc()
+
+    if appointment_date < today:
+        raise ValueError(
+            f"Appointment date {appointment_date} is in the past. "
+            f"Today is {today}."
+        )
+
+    if appointment_date == today:
+        # Check that the time hasn't passed yet
+        now = datetime.now(timezone.utc)
+        current_minutes = now.hour * 60 + now.minute
+        appointment_minutes = _time_to_minutes(appointment_time)
+
+        if appointment_minutes <= current_minutes:
+            raise ValueError(
+                f"Appointment time {appointment_time} has already passed today. "
+                f"Current time is {now.hour:02d}:{now.minute:02d}."
+            )
+
+
+def _validate_availability_window(
+    *,
+    session: Session,
+    doctor_id: uuid.UUID,
+    appointment_date: date,
+    appointment_time: str,
+) -> None:
+    """Validate that the appointment time aligns with a generated slot boundary.
+
+    For each matching availability interval, the appointment time must:
+    1. Be at or after the interval start_time (offset >= 0)
+    2. Be strictly before the interval end_time (can complete within window)
+    3. Align with a slot boundary: offset_minutes % duration_minutes == 0
+
+    Example: 09:00-12:00 with duration=30
+      Valid:   09:00, 09:30, 10:00, 10:30, 11:00, 11:30
+      Invalid: 09:05, 09:17, 10:42, 11:15
+
+    Raises ValueError if no matching slot is found.
+    """
+    # Determine the weekday of the appointment date
+    weekday_name = appointment_date.strftime("%A").lower()  # e.g., "monday"
+
+    # Map to Weekday enum
+    weekday_map = {
+        "monday": Weekday.MONDAY,
+        "tuesday": Weekday.TUESDAY,
+        "wednesday": Weekday.WEDNESDAY,
+        "thursday": Weekday.THURSDAY,
+        "friday": Weekday.FRIDAY,
+        "saturday": Weekday.SATURDAY,
+        "sunday": Weekday.SUNDAY,
+    }
+    weekday = weekday_map.get(weekday_name)
+    if weekday is None:
+        raise ValueError(f"Invalid weekday: {weekday_name}")
+
+    # Find active availability intervals for this doctor/weekday
+    statement = select(DoctorAvailability).where(
+        DoctorAvailability.doctor_id == doctor_id,
+        DoctorAvailability.weekday == weekday,
+        DoctorAvailability.is_active == True,
+    )
+    intervals = session.exec(statement).all()
+
+    if not intervals:
+        raise ValueError(
+            f"No active availability found for doctor {doctor_id} "
+            f"on {weekday_name}"
+        )
+
+    appointment_minutes = _time_to_minutes(appointment_time)
+
+    # Check if appointment time matches a generated slot boundary
+    for interval in intervals:
+        start_minutes = _time_to_minutes(interval.start_time)
+        end_minutes = _time_to_minutes(interval.end_time)
+        slot_duration = interval.duration_minutes
+
+        # Step 1: Range check — must be within the interval
+        if not (start_minutes <= appointment_minutes < end_minutes):
+            continue
+
+        # Step 2: Slot alignment check — offset must be a multiple of duration
+        offset_minutes = appointment_minutes - start_minutes
+        if offset_minutes % slot_duration == 0:
+            return  # Valid slot
+
+        # Time is in range but not on a slot boundary
+        raise ValueError(
+            f"Appointment time {appointment_time} does not align with "
+            f"any available slot for doctor {doctor_id} on {weekday_name}. "
+            f"Slots are every {slot_duration} minutes starting from "
+            f"{interval.start_time} (e.g., "
+            f"{interval.start_time}, "
+            f"{_format_time(start_minutes + slot_duration)}, ...)."
+        )
+
+    raise ValueError(
+        f"Appointment time {appointment_time} does not fall within any "
+        f"active availability interval for doctor {doctor_id} on {weekday_name}"
+    )
+
+
+def _validate_contact_info(
+    *,
+    contact_method: ContactMethod,
+    patient_phone: str,
+    patient_email: str | None,
+) -> None:
+    """Validate that required contact fields are provided based on contact method.
+
+    - PHONE / WHATSAPP / VIBER / ZALO: patient_phone is required
+    - EMAIL: patient_email is required
+    - TELEGRAM: at least one contact field is required
+
+    Raises ValueError on validation failure.
+    """
+    phone_required_methods = {
+        ContactMethod.PHONE,
+        ContactMethod.WHATSAPP,
+        ContactMethod.VIBER,
+        ContactMethod.ZALO,
+    }
+
+    if contact_method in phone_required_methods:
+        if not patient_phone or not patient_phone.strip():
+            raise ValueError(
+                f"patient_phone is required for contact method '{contact_method.value}'"
+            )
+
+    if contact_method == ContactMethod.EMAIL:
+        if not patient_email or not patient_email.strip():
+            raise ValueError(
+                "patient_email is required for contact method 'email'"
+            )
+
+    if contact_method == ContactMethod.TELEGRAM:
+        has_phone = bool(patient_phone and patient_phone.strip())
+        has_email = bool(patient_email and patient_email.strip())
+        if not has_phone and not has_email:
+            raise ValueError(
+                "At least one of patient_phone or patient_email is required "
+                "for contact method 'telegram'"
+            )
+
+
+def _check_double_booking(
+    *,
+    session: Session,
+    doctor_id: uuid.UUID,
+    appointment_date: date,
+    appointment_time: str,
+    exclude_id: uuid.UUID | None = None,
+) -> None:
+    """Check if the slot is already booked with a non-cancelled appointment.
+
+    Only PENDING or CONFIRMED appointments block the slot.
+    CANCELLED appointments do not block re-booking.
+
+    Raises ValueError if the slot is already taken.
+    """
+    statement = select(Appointment).where(
+        Appointment.doctor_id == doctor_id,
+        Appointment.appointment_date == appointment_date,
+        Appointment.appointment_time == appointment_time,
+        Appointment.status.in_([AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED]),
+    )
+
+    if exclude_id is not None:
+        statement = statement.where(Appointment.id != exclude_id)
+
+    existing = session.exec(statement).first()
+    if existing is not None:
+        raise ValueError(
+            f"Slot on {appointment_date} at {appointment_time} for "
+            f"doctor {doctor_id} is already booked (status: {existing.status.value})"
+        )
+
+
+def _validate_status_transition(
+    current_status: AppointmentStatus,
+    new_status: AppointmentStatus,
+) -> None:
+    """Validate appointment status transition.
+
+    Allowed transitions:
+      - PENDING -> CONFIRMED
+      - PENDING -> CANCELLED
+      - CONFIRMED -> CANCELLED
+
+    Rejected transitions:
+      - CANCELLED -> PENDING
+      - CANCELLED -> CONFIRMED
+      - CONFIRMED -> PENDING
+
+    Raises ValueError on invalid transition.
+    """
+    valid_transitions = {
+        AppointmentStatus.PENDING: {AppointmentStatus.CONFIRMED, AppointmentStatus.CANCELLED},
+        AppointmentStatus.CONFIRMED: {AppointmentStatus.CANCELLED},
+        AppointmentStatus.CANCELLED: set(),  # No transitions allowed from CANCELLED
+    }
+
+    allowed = valid_transitions.get(current_status, set())
+    if new_status not in allowed:
+        raise ValueError(
+            f"Invalid status transition: {current_status.value} -> {new_status.value}. "
+            f"Allowed transitions from '{current_status.value}' are: "
+            f"{', '.join(s.value for s in allowed) if allowed else 'none'}"
+        )
+
+
+def create_appointment(
+    *,
+    session: Session,
+    appointment_in: AppointmentCreate,
+) -> Appointment:
+    """Create a new appointment.
+
+    Validates:
+    1. Doctor exists and is active
+    2. Appointment date is not in the past
+    3. Appointment time falls within an active availability interval
+    4. Contact info is valid for the selected contact method
+    5. No double booking (same doctor, date, time with PENDING or CONFIRMED status)
+
+    Raises ValueError on validation failure.
+    """
+    # 1. Validate doctor exists and is active
+    _validate_doctor_active(session=session, doctor_id=appointment_in.doctor_id)
+
+    # 2. Validate appointment date is not in the past
+    _validate_appointment_date(
+        appointment_date=appointment_in.appointment_date,
+        appointment_time=appointment_in.appointment_time,
+    )
+
+    # 3. Validate appointment time falls within availability
+    _validate_availability_window(
+        session=session,
+        doctor_id=appointment_in.doctor_id,
+        appointment_date=appointment_in.appointment_date,
+        appointment_time=appointment_in.appointment_time,
+    )
+
+    # 4. Validate contact info
+    _validate_contact_info(
+        contact_method=appointment_in.contact_method,
+        patient_phone=appointment_in.patient_phone,
+        patient_email=appointment_in.patient_email,
+    )
+
+    # 5. Check for double booking
+    _check_double_booking(
+        session=session,
+        doctor_id=appointment_in.doctor_id,
+        appointment_date=appointment_in.appointment_date,
+        appointment_time=appointment_in.appointment_time,
+    )
+
+    # 6. Create the appointment
+    db_obj = Appointment.model_validate(appointment_in)
+    session.add(db_obj)
+    session.commit()
+    session.refresh(db_obj)
+    return db_obj
+
+
+def get_appointment(
+    *,
+    session: Session,
+    appointment_id: uuid.UUID,
+) -> Appointment | None:
+    """Get a single appointment by ID."""
+    return session.get(Appointment, appointment_id)
+
+
+def get_appointments(
+    *,
+    session: Session,
+    doctor_id: uuid.UUID | None = None,
+    appointment_date: date | None = None,
+    status: AppointmentStatus | None = None,
+    skip: int = 0,
+    limit: int = 100,
+) -> tuple[list[Appointment], int]:
+    """Get appointments with optional filters.
+
+    Args:
+        session: Database session.
+        doctor_id: Optional filter by doctor.
+        appointment_date: Optional filter by date.
+        status: Optional filter by status.
+        skip: Number of records to skip (pagination).
+        limit: Maximum number of records to return (pagination).
+
+    Returns:
+        Tuple of (list of appointments, total count).
+    """
+    # Build count query
+    count_statement = select(Appointment)
+    if doctor_id is not None:
+        count_statement = count_statement.where(Appointment.doctor_id == doctor_id)
+    if appointment_date is not None:
+        count_statement = count_statement.where(
+            Appointment.appointment_date == appointment_date
+        )
+    if status is not None:
+        count_statement = count_statement.where(Appointment.status == status)
+    count = len(session.exec(count_statement).all())
+
+    # Build data query with deterministic ordering
+    statement = select(Appointment)
+    if doctor_id is not None:
+        statement = statement.where(Appointment.doctor_id == doctor_id)
+    if appointment_date is not None:
+        statement = statement.where(Appointment.appointment_date == appointment_date)
+    if status is not None:
+        statement = statement.where(Appointment.status == status)
+    statement = statement.order_by(
+        Appointment.appointment_date.asc(),
+        Appointment.appointment_time.asc(),
+    ).offset(skip).limit(limit)
+
+    records = session.exec(statement).all()
+    return list(records), count
+
+
+def update_appointment_status(
+    *,
+    session: Session,
+    db_appointment: Appointment,
+    status_update: AppointmentStatusUpdate,
+) -> Appointment:
+    """Update an appointment's status with transition validation.
+
+    Validates:
+    1. Status transition is allowed (see _validate_status_transition)
+
+    Raises ValueError on invalid transition.
+    """
+    # 1. Validate status transition
+    _validate_status_transition(db_appointment.status, status_update.status)
+
+    # 2. Apply update
+    db_appointment.status = status_update.status
+    session.add(db_appointment)
+    session.commit()
+    session.refresh(db_appointment)
+    return db_appointment
+
+
+def delete_appointment(
+    *,
+    session: Session,
+    db_appointment: Appointment,
+) -> None:
+    """Delete an appointment record."""
+    session.delete(db_appointment)
     session.commit()

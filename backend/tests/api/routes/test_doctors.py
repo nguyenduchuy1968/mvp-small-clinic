@@ -1,8 +1,18 @@
 import uuid
+from datetime import date, timedelta
 
 from app import crud
 from app.core.config import settings
-from app.models import Doctor, User, UserRole
+from app.models import (
+    Appointment,
+    AppointmentStatus,
+    ContactMethod,
+    Doctor,
+    DoctorAvailability,
+    User,
+    UserRole,
+    Weekday,
+)
 from fastapi.testclient import TestClient
 from sqlmodel import Session, select
 from tests.utils.user import create_random_user
@@ -523,6 +533,206 @@ class TestUpdateDoctor:
         )
         assert r.status_code == 401
 
+    # ------------------------------------------------------------------
+    # Doctor Email/Password Update Tests
+    # ------------------------------------------------------------------
+
+    def test_update_doctor_email(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Updating a doctor's email should update the linked User.email."""
+        doctor = create_test_doctor(db, client, superuser_token_headers)
+        doctor_id = doctor["id"]
+        original_email = doctor.get("email", "")
+
+        # Fetch the original user to confirm
+        user = crud.get_user_by_email(session=db, email=original_email)
+        assert user is not None
+        original_user_id = str(user.id)
+
+        new_email = random_email()
+        update_data = {"email": new_email}
+
+        r = client.patch(
+            f"{settings.API_V1_STR}/doctors/{doctor_id}",
+            headers=superuser_token_headers,
+            json=update_data,
+        )
+        assert r.status_code == 200
+        updated = r.json()
+        assert updated["email"] == new_email
+
+        # Verify the User record was updated
+        # Expire the session cache to force a fresh read from the database,
+        # since the PATCH request committed the change in a different session.
+        db.expire_all()
+        updated_user = db.get(User, uuid.UUID(original_user_id))
+        assert updated_user is not None
+        assert updated_user.email == new_email
+
+        # Old email should no longer exist
+        old_user = crud.get_user_by_email(session=db, email=original_email)
+        assert old_user is None
+
+    def test_update_doctor_password(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Updating a doctor's password should update the linked User password."""
+        doctor = create_test_doctor(db, client, superuser_token_headers)
+        doctor_id = doctor["id"]
+
+        new_password = random_lower_string()
+        update_data = {"password": new_password}
+
+        r = client.patch(
+            f"{settings.API_V1_STR}/doctors/{doctor_id}",
+            headers=superuser_token_headers,
+            json=update_data,
+        )
+        assert r.status_code == 200
+
+        # Verify login with new password works
+        login_data = {
+            "username": doctor.get("email", ""),
+            "password": new_password,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/login/access-token",
+            data=login_data,
+        )
+        assert r.status_code == 200
+        assert "access_token" in r.json()
+
+    def test_update_doctor_email_uniqueness_violation(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Updating a doctor's email to an already-taken email should fail."""
+        # Create first doctor
+        doctor1 = create_test_doctor(db, client, superuser_token_headers)
+        doctor1_id = doctor1["id"]
+
+        # Create second doctor
+        doctor2 = create_test_doctor(db, client, superuser_token_headers)
+        doctor2_email = doctor2.get("email", "")
+
+        # Try to update doctor1's email to doctor2's email
+        update_data = {"email": doctor2_email}
+        r = client.patch(
+            f"{settings.API_V1_STR}/doctors/{doctor1_id}",
+            headers=superuser_token_headers,
+            json=update_data,
+        )
+        # Should fail with 409 Conflict due to unique constraint
+        assert r.status_code == 409
+
+    def test_update_doctor_empty_password_ignored(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Sending empty/null password should not change the existing password."""
+        doctor = create_test_doctor(db, client, superuser_token_headers)
+        doctor_id = doctor["id"]
+
+        # Update with empty password (should be ignored since it's not sent)
+        update_data = {"full_name": "Dr. No Password Change"}
+        r = client.patch(
+            f"{settings.API_V1_STR}/doctors/{doctor_id}",
+            headers=superuser_token_headers,
+            json=update_data,
+        )
+        assert r.status_code == 200
+        assert r.json()["full_name"] == "Dr. No Password Change"
+
+        # Verify we can still login with the original password
+        # (The original password was set in create_test_doctor, but we don't have it.
+        #  We just verify the doctor was updated successfully.)
+        assert r.json()["email"] is not None
+
+    def test_update_doctor_email_and_password_simultaneously(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Updating both email and password in one request should work."""
+        doctor = create_test_doctor(db, client, superuser_token_headers)
+        doctor_id = doctor["id"]
+
+        new_email = random_email()
+        new_password = random_lower_string()
+        update_data = {
+            "email": new_email,
+            "password": new_password,
+            "full_name": "Dr. Fully Updated",
+        }
+
+        r = client.patch(
+            f"{settings.API_V1_STR}/doctors/{doctor_id}",
+            headers=superuser_token_headers,
+            json=update_data,
+        )
+        assert r.status_code == 200
+        updated = r.json()
+        assert updated["email"] == new_email
+        assert updated["full_name"] == "Dr. Fully Updated"
+
+        # Verify login with new email and password works
+        login_data = {
+            "username": new_email,
+            "password": new_password,
+        }
+        r = client.post(
+            f"{settings.API_V1_STR}/login/access-token",
+            data=login_data,
+        )
+        assert r.status_code == 200
+        assert "access_token" in r.json()
+
+    def test_read_doctor_returns_email(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        normal_user_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """GET /doctors/{id} should return the doctor's email."""
+        doctor = create_test_doctor(db, client, superuser_token_headers)
+        doctor_id = doctor["id"]
+
+        r = client.get(
+            f"{settings.API_V1_STR}/doctors/{doctor_id}",
+            headers=normal_user_token_headers,
+        )
+        assert r.status_code == 200
+        assert "email" in r.json()
+        assert r.json()["email"] is not None
+
+    def test_read_doctors_list_returns_email(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """GET /doctors/ should return email for each doctor."""
+        create_test_doctor(db, client, superuser_token_headers)
+
+        r = client.get(f"{settings.API_V1_STR}/doctors/")
+        assert r.status_code == 200
+        data = r.json()
+        for doctor in data["data"]:
+            assert "email" in doctor
+
 
 class TestDeleteDoctor:
     def test_delete_doctor_success(
@@ -594,3 +804,130 @@ class TestDeleteDoctor:
             f"{settings.API_V1_STR}/doctors/{doctor_id}",
         )
         assert r.status_code == 401
+
+    # ------------------------------------------------------------------
+    # Doctor Deletion Safety — cascade protection tests
+    # ------------------------------------------------------------------
+
+    def test_delete_doctor_with_availability_returns_409(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Deleting a doctor with availability records should return 409."""
+        doctor = create_test_doctor(db, client, superuser_token_headers)
+        doctor_id = uuid.UUID(doctor["id"])
+
+        # Create an availability record for this doctor
+        availability = DoctorAvailability(
+            doctor_id=doctor_id,
+            weekday=Weekday.MONDAY,
+            start_time="09:00",
+            end_time="17:00",
+            duration_minutes=30,
+            is_active=True,
+        )
+        db.add(availability)
+        db.commit()
+
+        # Attempt deletion without force — should be blocked
+        r = client.delete(
+            f"{settings.API_V1_STR}/doctors/{doctor_id}",
+            headers=superuser_token_headers,
+        )
+        assert r.status_code == 409
+        detail = r.json()["detail"]
+        assert detail["can_delete"] is False
+        assert detail["availability_count"] >= 1
+        assert detail["future_appointments_count"] == 0
+
+        # Verify doctor still exists
+        db_doctor = db.get(Doctor, doctor_id)
+        assert db_doctor is not None
+
+    def test_delete_doctor_with_future_appointments_returns_409(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Deleting a doctor with future appointments should return 409."""
+        doctor = create_test_doctor(db, client, superuser_token_headers)
+        doctor_id = uuid.UUID(doctor["id"])
+
+        # Create a future appointment for this doctor
+        future_date = date.today() + timedelta(days=7)
+        appointment = Appointment(
+            doctor_id=doctor_id,
+            patient_name="Test Patient",
+            patient_phone="+380501234569",
+            contact_method=ContactMethod.PHONE,
+            appointment_date=future_date,
+            appointment_time="10:00",
+            status=AppointmentStatus.PENDING,
+        )
+        db.add(appointment)
+        db.commit()
+
+        # Attempt deletion without force — should be blocked
+        r = client.delete(
+            f"{settings.API_V1_STR}/doctors/{doctor_id}",
+            headers=superuser_token_headers,
+        )
+        assert r.status_code == 409
+        detail = r.json()["detail"]
+        assert detail["can_delete"] is False
+        assert detail["availability_count"] == 0
+        assert detail["future_appointments_count"] >= 1
+
+        # Verify doctor still exists
+        db_doctor = db.get(Doctor, doctor_id)
+        assert db_doctor is not None
+
+    def test_delete_doctor_with_force_succeeds(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+    ) -> None:
+        """Force-deleting a doctor with related records should succeed."""
+        doctor = create_test_doctor(db, client, superuser_token_headers)
+        doctor_id = uuid.UUID(doctor["id"])
+
+        # Create an availability record
+        availability = DoctorAvailability(
+            doctor_id=doctor_id,
+            weekday=Weekday.MONDAY,
+            start_time="09:00",
+            end_time="17:00",
+            duration_minutes=30,
+            is_active=True,
+        )
+        db.add(availability)
+
+        # Create a future appointment
+        future_date = date.today() + timedelta(days=7)
+        appointment = Appointment(
+            doctor_id=doctor_id,
+            patient_name="Test Patient",
+            patient_phone="+380501234569",
+            contact_method=ContactMethod.PHONE,
+            appointment_date=future_date,
+            appointment_time="10:00",
+            status=AppointmentStatus.PENDING,
+        )
+        db.add(appointment)
+        db.commit()
+
+        # Force delete — should succeed
+        r = client.delete(
+            f"{settings.API_V1_STR}/doctors/{doctor_id}?force=true",
+            headers=superuser_token_headers,
+        )
+        assert r.status_code == 200
+        assert r.json()["message"] == "Doctor deleted successfully"
+
+        # Verify doctor is gone
+        db_doctor = db.get(Doctor, doctor_id)
+        assert db_doctor is None

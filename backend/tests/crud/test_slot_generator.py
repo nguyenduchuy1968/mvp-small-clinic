@@ -361,7 +361,11 @@ class TestBookedSlotsRemoved:
         assert "11:30" in times
 
     def test_confirmed_slot_removed(self, db: Session) -> None:
-        """A CONFIRMED appointment blocks its slot."""
+        """A CONFIRMED appointment blocks its slot.
+
+        With AUTO_CONFIRM_APPOINTMENTS=True, new appointments are created
+        directly as CONFIRMED, so no explicit status update is needed.
+        """
         _, doctor = _create_doctor_user(db)
         _create_availability(
             db,
@@ -373,7 +377,7 @@ class TestBookedSlotsRemoved:
         )
         target_date = _get_future_monday()
 
-        # Create a PENDING appointment, then confirm it
+        # Create an appointment — auto-confirmed as CONFIRMED
         appointment_in = AppointmentCreate(
             doctor_id=doctor.id,
             patient_name="Test Patient",
@@ -382,12 +386,7 @@ class TestBookedSlotsRemoved:
             appointment_date=target_date,
             appointment_time="10:00",
         )
-        appointment = crud.create_appointment(session=db, appointment_in=appointment_in)
-        crud.update_appointment_status(
-            session=db,
-            db_appointment=appointment,
-            status_update=AppointmentStatusUpdate(status=AppointmentStatus.CONFIRMED),
-        )
+        crud.create_appointment(session=db, appointment_in=appointment_in)
 
         result = slot_generator.generate_available_slots(
             session=db,

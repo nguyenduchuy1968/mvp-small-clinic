@@ -1,0 +1,32 @@
+{
+  "title": "Запис на прийом",
+  "steps": {
+    "selectDoctor": "Вибір лікаря",
+    "selectDate": "Вибір дати",
+    "selectTime": "Вибір часу",
+    "patientInfo": "Інформація про пацієнта",
+    "confirm": "Підтвердження"
+  },
+  "form": {
+    "patientName": "Повне ім'я пацієнта",
+    "patientPhone": "Номер телефону",
+    "patientEmail": "Електронна пошта",
+    "contactMethod": "Спосіб зв'язку",
+    "notes": "Нотатки",
+    "contactMethods": {
+      "phone": "Телефон",
+      "email": "Електронна пошта",
+      "whatsapp": "WhatsApp",
+      "viber": "Viber",
+      "zalo": "Zalo",
+      "telegram": "Telegram"
+    }
+  },
+  "submit": {
+    "button": "Записатися",
+    "success": "Запис успішно створено!",
+    "error": "Не вдалося створити запис"
+  },
+  "noSlots": "Немає вільних часових проміжків на цю дату",
+  "noDoctors": "Немає доступних лікарів"
+}

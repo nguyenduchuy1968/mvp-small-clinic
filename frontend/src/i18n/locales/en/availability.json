@@ -1,0 +1,47 @@
+{
+  "title": "Schedule",
+  "list": {
+    "title": "Doctor's Schedule",
+    "empty": "No schedules yet",
+    "columns": {
+      "weekday": "Day",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "duration": "Duration",
+      "status": "Status",
+      "actions": "Actions"
+    }
+  },
+  "create": {
+    "title": "Add Schedule",
+    "success": "Schedule added successfully"
+  },
+  "edit": {
+    "title": "Edit Schedule",
+    "success": "Schedule updated successfully"
+  },
+  "delete": {
+    "confirmMessage": "Are you sure you want to delete this schedule?",
+    "success": "Schedule deleted successfully"
+  },
+  "fields": {
+    "weekday": "Day",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "duration": "Duration (minutes)",
+    "isActive": "Active"
+  },
+  "weekdays": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  }
+}

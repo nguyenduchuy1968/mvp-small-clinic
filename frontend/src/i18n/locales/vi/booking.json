@@ -1,0 +1,32 @@
+{
+  "title": "Đặt lịch hẹn",
+  "steps": {
+    "selectDoctor": "Chọn bác sĩ",
+    "selectDate": "Chọn ngày",
+    "selectTime": "Chọn giờ",
+    "patientInfo": "Thông tin bệnh nhân",
+    "confirm": "Xác nhận"
+  },
+  "form": {
+    "patientName": "Họ và tên bệnh nhân",
+    "patientPhone": "Số điện thoại",
+    "patientEmail": "Email",
+    "contactMethod": "Phương thức liên hệ",
+    "notes": "Ghi chú",
+    "contactMethods": {
+      "phone": "Điện thoại",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "viber": "Viber",
+      "zalo": "Zalo",
+      "telegram": "Telegram"
+    }
+  },
+  "submit": {
+    "button": "Đặt lịch hẹn",
+    "success": "Đặt lịch hẹn thành công!",
+    "error": "Đặt lịch hẹn thất bại"
+  },
+  "noSlots": "Không có khung giờ trống cho ngày này",
+  "noDoctors": "Không có bác sĩ nào"
+}

@@ -1,0 +1,40 @@
+{
+  "title": "Quản lý lịch hẹn",
+  "list": {
+    "title": "Danh sách lịch hẹn",
+    "empty": "Chưa có lịch hẹn nào",
+    "columns": {
+      "patientName": "Tên bệnh nhân",
+      "patientPhone": "Số điện thoại",
+      "date": "Ngày hẹn",
+      "time": "Giờ hẹn",
+      "doctor": "Bác sĩ",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    }
+  },
+  "detail": {
+    "title": "Chi tiết lịch hẹn",
+    "patientInfo": "Thông tin bệnh nhân",
+    "appointmentInfo": "Thông tin lịch hẹn",
+    "contactMethod": "Phương thức liên hệ",
+    "notes": "Ghi chú"
+  },
+  "status": {
+    "pending": "Chờ xác nhận",
+    "confirmed": "Đã xác nhận",
+    "cancelled": "Đã hủy"
+  },
+  "actions": {
+    "confirm": "Xác nhận",
+    "cancel": "Hủy lịch hẹn",
+    "delete": "Xóa"
+  },
+  "updateStatus": {
+    "success": "Cập nhật trạng thái thành công",
+    "confirmTitle": "Xác nhận lịch hẹn",
+    "confirmMessage": "Bạn có chắc chắn muốn xác nhận lịch hẹn này?",
+    "cancelTitle": "Hủy lịch hẹn",
+    "cancelMessage": "Bạn có chắc chắn muốn hủy lịch hẹn này?"
+  }
+}

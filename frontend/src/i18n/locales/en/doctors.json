@@ -1,0 +1,48 @@
+{
+  "title": "Doctor Management",
+  "list": {
+    "title": "Doctor List",
+    "empty": "No doctors yet",
+    "columns": {
+      "fullName": "Full Name",
+      "specialty": "Specialty",
+      "phone": "Phone",
+      "experience": "Experience",
+      "status": "Status",
+      "actions": "Actions"
+    }
+  },
+  "create": {
+    "title": "Add New Doctor",
+    "description": "Fill in the details below to add a new doctor.",
+    "success": "Doctor added successfully"
+  },
+  "edit": {
+    "title": "Edit Doctor Information",
+    "description": "Update the doctor details below.",
+    "success": "Information updated successfully"
+  },
+  "delete": {
+    "confirmMessage": "Are you sure you want to delete doctor {name}?",
+    "availabilityWarning": "This doctor has {{count}} schedule(s).",
+    "appointmentsWarning": "This doctor has {{count}} future appointment(s).",
+    "forceConfirmMessage": "Are you sure you want to permanently delete this doctor? This action cannot be undone."
+  },
+  "fields": {
+    "fullName": "Full Name",
+    "specialty": "Specialty",
+    "phone": "Phone",
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "New Password",
+    "passwordHelper": "Leave blank to keep current password",
+    "experience": "Years of Experience",
+    "consultationDuration": "Consultation Duration (minutes)",
+    "bio": "Biography",
+    "isActive": "Active"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  }
+}

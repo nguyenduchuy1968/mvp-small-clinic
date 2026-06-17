@@ -1,0 +1,40 @@
+{
+  "title": "Appointment Management",
+  "list": {
+    "title": "Appointment List",
+    "empty": "No appointments yet",
+    "columns": {
+      "patientName": "Patient Name",
+      "patientPhone": "Phone",
+      "date": "Date",
+      "time": "Time",
+      "doctor": "Doctor",
+      "status": "Status",
+      "actions": "Actions"
+    }
+  },
+  "detail": {
+    "title": "Appointment Details",
+    "patientInfo": "Patient Information",
+    "appointmentInfo": "Appointment Information",
+    "contactMethod": "Contact Method",
+    "notes": "Notes"
+  },
+  "status": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "cancelled": "Cancelled"
+  },
+  "actions": {
+    "confirm": "Confirm",
+    "cancel": "Cancel Appointment",
+    "delete": "Delete"
+  },
+  "updateStatus": {
+    "success": "Status updated successfully",
+    "confirmTitle": "Confirm Appointment",
+    "confirmMessage": "Are you sure you want to confirm this appointment?",
+    "cancelTitle": "Cancel Appointment",
+    "cancelMessage": "Are you sure you want to cancel this appointment?"
+  }
+}

@@ -7,6 +7,7 @@ Verifies HTTP status codes, response bodies, and permission enforcement.
 import uuid
 from datetime import date, timedelta
 
+import pytest
 from app.core.config import settings
 from app.models import User, UserRole, Weekday
 from fastapi.testclient import TestClient
@@ -179,9 +180,7 @@ class TestGetAvailableSlots:
         assert data["slots"][0]["time"] == "09:00"
         assert data["slots"][-1]["time"] == "11:30"
 
-    def test_get_slots_doctor_not_found(
-        self, client: TestClient
-    ) -> None:
+    def test_get_slots_doctor_not_found(self, client: TestClient) -> None:
         fake_id = str(uuid.uuid4())
         r = client.get(
             f"{settings.API_V1_STR}/doctors/{fake_id}/slots",
@@ -247,7 +246,7 @@ class TestCreateAppointment:
         assert result["patient_name"] == "John Doe"
         assert result["appointment_date"] == _TOMORROW_STR
         assert result["appointment_time"] == "09:00"
-        assert result["status"] == "pending"
+        assert result["status"] == "confirmed"
         assert "id" in result
         assert "created_at" in result
 
@@ -265,7 +264,10 @@ class TestCreateAppointment:
             json=payload,
         )
         assert r.status_code == 400
-        assert "slot" in r.json()["detail"].lower() or "align" in r.json()["detail"].lower()
+        assert (
+            "slot" in r.json()["detail"].lower()
+            or "align" in r.json()["detail"].lower()
+        )
 
     def test_create_double_booking_returns_409(
         self, client: TestClient, superuser_token_headers: dict[str, str], db: Session
@@ -289,7 +291,10 @@ class TestCreateAppointment:
             json=payload,
         )
         assert r2.status_code == 409
-        assert "already booked" in r2.json()["detail"].lower() or "double" in r2.json()["detail"].lower()
+        assert (
+            "already booked" in r2.json()["detail"].lower()
+            or "double" in r2.json()["detail"].lower()
+        )
 
     def test_create_public_no_auth(
         self, client: TestClient, superuser_token_headers: dict[str, str], db: Session
@@ -305,6 +310,171 @@ class TestCreateAppointment:
             json=payload,
         )
         assert r.status_code == 201
+
+
+class TestAutoConfirmAppointment:
+    """Tests for the AUTO_CONFIRM_APPOINTMENTS setting and race condition protection."""
+
+    def test_auto_confirm_enabled_creates_confirmed(
+        self, client: TestClient, superuser_token_headers: dict[str, str], db: Session
+    ) -> None:
+        """When AUTO_CONFIRM_APPOINTMENTS=True, new appointments are CONFIRMED."""
+        doctor = _create_doctor_via_api(client, superuser_token_headers)
+        doctor_id = doctor["id"]
+        _create_availability_slot(client, doctor_id, superuser_token_headers)
+
+        payload = _create_appointment_payload(doctor_id)
+        r = client.post(
+            f"{settings.API_V1_STR}/appointments",
+            json=payload,
+        )
+        assert r.status_code == 201
+        assert r.json()["status"] == "confirmed"
+
+    def test_auto_confirm_disabled_creates_pending(
+        self,
+        client: TestClient,
+        superuser_token_headers: dict[str, str],
+        db: Session,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """When AUTO_CONFIRM_APPOINTMENTS=False, new appointments are PENDING.
+
+        This verifies the system can be switched to manual-confirm mode
+        in the future without breaking any existing workflows.
+        """
+        # Step 1: Override the setting
+        monkeypatch.setattr(settings, "AUTO_CONFIRM_APPOINTMENTS", False)
+
+        try:
+            doctor = _create_doctor_via_api(client, superuser_token_headers)
+            doctor_id = doctor["id"]
+            _create_availability_slot(client, doctor_id, superuser_token_headers)
+
+            payload = _create_appointment_payload(doctor_id)
+
+            # Step 2: Create appointment — should be PENDING
+            r = client.post(
+                f"{settings.API_V1_STR}/appointments",
+                json=payload,
+            )
+            assert r.status_code == 201
+            assert r.json()["status"] == "pending"
+            appointment_id = r.json()["id"]
+
+            # Step 3a: Slot Generator still blocks the slot (PENDING blocks)
+            r = client.get(
+                f"{settings.API_V1_STR}/doctors/{doctor_id}/slots",
+                params={"date": _TOMORROW_STR},
+            )
+            assert r.status_code == 200
+            slots = r.json()
+            booked_times = [s["time"] for s in slots["slots"]]
+            assert payload["appointment_time"] not in booked_times
+            assert slots["count"] == 5  # 6 slots - 1 booked = 5
+
+            # Step 3b: Appointment appears in list
+            r = client.get(
+                f"{settings.API_V1_STR}/appointments",
+                headers=superuser_token_headers,
+            )
+            assert r.status_code == 200
+            data = r.json()
+            ids = [a["id"] for a in data["data"]]
+            assert appointment_id in ids
+
+            # Step 3c: PENDING → CONFIRMED transition works
+            r = client.patch(
+                f"{settings.API_V1_STR}/appointments/{appointment_id}/status",
+                headers=superuser_token_headers,
+                json={"status": "confirmed"},
+            )
+            assert r.status_code == 200
+            assert r.json()["status"] == "confirmed"
+
+        finally:
+            # Step 4: Restore settings
+            monkeypatch.undo()
+
+    def test_double_booking_returns_409_conflict(
+        self, client: TestClient, superuser_token_headers: dict[str, str], db: Session
+    ) -> None:
+        """Booking the same slot twice returns 409 Conflict with descriptive message."""
+        doctor = _create_doctor_via_api(client, superuser_token_headers)
+        doctor_id = doctor["id"]
+        _create_availability_slot(client, doctor_id, superuser_token_headers)
+
+        payload = _create_appointment_payload(doctor_id)
+
+        # First booking succeeds
+        r1 = client.post(
+            f"{settings.API_V1_STR}/appointments",
+            json=payload,
+        )
+        assert r1.status_code == 201
+        assert r1.json()["status"] == "confirmed"
+
+        # Second booking at same slot — should be 409 Conflict
+        r2 = client.post(
+            f"{settings.API_V1_STR}/appointments",
+            json=payload,
+        )
+        assert r2.status_code == 409
+        detail = r2.json()["detail"].lower()
+        assert "already booked" in detail
+
+    def test_race_condition_integrity_error_returns_409(
+        self, client: TestClient, superuser_token_headers: dict[str, str], db: Session
+    ) -> None:
+        """Simulate a DB unique constraint violation (race condition) → 409 Conflict.
+
+        The application-level double booking check (_check_double_booking) catches
+        most conflicts. However, in high-concurrency scenarios, two requests may
+        pass the check simultaneously. The DB-level UNIQUE constraint
+        (uq_appointment_slot on doctor_id, appointment_date, appointment_time)
+        acts as a safety net, and the IntegrityError handler converts it to 409.
+
+        This test verifies the IntegrityError path by:
+        1. Creating an appointment at a slot
+        2. Cancelling it (so the app-level check allows re-booking)
+        3. Attempting to book the same slot — the app-level check passes
+           (CANCELLED doesn't block), but the DB UNIQUE constraint fires
+           because the constraint applies regardless of status.
+        """
+        from app.models import Appointment, AppointmentStatus
+
+        doctor = _create_doctor_via_api(client, superuser_token_headers)
+        doctor_id = doctor["id"]
+        _create_availability_slot(client, doctor_id, superuser_token_headers)
+
+        payload = _create_appointment_payload(doctor_id)
+
+        # Step 1: Create an appointment at the slot
+        r = client.post(
+            f"{settings.API_V1_STR}/appointments",
+            json=payload,
+        )
+        assert r.status_code == 201
+        appointment_id = r.json()["id"]
+
+        # Step 2: Cancel it — CANCELLED status passes the app-level check
+        r = client.patch(
+            f"{settings.API_V1_STR}/appointments/{appointment_id}/status",
+            headers=superuser_token_headers,
+            json={"status": "cancelled"},
+        )
+        assert r.status_code == 200
+
+        # Step 3: Try to book the same slot again
+        # The app-level _check_double_booking only blocks PENDING/CONFIRMED,
+        # so it will pass. But the DB UNIQUE constraint will fire.
+        r = client.post(
+            f"{settings.API_V1_STR}/appointments",
+            json=payload,
+        )
+        # This should be 409 because the IntegrityError handler converts it
+        assert r.status_code == 409
+        assert "already booked" in r.json()["detail"].lower()
 
 
 # ---------------------------------------------------------------------------
@@ -432,12 +602,12 @@ class TestReadAppointments:
         r = client.get(
             f"{settings.API_V1_STR}/appointments",
             headers=superuser_token_headers,
-            params={"status": "pending"},
+            params={"status": "confirmed"},
         )
         assert r.status_code == 200
         data = r.json()
         assert data["count"] >= 1
-        assert all(a["status"] == "pending" for a in data["data"])
+        assert all(a["status"] == "confirmed" for a in data["data"])
 
     def test_list_pagination(
         self, client: TestClient, superuser_token_headers: dict[str, str], db: Session
@@ -445,8 +615,11 @@ class TestReadAppointments:
         doctor = _create_doctor_via_api(client, superuser_token_headers)
         doctor_id = doctor["id"]
         _create_availability_slot(
-            client, doctor_id, superuser_token_headers,
-            start_time="09:00", end_time="11:00",
+            client,
+            doctor_id,
+            superuser_token_headers,
+            start_time="09:00",
+            end_time="11:00",
         )
 
         # Create 3 appointments
@@ -464,9 +637,7 @@ class TestReadAppointments:
         assert data["count"] >= 3
         assert len(data["data"]) == 2
 
-    def test_list_unauthenticated(
-        self, client: TestClient
-    ) -> None:
+    def test_list_unauthenticated(self, client: TestClient) -> None:
         r = client.get(
             f"{settings.API_V1_STR}/appointments",
         )
@@ -492,16 +663,17 @@ class TestUpdateAppointmentStatus:
         r = client.post(f"{settings.API_V1_STR}/appointments", json=payload)
         assert r.status_code == 201
         appointment_id = r.json()["id"]
+        assert r.json()["status"] == "confirmed"
 
-        # PENDING → CONFIRMED
+        # CONFIRMED → CANCELLED
         r = client.patch(
             f"{settings.API_V1_STR}/appointments/{appointment_id}/status",
             headers=superuser_token_headers,
-            json={"status": "confirmed"},
+            json={"status": "cancelled"},
         )
         assert r.status_code == 200
         result = r.json()
-        assert result["status"] == "confirmed"
+        assert result["status"] == "cancelled"
 
     def test_update_invalid_transition_returns_400(
         self, client: TestClient, superuser_token_headers: dict[str, str], db: Session
@@ -515,14 +687,7 @@ class TestUpdateAppointmentStatus:
         assert r.status_code == 201
         appointment_id = r.json()["id"]
 
-        # PENDING → CONFIRMED → CANCELLED (valid)
-        r = client.patch(
-            f"{settings.API_V1_STR}/appointments/{appointment_id}/status",
-            headers=superuser_token_headers,
-            json={"status": "confirmed"},
-        )
-        assert r.status_code == 200
-
+        # CONFIRMED → CANCELLED (valid)
         r = client.patch(
             f"{settings.API_V1_STR}/appointments/{appointment_id}/status",
             headers=superuser_token_headers,
@@ -682,7 +847,7 @@ class TestPublicBookingFlow:
             headers=superuser_token_headers,
         )
         assert r.status_code == 200
-        assert r.json()["status"] == "pending"
+        assert r.json()["status"] == "confirmed"
 
 
 # ---------------------------------------------------------------------------
@@ -761,10 +926,15 @@ class TestDoctorPermissions:
         # Create doctor B with appointment
         doctor_b, _ = _create_doctor_user_token(client, db)
         _create_availability_slot(
-            client, doctor_b["id"], superuser_headers,
-            start_time="10:00", end_time="12:00",
+            client,
+            doctor_b["id"],
+            superuser_headers,
+            start_time="10:00",
+            end_time="12:00",
         )
-        payload_b = _create_appointment_payload(doctor_b["id"], appointment_time="10:00")
+        payload_b = _create_appointment_payload(
+            doctor_b["id"], appointment_time="10:00"
+        )
         client.post(f"{settings.API_V1_STR}/appointments", json=payload_b)
 
         # Doctor A lists appointments — should only see their own
@@ -792,15 +962,16 @@ class TestDoctorPermissions:
         r = client.post(f"{settings.API_V1_STR}/appointments", json=payload)
         assert r.status_code == 201
         appointment_id = r.json()["id"]
+        assert r.json()["status"] == "confirmed"
 
-        # Doctor updates own appointment status
+        # Doctor updates own appointment status: CONFIRMED → CANCELLED
         r = client.patch(
             f"{settings.API_V1_STR}/appointments/{appointment_id}/status",
             headers=token_headers,
-            json={"status": "confirmed"},
+            json={"status": "cancelled"},
         )
         assert r.status_code == 200
-        assert r.json()["status"] == "confirmed"
+        assert r.json()["status"] == "cancelled"
 
     def test_doctor_cannot_update_another_doctors_appointment(
         self,
@@ -821,7 +992,7 @@ class TestDoctorPermissions:
         r = client.patch(
             f"{settings.API_V1_STR}/appointments/{appointment_id}/status",
             headers=attacker_headers,
-            json={"status": "confirmed"},
+            json={"status": "cancelled"},
         )
         assert r.status_code == 403
 
@@ -932,10 +1103,10 @@ class TestAdminPermissions:
         r = client.patch(
             f"{settings.API_V1_STR}/appointments/{appointment_id}/status",
             headers=superuser_token_headers,
-            json={"status": "confirmed"},
+            json={"status": "cancelled"},
         )
         assert r.status_code == 200
-        assert r.json()["status"] == "confirmed"
+        assert r.json()["status"] == "cancelled"
 
     def test_admin_delete_any_appointment(
         self,

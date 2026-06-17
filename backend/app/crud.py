@@ -2,8 +2,10 @@ import uuid
 from datetime import date, datetime, timezone
 from typing import Any
 
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
+from app.core.config import settings
 from app.core.security import get_password_hash, verify_password
 from app.models import (
     Appointment,
@@ -156,10 +158,37 @@ def update_doctor(
     *, session: Session, db_doctor: Doctor, doctor_in: DoctorUpdate
 ) -> Doctor:
     doctor_data = doctor_in.model_dump(exclude_unset=True)
+
+    # Extract User-specific fields (email, password) before updating Doctor
+    user_update_data: dict[str, Any] = {}
+    if "email" in doctor_data:
+        user_update_data["email"] = doctor_data.pop("email")
+    if "password" in doctor_data:
+        user_update_data["password"] = doctor_data.pop("password")
+
+    # Update Doctor fields
     db_doctor.sqlmodel_update(doctor_data)
     session.add(db_doctor)
     session.commit()
     session.refresh(db_doctor)
+
+    # Update linked User fields (email/password) if provided
+    if user_update_data:
+        # Eagerly load the user relationship to ensure it's available
+        from sqlalchemy.orm import selectinload
+        stmt = (
+            select(Doctor)
+            .where(Doctor.id == db_doctor.id)
+            .options(selectinload(Doctor.user))
+        )
+        fresh_doctor = session.exec(stmt).first()
+        if fresh_doctor and fresh_doctor.user:
+            user_update = UserUpdate(**user_update_data)
+            update_user(session=session, db_user=fresh_doctor.user, user_in=user_update)
+            # Re-fetch to get the updated user data
+            session.refresh(fresh_doctor)
+        return fresh_doctor or db_doctor
+
     return db_doctor
 
 
@@ -751,7 +780,15 @@ def create_appointment(
     4. Contact info is valid for the selected contact method
     5. No double booking (same doctor, date, time with PENDING or CONFIRMED status)
 
+    The appointment status is determined by the AUTO_CONFIRM_APPOINTMENTS setting:
+    - True  → CONFIRMED (MVP default)
+    - False → PENDING  (for clinics requiring manual approval)
+
     Raises ValueError on validation failure.
+
+    Catches IntegrityError from database unique constraint violations
+    (race condition protection) and raises ValueError with a clear message,
+    which the API layer converts to HTTP 409 Conflict.
     """
     # 1. Validate doctor exists and is active
     _validate_doctor_active(session=session, doctor_id=appointment_in.doctor_id)
@@ -785,10 +822,29 @@ def create_appointment(
         appointment_time=appointment_in.appointment_time,
     )
 
-    # 6. Create the appointment
-    db_obj = Appointment.model_validate(appointment_in)
+    # 6. Determine appointment status based on auto-confirm setting
+    if settings.AUTO_CONFIRM_APPOINTMENTS:
+        appointment_status = AppointmentStatus.CONFIRMED
+    else:
+        appointment_status = AppointmentStatus.PENDING
+
+    # 7. Create the appointment with the determined status
+    appointment_data = appointment_in.model_dump()
+    appointment_data["status"] = appointment_status
+    db_obj = Appointment.model_validate(appointment_data)
     session.add(db_obj)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError as exc:
+        session.rollback()
+        # Check if it's the unique constraint for double booking
+        if "uq_appointment_slot" in str(exc):
+            raise ValueError(
+                f"Slot on {appointment_in.appointment_date} at "
+                f"{appointment_in.appointment_time} for "
+                f"doctor {appointment_in.doctor_id} is already booked"
+            )
+        raise
     session.refresh(db_obj)
     return db_obj
 

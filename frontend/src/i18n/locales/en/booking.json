@@ -1,0 +1,32 @@
+{
+  "title": "Book Appointment",
+  "steps": {
+    "selectDoctor": "Select Doctor",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "patientInfo": "Patient Information",
+    "confirm": "Confirm"
+  },
+  "form": {
+    "patientName": "Patient Full Name",
+    "patientPhone": "Phone Number",
+    "patientEmail": "Email",
+    "contactMethod": "Contact Method",
+    "notes": "Notes",
+    "contactMethods": {
+      "phone": "Phone",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "viber": "Viber",
+      "zalo": "Zalo",
+      "telegram": "Telegram"
+    }
+  },
+  "submit": {
+    "button": "Book Appointment",
+    "success": "Appointment booked successfully!",
+    "error": "Failed to book appointment"
+  },
+  "noSlots": "No available slots for this date",
+  "noDoctors": "No doctors available"
+}

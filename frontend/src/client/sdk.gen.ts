@@ -3,22 +3,264 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { AppointmentsGetAvailableSlotsData, AppointmentsGetAvailableSlotsResponse, AppointmentsCreateAppointmentData, AppointmentsCreateAppointmentResponse, AppointmentsReadAppointmentsData, AppointmentsReadAppointmentsResponse, AppointmentsReadAppointmentData, AppointmentsReadAppointmentResponse, AppointmentsDeleteAppointmentData, AppointmentsDeleteAppointmentResponse, AppointmentsUpdateAppointmentStatusData, AppointmentsUpdateAppointmentStatusResponse, AvailabilityReadDoctorAvailabilitiesData, AvailabilityReadDoctorAvailabilitiesResponse, AvailabilityCreateDoctorAvailabilityData, AvailabilityCreateDoctorAvailabilityResponse, AvailabilityUpdateDoctorAvailabilityData, AvailabilityUpdateDoctorAvailabilityResponse, AvailabilityDeleteDoctorAvailabilityData, AvailabilityDeleteDoctorAvailabilityResponse, DoctorsReadDoctorsData, DoctorsReadDoctorsResponse, DoctorsCreateDoctorData, DoctorsCreateDoctorResponse, DoctorsReadDoctorsPublicData, DoctorsReadDoctorsPublicResponse, DoctorsReadDoctorData, DoctorsReadDoctorResponse, DoctorsUpdateDoctorData, DoctorsUpdateDoctorResponse, DoctorsDeleteDoctorData, DoctorsDeleteDoctorResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
 
-export class ItemsService {
+export class AppointmentsService {
     /**
-     * Read Items
-     * Retrieve items.
+     * Get Available Slots
+     * Retrieve all available booking slots for a doctor on a specific date. Slots are generated from the doctor's active availability intervals and exclude already-booked slots (PENDING or CONFIRMED). If the requested date is today, past slots are also excluded. This endpoint is public and does not require authentication.
+     * @param data The data for the request.
+     * @param data.doctorId
+     * @param data.date Target date in YYYY-MM-DD format
+     * @returns AvailableSlotsResponse Successful Response
+     * @throws ApiError
+     */
+    public static getAvailableSlots(data: AppointmentsGetAvailableSlotsData): CancelablePromise<AppointmentsGetAvailableSlotsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/doctors/{doctor_id}/slots',
+            path: {
+                doctor_id: data.doctorId
+            },
+            query: {
+                date: data.date
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Appointment
+     * Create a new appointment booking. Validates that the doctor exists and is active, the appointment date is not in the past, the time falls within an active availability interval and aligns with the slot duration, contact info is valid for the selected contact method, and there is no double booking. This endpoint is public and does not require authentication.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns AppointmentPublic Successful Response
+     * @throws ApiError
+     */
+    public static createAppointment(data: AppointmentsCreateAppointmentData): CancelablePromise<AppointmentsCreateAppointmentResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/appointments',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * List Appointments
+     * Retrieve a list of appointments with optional filters. Requires authentication. Admins can see all appointments. Doctors can only see their own appointments. Supports filtering by doctor_id, appointment_date, and status. Supports pagination via skip and limit parameters. Results are ordered by appointment date then time (ascending).
+     * @param data The data for the request.
+     * @param data.doctorId Filter by doctor UUID
+     * @param data.appointmentDate Filter by appointment date (YYYY-MM-DD)
+     * @param data.status Filter by appointment status
+     * @param data.skip Number of records to skip
+     * @param data.limit Maximum records to return
+     * @returns AppointmentsPublic Successful Response
+     * @throws ApiError
+     */
+    public static readAppointments(data: AppointmentsReadAppointmentsData = {}): CancelablePromise<AppointmentsReadAppointmentsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/appointments',
+            query: {
+                doctor_id: data.doctorId,
+                appointment_date: data.appointmentDate,
+                status: data.status,
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Appointment by ID
+     * Retrieve a specific appointment by its ID. Requires authentication. Admins can access any appointment. Doctors can only access their own appointments.
+     * @param data The data for the request.
+     * @param data.appointmentId
+     * @returns AppointmentPublic Successful Response
+     * @throws ApiError
+     */
+    public static readAppointment(data: AppointmentsReadAppointmentData): CancelablePromise<AppointmentsReadAppointmentResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/appointments/{appointment_id}',
+            path: {
+                appointment_id: data.appointmentId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Appointment
+     * Delete an appointment record. This permanently removes the record from the database. Requires authentication. Admins can delete any appointment. Doctors can only delete their own appointments.
+     * @param data The data for the request.
+     * @param data.appointmentId
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteAppointment(data: AppointmentsDeleteAppointmentData): CancelablePromise<AppointmentsDeleteAppointmentResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/appointments/{appointment_id}',
+            path: {
+                appointment_id: data.appointmentId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Appointment Status
+     * Update the status of an appointment. Validates the status transition (e.g., PENDING→CONFIRMED, PENDING→CANCELLED, CONFIRMED→CANCELLED). Requires authentication. Admins can update any appointment. Doctors can only update their own appointments.
+     * @param data The data for the request.
+     * @param data.appointmentId
+     * @param data.requestBody
+     * @returns AppointmentPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateAppointmentStatus(data: AppointmentsUpdateAppointmentStatusData): CancelablePromise<AppointmentsUpdateAppointmentStatusResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/appointments/{appointment_id}/status',
+            path: {
+                appointment_id: data.appointmentId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class AvailabilityService {
+    /**
+     * Get Doctor Availability
+     * Retrieve availability slots for a specific doctor. Supports pagination via `skip` and `limit` parameters. Use `active_only=false` to include inactive slots. Results are ordered by weekday (Monday→Sunday) and then by start time.
+     * @param data The data for the request.
+     * @param data.doctorId
+     * @param data.skip
+     * @param data.limit
+     * @param data.activeOnly
+     * @returns DoctorAvailabilitiesPublic Successful Response
+     * @throws ApiError
+     */
+    public static readDoctorAvailabilities(data: AvailabilityReadDoctorAvailabilitiesData): CancelablePromise<AvailabilityReadDoctorAvailabilitiesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/doctors/{doctor_id}/availability',
+            path: {
+                doctor_id: data.doctorId
+            },
+            query: {
+                skip: data.skip,
+                limit: data.limit,
+                active_only: data.activeOnly
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Doctor Availability
+     * Create a new availability slot for a doctor. Validates that the time range is valid (end > start), duration_minutes does not exceed the interval length, and the slot does not overlap with existing slots. Touching intervals (e.g., 09:00-10:00 and 10:00-11:00) are allowed.
+     * @param data The data for the request.
+     * @param data.doctorId
+     * @param data.requestBody
+     * @returns DoctorAvailabilityPublic Successful Response
+     * @throws ApiError
+     */
+    public static createDoctorAvailability(data: AvailabilityCreateDoctorAvailabilityData): CancelablePromise<AvailabilityCreateDoctorAvailabilityResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/doctors/{doctor_id}/availability',
+            path: {
+                doctor_id: data.doctorId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Doctor Availability
+     * Update an existing availability slot. Only provided fields are updated (partial update). Validates time range, duration, and overlap with other slots (excluding the slot being updated).
+     * @param data The data for the request.
+     * @param data.availabilityId
+     * @param data.requestBody
+     * @returns DoctorAvailabilityPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateDoctorAvailability(data: AvailabilityUpdateDoctorAvailabilityData): CancelablePromise<AvailabilityUpdateDoctorAvailabilityResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/availability/{availability_id}',
+            path: {
+                availability_id: data.availabilityId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Doctor Availability
+     * Delete an availability slot. This permanently removes the record from the database.
+     * @param data The data for the request.
+     * @param data.availabilityId
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteDoctorAvailability(data: AvailabilityDeleteDoctorAvailabilityData): CancelablePromise<AvailabilityDeleteDoctorAvailabilityResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/availability/{availability_id}',
+            path: {
+                availability_id: data.availabilityId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class DoctorsService {
+    /**
+     * Read Doctors
+     * Retrieve active doctors. Public endpoint.
      * @param data The data for the request.
      * @param data.skip
      * @param data.limit
-     * @returns ItemsPublic Successful Response
+     * @returns DoctorsPublic Successful Response
      * @throws ApiError
      */
-    public static readItems(data: ItemsReadItemsData = {}): CancelablePromise<ItemsReadItemsResponse> {
+    public static readDoctors(data: DoctorsReadDoctorsData = {}): CancelablePromise<DoctorsReadDoctorsResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/v1/items/',
+            url: '/api/v1/doctors/',
             query: {
                 skip: data.skip,
                 limit: data.limit
@@ -30,17 +272,24 @@ export class ItemsService {
     }
     
     /**
-     * Create Item
-     * Create new item.
+     * Create Doctor
+     * Create a new doctor with automatic user creation.
+     *
+     * This is the primary doctor onboarding endpoint.
+     * Automatically creates a User (role=DOCTOR) and a Doctor profile
+     * in a single atomic operation. The admin never needs to provide a user_id.
+     *
+     * The operation is transactional: if Doctor creation fails,
+     * the User creation is rolled back.
      * @param data The data for the request.
      * @param data.requestBody
-     * @returns ItemPublic Successful Response
+     * @returns DoctorPublic Successful Response
      * @throws ApiError
      */
-    public static createItem(data: ItemsCreateItemData): CancelablePromise<ItemsCreateItemResponse> {
+    public static createDoctor(data: DoctorsCreateDoctorData): CancelablePromise<DoctorsCreateDoctorResponse> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/v1/items/',
+            url: '/api/v1/doctors/',
             body: data.requestBody,
             mediaType: 'application/json',
             errors: {
@@ -50,19 +299,21 @@ export class ItemsService {
     }
     
     /**
-     * Read Item
-     * Get item by ID.
+     * Read Doctors Public
+     * Retrieve active doctors. Public endpoint (explicit alias).
      * @param data The data for the request.
-     * @param data.id
-     * @returns ItemPublic Successful Response
+     * @param data.skip
+     * @param data.limit
+     * @returns DoctorsPublic Successful Response
      * @throws ApiError
      */
-    public static readItem(data: ItemsReadItemData): CancelablePromise<ItemsReadItemResponse> {
+    public static readDoctorsPublic(data: DoctorsReadDoctorsPublicData = {}): CancelablePromise<DoctorsReadDoctorsPublicResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/v1/items/{id}',
-            path: {
-                id: data.id
+            url: '/api/v1/doctors/public',
+            query: {
+                skip: data.skip,
+                limit: data.limit
             },
             errors: {
                 422: 'Validation Error'
@@ -71,20 +322,41 @@ export class ItemsService {
     }
     
     /**
-     * Update Item
-     * Update an item.
+     * Read Doctor
+     * Get a specific doctor by ID. Requires authentication.
      * @param data The data for the request.
-     * @param data.id
-     * @param data.requestBody
-     * @returns ItemPublic Successful Response
+     * @param data.doctorId
+     * @returns DoctorPublic Successful Response
      * @throws ApiError
      */
-    public static updateItem(data: ItemsUpdateItemData): CancelablePromise<ItemsUpdateItemResponse> {
+    public static readDoctor(data: DoctorsReadDoctorData): CancelablePromise<DoctorsReadDoctorResponse> {
         return __request(OpenAPI, {
-            method: 'PUT',
-            url: '/api/v1/items/{id}',
+            method: 'GET',
+            url: '/api/v1/doctors/{doctor_id}',
             path: {
-                id: data.id
+                doctor_id: data.doctorId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Update Doctor
+     * Update a doctor profile. Admin only.
+     * @param data The data for the request.
+     * @param data.doctorId
+     * @param data.requestBody
+     * @returns DoctorPublic Successful Response
+     * @throws ApiError
+     */
+    public static updateDoctor(data: DoctorsUpdateDoctorData): CancelablePromise<DoctorsUpdateDoctorResponse> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/v1/doctors/{doctor_id}',
+            path: {
+                doctor_id: data.doctorId
             },
             body: data.requestBody,
             mediaType: 'application/json',
@@ -95,21 +367,32 @@ export class ItemsService {
     }
     
     /**
-     * Delete Item
-     * Delete an item.
+     * Delete Doctor
+     * Delete a doctor profile. Admin only.
+     *
+     * Safety check: Before deletion, counts related records (availability
+     * and future appointments). If any exist and `force` is not supplied,
+     * returns HTTP 409 with the counts to prevent silent data loss.
+     *
+     * Use `?force=true` to override and proceed with deletion.
      * @param data The data for the request.
-     * @param data.id
-     * @returns Message Successful Response
+     * @param data.doctorId
+     * @param data.force Force deletion even if doctor has related records
+     * @returns unknown Successful Response
      * @throws ApiError
      */
-    public static deleteItem(data: ItemsDeleteItemData): CancelablePromise<ItemsDeleteItemResponse> {
+    public static deleteDoctor(data: DoctorsDeleteDoctorData): CancelablePromise<DoctorsDeleteDoctorResponse> {
         return __request(OpenAPI, {
             method: 'DELETE',
-            url: '/api/v1/items/{id}',
+            url: '/api/v1/doctors/{doctor_id}',
             path: {
-                id: data.id
+                doctor_id: data.doctorId
+            },
+            query: {
+                force: data.force
             },
             errors: {
+                409: 'Doctor has related records (availability or future appointments)',
                 422: 'Validation Error'
             }
         });
@@ -337,26 +620,6 @@ export class UsersService {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/v1/users/me/password',
-            body: data.requestBody,
-            mediaType: 'application/json',
-            errors: {
-                422: 'Validation Error'
-            }
-        });
-    }
-    
-    /**
-     * Register User
-     * Create new user without the need to be logged in.
-     * @param data The data for the request.
-     * @param data.requestBody
-     * @returns UserPublic Successful Response
-     * @throws ApiError
-     */
-    public static registerUser(data: UsersRegisterUserData): CancelablePromise<UsersRegisterUserResponse> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/v1/users/signup',
             body: data.requestBody,
             mediaType: 'application/json',
             errors: {

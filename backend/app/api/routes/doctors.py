@@ -1,10 +1,14 @@
 import uuid
+from datetime import date
 from typing import Any
 
 from app import crud
 from app.api.deps import CurrentUser, SessionDep, get_current_active_superuser
 from app.models import (
+    Appointment,
+    AppointmentStatus,
     Doctor,
+    DoctorAvailability,
     DoctorCreate,
     DoctorCreateWithUser,
     DoctorPublic,
@@ -13,7 +17,8 @@ from app.models import (
     Message,
     User,
 )
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import func, select
 
 router = APIRouter(prefix="/doctors", tags=["doctors"])
@@ -32,10 +37,21 @@ def read_doctors(session: SessionDep, skip: int = 0, limit: int = 100) -> Any:
     )
     count = session.exec(count_statement).one()
 
-    statement = select(Doctor).where(Doctor.is_active == True).offset(skip).limit(limit)
+    statement = (
+        select(Doctor)
+        .where(Doctor.is_active == True)
+        .offset(skip)
+        .limit(limit)
+    )
     doctors = session.exec(statement).all()
 
-    doctors_public = [DoctorPublic.model_validate(doc) for doc in doctors]
+    doctors_public = [
+        DoctorPublic.model_validate(
+            doc,
+            update={"email": doc.user.email if doc.user else None},
+        )
+        for doc in doctors
+    ]
     return DoctorsPublic(data=doctors_public, count=count)
 
 
@@ -52,10 +68,21 @@ def read_doctors_public(session: SessionDep, skip: int = 0, limit: int = 100) ->
     )
     count = session.exec(count_statement).one()
 
-    statement = select(Doctor).where(Doctor.is_active == True).offset(skip).limit(limit)
+    statement = (
+        select(Doctor)
+        .where(Doctor.is_active == True)
+        .offset(skip)
+        .limit(limit)
+    )
     doctors = session.exec(statement).all()
 
-    doctors_public = [DoctorPublic.model_validate(doc) for doc in doctors]
+    doctors_public = [
+        DoctorPublic.model_validate(
+            doc,
+            update={"email": doc.user.email if doc.user else None},
+        )
+        for doc in doctors
+    ]
     return DoctorsPublic(data=doctors_public, count=count)
 
 
@@ -77,7 +104,10 @@ def read_doctor(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Doctor not found",
         )
-    return doctor
+    return DoctorPublic.model_validate(
+        doctor,
+        update={"email": doctor.user.email if doctor.user else None},
+    )
 
 
 @router.post(
@@ -102,19 +132,18 @@ def create_doctor(
     the User creation is rolled back.
     """
     # Check for duplicate email
-    existing_user = crud.get_user_by_email(
-        session=session, email=doctor_in.email
-    )
+    existing_user = crud.get_user_by_email(session=session, email=doctor_in.email)
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="A user with this email already exists",
         )
 
-    doctor = crud.create_doctor_with_user(
-        session=session, doctor_in=doctor_in
+    doctor = crud.create_doctor_with_user(session=session, doctor_in=doctor_in)
+    return DoctorPublic.model_validate(
+        doctor,
+        update={"email": doctor.user.email if doctor.user else None},
     )
-    return doctor
 
 
 @router.post(
@@ -177,29 +206,98 @@ def update_doctor(
             detail="Doctor not found",
         )
 
-    doctor = crud.update_doctor(
-        session=session, db_doctor=db_doctor, doctor_in=doctor_in
+    try:
+        doctor = crud.update_doctor(
+            session=session, db_doctor=db_doctor, doctor_in=doctor_in
+        )
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="A user with this email already exists",
+        )
+    return DoctorPublic.model_validate(
+        doctor,
+        update={"email": doctor.user.email if doctor.user else None},
     )
-    return doctor
 
 
 @router.delete(
     "/{doctor_id}",
     dependencies=[Depends(get_current_active_superuser)],
+    responses={
+        409: {
+            "description": "Doctor has related records (availability or future appointments)",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "can_delete": False,
+                        "availability_count": 12,
+                        "future_appointments_count": 8,
+                        "message": "Doctor has related records. Use ?force=true to delete anyway.",
+                    },
+                },
+            },
+        },
+    },
 )
 def delete_doctor(
     *,
     session: SessionDep,
     doctor_id: uuid.UUID,
-) -> Message:
+    force: bool = Query(
+        default=False,
+        description="Force deletion even if doctor has related records",
+    ),
+) -> Any:
     """
     Delete a doctor profile. Admin only.
+
+    Safety check: Before deletion, counts related records (availability
+    and future appointments). If any exist and `force` is not supplied,
+    returns HTTP 409 with the counts to prevent silent data loss.
+
+    Use `?force=true` to override and proceed with deletion.
     """
     db_doctor = session.get(Doctor, doctor_id)
     if not db_doctor:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Doctor not found",
+        )
+
+    # Count related availability records
+    availability_count = session.exec(
+        select(func.count())
+        .select_from(DoctorAvailability)
+        .where(
+            DoctorAvailability.doctor_id == doctor_id,
+        )
+    ).one()
+
+    # Count future appointments (PENDING or CONFIRMED, date >= today)
+    today = date.today()
+    future_appointments_count = session.exec(
+        select(func.count())
+        .select_from(Appointment)
+        .where(
+            Appointment.doctor_id == doctor_id,
+            Appointment.appointment_date >= today,
+            Appointment.status.in_(
+                [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED]
+            ),
+        )
+    ).one()
+
+    # If related records exist and force is not supplied, block deletion
+    if (availability_count > 0 or future_appointments_count > 0) and not force:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "can_delete": False,
+                "availability_count": availability_count,
+                "future_appointments_count": future_appointments_count,
+                "message": "Doctor has related records. Use ?force=true to delete anyway.",
+            },
         )
 
     crud.delete_doctor(session=session, db_doctor=db_doctor)

@@ -1,0 +1,21 @@
+{
+  "welcome": "З поверненням",
+  "welcomeBack": "раді вас знову бачити!!!",
+  "title": "Панель керування",
+  "stats": {
+    "totalDoctors": "Всього лікарів",
+    "totalAppointments": "Всього записів",
+    "pendingAppointments": "Записи в очікуванні",
+    "todayAppointments": "Записи на сьогодні"
+  },
+  "quickActions": {
+    "title": "Швидкі дії",
+    "bookAppointment": "Записатися",
+    "manageDoctors": "Керувати лікарями",
+    "viewSchedule": "Переглянути розклад"
+  },
+  "recentAppointments": {
+    "title": "Останні записи",
+    "empty": "Ще немає записів"
+  }
+}

@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { Suspense } from "react"
+import { useTranslation } from "react-i18next"
 
 import { type UserPublic, UsersService } from "@/client"
 import AddUser from "@/components/Admin/AddUser"
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/_layout/admin")({
   head: () => ({
     meta: [
       {
-        title: "Admin - FastAPI Template",
+        title: "Admin",
       },
     ],
   }),
@@ -56,13 +57,15 @@ function UsersTable() {
 }
 
 function Admin() {
+  const { t } = useTranslation("common")
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Users</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t("nav.admin")}</h1>
           <p className="text-muted-foreground">
-            Manage user accounts and permissions
+            {t("users.manageDescription")}
           </p>
         </div>
         <AddUser />

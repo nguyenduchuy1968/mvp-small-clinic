@@ -1,0 +1,21 @@
+{
+  "welcome": "Chào mừng trở lại",
+  "welcomeBack": "rất vui được gặp lại bạn!!!",
+  "title": "Bảng điều khiển",
+  "stats": {
+    "totalDoctors": "Tổng số bác sĩ",
+    "totalAppointments": "Tổng số lịch hẹn",
+    "pendingAppointments": "Lịch hẹn chờ xác nhận",
+    "todayAppointments": "Lịch hẹn hôm nay"
+  },
+  "quickActions": {
+    "title": "Thao tác nhanh",
+    "bookAppointment": "Đặt lịch hẹn",
+    "manageDoctors": "Quản lý bác sĩ",
+    "viewSchedule": "Xem lịch làm việc"
+  },
+  "recentAppointments": {
+    "title": "Lịch hẹn gần đây",
+    "empty": "Chưa có lịch hẹn nào"
+  }
+}

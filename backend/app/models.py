@@ -109,6 +109,8 @@ class DoctorUpdate(DoctorBase):
     is_active: bool | None = None  # type: ignore[assignment]
     phone: str | None = Field(default=None, max_length=50)  # type: ignore[assignment]
     consultation_duration: int | None = Field(default=None, ge=5, le=180)  # type: ignore[assignment]
+    email: EmailStr | None = Field(default=None, max_length=255)
+    password: str | None = Field(default=None, min_length=8, max_length=128)
 
 
 class Doctor(DoctorBase, table=True):
@@ -213,6 +215,7 @@ class DoctorAvailabilitiesPublic(SQLModel):
 class DoctorPublic(DoctorBase):
     id: uuid.UUID
     user_id: uuid.UUID
+    email: str | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
 

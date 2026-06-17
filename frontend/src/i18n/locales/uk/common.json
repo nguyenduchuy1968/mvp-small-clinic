@@ -1,0 +1,145 @@
+{
+  "nav": {
+    "dashboard": "Панель керування",
+    "doctors": "Лікарі",
+    "availability": "Розклад",
+    "appointments": "Записи",
+    "settings": "Налаштування",
+    "admin": "Адміністрування",
+    "logout": "Вийти",
+    "language": "Мова"
+  },
+  "actions": {
+    "create": "Створити",
+    "edit": "Редагувати",
+    "delete": "Видалити",
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "confirm": "Підтвердити",
+    "search": "Пошук",
+    "filter": "Фільтр",
+    "clear": "Очистити фільтри",
+    "close": "Закрити",
+    "back": "Назад",
+    "copy": "Копіювати ID"
+  },
+  "pagination": {
+    "showing": "Показано {from}–{to} із {total}",
+    "previous": "Попередня",
+    "next": "Наступна",
+    "rowsPerPage": "Рядків на сторінку",
+    "page": "Сторінка",
+    "of": "з",
+    "entries": "записів",
+    "goToFirstPage": "На першу сторінку",
+    "goToPreviousPage": "На попередню сторінку",
+    "goToNextPage": "На наступну сторінку",
+    "goToLastPage": "На останню сторінку"
+  },
+  "states": {
+    "loading": "Завантаження...",
+    "empty": "Немає даних",
+    "error": "Сталася помилка",
+    "notFound": "Не знайдено"
+  },
+  "errors": {
+    "title": "Помилка",
+    "alreadyBooked": "Цей час уже заброньовано",
+    "notFound": "Не знайдено",
+    "overlap": "Часові проміжки перетинаються",
+    "invalidTime": "Недійсний час",
+    "unauthorized": "Будь ласка, увійдіть",
+    "forbidden": "У вас немає дозволу на виконання цієї дії"
+  },
+  "confirmations": {
+    "deleteTitle": "Підтвердження видалення",
+    "deleteMessage": "Ви впевнені, що хочете видалити {item}?",
+    "cancelTitle": "Підтвердження скасування",
+    "cancelMessage": "Ви впевнені, що хочете скасувати цей запис?"
+  },
+  "toasts": {
+    "createSuccess": "Успішно створено",
+    "updateSuccess": "Успішно оновлено",
+    "deleteSuccess": "Успішно видалено",
+    "errorOccurred": "Сталася помилка"
+  },
+  "validation": {
+    "invalidEmail": "Недійсна електронна адреса",
+    "passwordRequired": "Пароль обов'язковий",
+    "passwordMinLength": "Пароль має містити щонайменше 8 символів",
+    "confirmPasswordRequired": "Будь ласка, підтвердьте пароль",
+    "passwordsDontMatch": "Паролі не збігаються",
+    "fullNameRequired": "Повне ім'я обов'язкове",
+    "experienceYearsRange": "Кількість років досвіду має бути від 0 до 100"
+  },
+  "sections": {
+    "contactInfo": "Контактна інформація",
+    "professionalInfo": "Професійна інформація"
+  },
+  "items": {
+    "addItem": "Додати елемент",
+    "editItem": "Редагувати елемент",
+    "deleteItem": "Видалити елемент",
+    "title": "Назва",
+    "description": "Опис",
+    "addDescription": "Заповніть деталі, щоб додати новий елемент.",
+    "editDescription": "Оновіть деталі елемента нижче.",
+    "deleteDescription": "Цей елемент буде остаточно видалено. Ви впевнені? Цю дію неможливо скасувати.",
+    "noDescription": "Немає опису",
+    "titleRequired": "Назва обов'язкова",
+    "created": "Елемент успішно створено",
+    "updated": "Елемент успішно оновлено",
+    "deleted": "Елемент успішно видалено",
+    "emptyTitle": "У вас ще немає елементів",
+    "emptyDescription": "Додайте новий елемент, щоб почати",
+    "pageTitle": "Елементи",
+    "pageDescription": "Створюйте та керуйте своїми елементами"
+  },
+  "users": {
+    "fullName": "Повне ім'я",
+    "email": "Електронна пошта",
+    "role": "Роль",
+    "status": "Статус",
+    "deleteAccount": "Видалити обліковий запис",
+    "deleteConfirmationTitle": "Потрібне підтвердження",
+    "deleteConfirmationDescription": "Усі дані вашого облікового запису буде остаточно видалено. Якщо ви впевнені, натисніть \"Підтвердити\", щоб продовжити. Цю дію неможливо скасувати.",
+    "accountDeleted": "Ваш обліковий запис успішно видалено",
+    "addUserDescription": "Заповніть форму нижче, щоб додати нового користувача до системи.",
+    "email": "Електронна пошта",
+    "setPassword": "Встановити пароль",
+    "confirmPassword": "Підтвердити пароль",
+    "isSuperuser": "Суперкористувач?",
+    "isActive": "Активний?",
+    "you": "Ви",
+    "superuser": "Суперкористувач",
+    "user": "Користувач",
+    "active": "Активний",
+    "inactive": "Неактивний",
+    "nA": "N/A",
+    "manageDescription": "Керування обліковими записами користувачів і дозволами",
+    "editUserDescription": "Оновіть дані користувача нижче."
+  },
+  "settings": {
+    "myProfile": "Мій профіль",
+    "password": "Пароль",
+    "dangerZone": "Небезпечна зона",
+    "manageDescription": "Керуйте налаштуваннями та параметрами облікового запису",
+    "changePassword": "Змінити пароль",
+    "currentPassword": "Поточний пароль",
+    "newPassword": "Новий пароль",
+    "confirmPassword": "Підтвердження пароля",
+    "updatePassword": "Оновити пароль",
+    "passwordRequired": "Пароль обов'язковий",
+    "passwordMinLength": "Пароль має містити щонайменше 8 символів",
+    "confirmPasswordRequired": "Будь ласка, підтвердьте пароль",
+    "passwordsDontMatch": "Паролі не збігаються"
+  },
+  "password": {
+    "show": "Показати пароль",
+    "hide": "Приховати пароль"
+  },
+  "userSettings": "Налаштування користувача",
+  "footer": {
+    "copyright": "Full Stack FastAPI Template"
+  }
+}

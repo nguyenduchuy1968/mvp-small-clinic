@@ -16,8 +16,14 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
-import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
+import { Route as LayoutDoctorsRouteImport } from './routes/_layout/doctors'
+import { Route as LayoutAvailabilityRouteImport } from './routes/_layout/availability'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
+import { Route as LayoutDoctorsNewRouteImport } from './routes/_layout/doctors.new'
+import { Route as LayoutDoctorsIdRouteImport } from './routes/_layout/doctors.$id'
+import { Route as LayoutAvailabilityNewRouteImport } from './routes/_layout/availability.new'
+import { Route as LayoutDoctorsIdEditRouteImport } from './routes/_layout/doctors.$id.edit'
+import { Route as LayoutAvailabilityIdEditRouteImport } from './routes/_layout/availability.$id.edit'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -53,9 +59,14 @@ const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutItemsRoute = LayoutItemsRouteImport.update({
-  id: '/items',
-  path: '/items',
+const LayoutDoctorsRoute = LayoutDoctorsRouteImport.update({
+  id: '/doctors',
+  path: '/doctors',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutAvailabilityRoute = LayoutAvailabilityRouteImport.update({
+  id: '/availability',
+  path: '/availability',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutAdminRoute = LayoutAdminRouteImport.update({
@@ -63,16 +74,48 @@ const LayoutAdminRoute = LayoutAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutDoctorsNewRoute = LayoutDoctorsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => LayoutDoctorsRoute,
+} as any)
+const LayoutDoctorsIdRoute = LayoutDoctorsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => LayoutDoctorsRoute,
+} as any)
+const LayoutAvailabilityNewRoute = LayoutAvailabilityNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => LayoutAvailabilityRoute,
+} as any)
+const LayoutDoctorsIdEditRoute = LayoutDoctorsIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => LayoutDoctorsIdRoute,
+} as any)
+const LayoutAvailabilityIdEditRoute =
+  LayoutAvailabilityIdEditRouteImport.update({
+    id: '/$id/edit',
+    path: '/$id/edit',
+    getParentRoute: () => LayoutAvailabilityRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof LayoutIndexRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
-  '/items': typeof LayoutItemsRoute
+  '/availability': typeof LayoutAvailabilityRouteWithChildren
+  '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
-  '/': typeof LayoutIndexRoute
+  '/availability/new': typeof LayoutAvailabilityNewRoute
+  '/doctors/$id': typeof LayoutDoctorsIdRouteWithChildren
+  '/doctors/new': typeof LayoutDoctorsNewRoute
+  '/availability/$id/edit': typeof LayoutAvailabilityIdEditRoute
+  '/doctors/$id/edit': typeof LayoutDoctorsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -80,9 +123,15 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
-  '/items': typeof LayoutItemsRoute
+  '/availability': typeof LayoutAvailabilityRouteWithChildren
+  '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
+  '/availability/new': typeof LayoutAvailabilityNewRoute
+  '/doctors/$id': typeof LayoutDoctorsIdRouteWithChildren
+  '/doctors/new': typeof LayoutDoctorsNewRoute
+  '/availability/$id/edit': typeof LayoutAvailabilityIdEditRoute
+  '/doctors/$id/edit': typeof LayoutDoctorsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -92,21 +141,33 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
-  '/_layout/items': typeof LayoutItemsRoute
+  '/_layout/availability': typeof LayoutAvailabilityRouteWithChildren
+  '/_layout/doctors': typeof LayoutDoctorsRouteWithChildren
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/availability/new': typeof LayoutAvailabilityNewRoute
+  '/_layout/doctors/$id': typeof LayoutDoctorsIdRouteWithChildren
+  '/_layout/doctors/new': typeof LayoutDoctorsNewRoute
+  '/_layout/availability/$id/edit': typeof LayoutAvailabilityIdEditRoute
+  '/_layout/doctors/$id/edit': typeof LayoutDoctorsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/login'
     | '/recover-password'
     | '/reset-password'
     | '/signup'
     | '/admin'
-    | '/items'
+    | '/availability'
+    | '/doctors'
     | '/settings'
-    | '/'
+    | '/availability/new'
+    | '/doctors/$id'
+    | '/doctors/new'
+    | '/availability/$id/edit'
+    | '/doctors/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -114,9 +175,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
-    | '/items'
+    | '/availability'
+    | '/doctors'
     | '/settings'
     | '/'
+    | '/availability/new'
+    | '/doctors/$id'
+    | '/doctors/new'
+    | '/availability/$id/edit'
+    | '/doctors/$id/edit'
   id:
     | '__root__'
     | '/_layout'
@@ -125,9 +192,15 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/_layout/admin'
-    | '/_layout/items'
+    | '/_layout/availability'
+    | '/_layout/doctors'
     | '/_layout/settings'
     | '/_layout/'
+    | '/_layout/availability/new'
+    | '/_layout/doctors/$id'
+    | '/_layout/doctors/new'
+    | '/_layout/availability/$id/edit'
+    | '/_layout/doctors/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -171,7 +244,7 @@ declare module '@tanstack/react-router' {
     '/_layout': {
       id: '/_layout'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -189,11 +262,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSettingsRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/items': {
-      id: '/_layout/items'
-      path: '/items'
-      fullPath: '/items'
-      preLoaderRoute: typeof LayoutItemsRouteImport
+    '/_layout/doctors': {
+      id: '/_layout/doctors'
+      path: '/doctors'
+      fullPath: '/doctors'
+      preLoaderRoute: typeof LayoutDoctorsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/availability': {
+      id: '/_layout/availability'
+      path: '/availability'
+      fullPath: '/availability'
+      preLoaderRoute: typeof LayoutAvailabilityRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/admin': {
@@ -203,19 +283,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/doctors/new': {
+      id: '/_layout/doctors/new'
+      path: '/new'
+      fullPath: '/doctors/new'
+      preLoaderRoute: typeof LayoutDoctorsNewRouteImport
+      parentRoute: typeof LayoutDoctorsRoute
+    }
+    '/_layout/doctors/$id': {
+      id: '/_layout/doctors/$id'
+      path: '/$id'
+      fullPath: '/doctors/$id'
+      preLoaderRoute: typeof LayoutDoctorsIdRouteImport
+      parentRoute: typeof LayoutDoctorsRoute
+    }
+    '/_layout/availability/new': {
+      id: '/_layout/availability/new'
+      path: '/new'
+      fullPath: '/availability/new'
+      preLoaderRoute: typeof LayoutAvailabilityNewRouteImport
+      parentRoute: typeof LayoutAvailabilityRoute
+    }
+    '/_layout/doctors/$id/edit': {
+      id: '/_layout/doctors/$id/edit'
+      path: '/edit'
+      fullPath: '/doctors/$id/edit'
+      preLoaderRoute: typeof LayoutDoctorsIdEditRouteImport
+      parentRoute: typeof LayoutDoctorsIdRoute
+    }
+    '/_layout/availability/$id/edit': {
+      id: '/_layout/availability/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/availability/$id/edit'
+      preLoaderRoute: typeof LayoutAvailabilityIdEditRouteImport
+      parentRoute: typeof LayoutAvailabilityRoute
+    }
   }
 }
 
+interface LayoutAvailabilityRouteChildren {
+  LayoutAvailabilityNewRoute: typeof LayoutAvailabilityNewRoute
+  LayoutAvailabilityIdEditRoute: typeof LayoutAvailabilityIdEditRoute
+}
+
+const LayoutAvailabilityRouteChildren: LayoutAvailabilityRouteChildren = {
+  LayoutAvailabilityNewRoute: LayoutAvailabilityNewRoute,
+  LayoutAvailabilityIdEditRoute: LayoutAvailabilityIdEditRoute,
+}
+
+const LayoutAvailabilityRouteWithChildren =
+  LayoutAvailabilityRoute._addFileChildren(LayoutAvailabilityRouteChildren)
+
+interface LayoutDoctorsIdRouteChildren {
+  LayoutDoctorsIdEditRoute: typeof LayoutDoctorsIdEditRoute
+}
+
+const LayoutDoctorsIdRouteChildren: LayoutDoctorsIdRouteChildren = {
+  LayoutDoctorsIdEditRoute: LayoutDoctorsIdEditRoute,
+}
+
+const LayoutDoctorsIdRouteWithChildren = LayoutDoctorsIdRoute._addFileChildren(
+  LayoutDoctorsIdRouteChildren,
+)
+
+interface LayoutDoctorsRouteChildren {
+  LayoutDoctorsIdRoute: typeof LayoutDoctorsIdRouteWithChildren
+  LayoutDoctorsNewRoute: typeof LayoutDoctorsNewRoute
+}
+
+const LayoutDoctorsRouteChildren: LayoutDoctorsRouteChildren = {
+  LayoutDoctorsIdRoute: LayoutDoctorsIdRouteWithChildren,
+  LayoutDoctorsNewRoute: LayoutDoctorsNewRoute,
+}
+
+const LayoutDoctorsRouteWithChildren = LayoutDoctorsRoute._addFileChildren(
+  LayoutDoctorsRouteChildren,
+)
+
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
-  LayoutItemsRoute: typeof LayoutItemsRoute
+  LayoutAvailabilityRoute: typeof LayoutAvailabilityRouteWithChildren
+  LayoutDoctorsRoute: typeof LayoutDoctorsRouteWithChildren
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
-  LayoutItemsRoute: LayoutItemsRoute,
+  LayoutAvailabilityRoute: LayoutAvailabilityRouteWithChildren,
+  LayoutDoctorsRoute: LayoutDoctorsRouteWithChildren,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
 }

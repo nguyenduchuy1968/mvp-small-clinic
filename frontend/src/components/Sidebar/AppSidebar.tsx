@@ -1,28 +1,32 @@
-import { Briefcase, Home, Users } from "lucide-react"
+import { Briefcase, CalendarClock, Home, Stethoscope, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
-import { SidebarAppearance } from "@/components/Common/Appearance"
-import { Logo } from "@/components/Common/Logo"
+import { SidebarAppearance } from '@/components/Common/Appearance';
+import { Logo } from '@/components/Common/Logo';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-} from "@/components/ui/sidebar"
-import useAuth from "@/hooks/useAuth"
-import { type Item, Main } from "./Main"
-import { User } from "./User"
+} from '@/components/ui/sidebar';
+import useAuth from '@/hooks/useAuth';
+import { type Item, Main } from './Main';
+import { User } from './User';
 
-const baseItems: Item[] = [
-  { icon: Home, title: "Dashboard", path: "/" },
-  { icon: Briefcase, title: "Items", path: "/items" },
-]
+function AppSidebar() {
+  const { t } = useTranslation('common');
+  const { user: currentUser } = useAuth();
 
-export function AppSidebar() {
-  const { user: currentUser } = useAuth()
+  const baseItems: Item[] = [
+    { icon: Home, title: t('nav.dashboard'), path: '/' },
+    { icon: Stethoscope, title: t('nav.doctors'), path: '/doctors' },
+    { icon: CalendarClock, title: t('nav.availability'), path: '/availability' },
+    { icon: Briefcase, title: 'Items', path: '/items' },
+  ];
 
   const items = currentUser?.is_superuser
-    ? [...baseItems, { icon: Users, title: "Admin", path: "/admin" }]
-    : baseItems
+    ? [...baseItems, { icon: Users, title: t('nav.admin'), path: '/admin' }]
+    : baseItems;
 
   return (
     <Sidebar collapsible="icon">
@@ -37,7 +41,7 @@ export function AppSidebar() {
         <User user={currentUser} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
 
-export default AppSidebar
+export default AppSidebar;

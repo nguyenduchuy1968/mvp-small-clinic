@@ -1,0 +1,47 @@
+{
+  "title": "Lịch làm việc",
+  "list": {
+    "title": "Lịch làm việc của bác sĩ",
+    "empty": "Chưa có lịch làm việc nào",
+    "columns": {
+      "weekday": "Thứ",
+      "startTime": "Giờ bắt đầu",
+      "endTime": "Giờ kết thúc",
+      "duration": "Thời lượng",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    }
+  },
+  "create": {
+    "title": "Thêm lịch làm việc",
+    "success": "Thêm lịch làm việc thành công"
+  },
+  "edit": {
+    "title": "Chỉnh sửa lịch làm việc",
+    "success": "Cập nhật lịch làm việc thành công"
+  },
+  "delete": {
+    "confirmMessage": "Bạn có chắc chắn muốn xóa lịch làm việc này?",
+    "success": "Xóa lịch làm việc thành công"
+  },
+  "fields": {
+    "weekday": "Thứ",
+    "startTime": "Giờ bắt đầu",
+    "endTime": "Giờ kết thúc",
+    "duration": "Thời lượng (phút)",
+    "isActive": "Kích hoạt"
+  },
+  "weekdays": {
+    "monday": "Thứ Hai",
+    "tuesday": "Thứ Ba",
+    "wednesday": "Thứ Tư",
+    "thursday": "Thứ Năm",
+    "friday": "Thứ Sáu",
+    "saturday": "Thứ Bảy",
+    "sunday": "Chủ Nhật"
+  },
+  "status": {
+    "active": "Đang hoạt động",
+    "inactive": "Ngừng hoạt động"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "welcome": "Welcome back",
+  "welcomeBack": "nice to see you again!!!",
+  "title": "Dashboard",
+  "stats": {
+    "totalDoctors": "Total doctors",
+    "totalAppointments": "Total appointments",
+    "pendingAppointments": "Pending appointments",
+    "todayAppointments": "Today's appointments"
+  },
+  "quickActions": {
+    "title": "Quick actions",
+    "bookAppointment": "Book appointment",
+    "manageDoctors": "Manage doctors",
+    "viewSchedule": "View schedule"
+  },
+  "recentAppointments": {
+    "title": "Recent appointments",
+    "empty": "No appointments yet"
+  }
+}

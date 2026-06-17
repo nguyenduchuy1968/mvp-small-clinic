@@ -1,14 +1,16 @@
 import { toast } from "sonner"
 
+import i18next from "@/i18n"
+
 const useCustomToast = () => {
   const showSuccessToast = (description: string) => {
-    toast.success("Success!", {
+    toast.success(i18next.t("common.toasts.createSuccess"), {
       description,
     })
   }
 
   const showErrorToast = (description: string) => {
-    toast.error("Something went wrong!", {
+    toast.error(i18next.t("common.toasts.errorOccurred"), {
       description,
     })
   }

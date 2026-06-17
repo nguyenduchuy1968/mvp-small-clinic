@@ -1,0 +1,48 @@
+{
+  "title": "Quản lý bác sĩ",
+  "list": {
+    "title": "Danh sách bác sĩ",
+    "empty": "Chưa có bác sĩ nào",
+    "columns": {
+      "fullName": "Họ và tên",
+      "specialty": "Chuyên khoa",
+      "phone": "Số điện thoại",
+      "experience": "Kinh nghiệm",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    }
+  },
+  "create": {
+    "title": "Thêm bác sĩ mới",
+    "description": "Điền thông tin bên dưới để thêm bác sĩ mới.",
+    "success": "Thêm bác sĩ thành công"
+  },
+  "edit": {
+    "title": "Chỉnh sửa thông tin bác sĩ",
+    "description": "Cập nhật thông tin bác sĩ bên dưới.",
+    "success": "Cập nhật thông tin thành công"
+  },
+  "delete": {
+    "confirmMessage": "Bạn có chắc chắn muốn xóa bác sĩ {name}?",
+    "availabilityWarning": "Bác sĩ này có {{count}} lịch làm việc.",
+    "appointmentsWarning": "Bác sĩ này có {{count}} cuộc hẹn trong tương lai.",
+    "forceConfirmMessage": "Bạn có chắc chắn muốn xóa vĩnh viễn bác sĩ này? Hành động này không thể hoàn tác."
+  },
+  "fields": {
+    "fullName": "Họ và tên",
+    "specialty": "Chuyên khoa",
+    "phone": "Số điện thoại",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "newPassword": "Mật khẩu mới",
+    "passwordHelper": "Để trống nếu muốn giữ nguyên mật khẩu hiện tại",
+    "experience": "Số năm kinh nghiệm",
+    "consultationDuration": "Thời gian tư vấn (phút)",
+    "bio": "Giới thiệu",
+    "isActive": "Đang hoạt động"
+  },
+  "status": {
+    "active": "Hoạt động",
+    "inactive": "Ngừng hoạt động"
+  }
+}

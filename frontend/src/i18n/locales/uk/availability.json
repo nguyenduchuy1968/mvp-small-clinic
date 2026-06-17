@@ -1,0 +1,47 @@
+{
+  "title": "Розклад",
+  "list": {
+    "title": "Розклад лікаря",
+    "empty": "Ще немає розкладу",
+    "columns": {
+      "weekday": "День",
+      "startTime": "Початок",
+      "endTime": "Кінець",
+      "duration": "Тривалість",
+      "status": "Статус",
+      "actions": "Дії"
+    }
+  },
+  "create": {
+    "title": "Додати розклад",
+    "success": "Розклад успішно додано"
+  },
+  "edit": {
+    "title": "Редагувати розклад",
+    "success": "Розклад успішно оновлено"
+  },
+  "delete": {
+    "confirmMessage": "Ви впевнені, що хочете видалити цей розклад?",
+    "success": "Розклад успішно видалено"
+  },
+  "fields": {
+    "weekday": "День",
+    "startTime": "Початок",
+    "endTime": "Кінець",
+    "duration": "Тривалість (хвилин)",
+    "isActive": "Активний"
+  },
+  "weekdays": {
+    "monday": "Понеділок",
+    "tuesday": "Вівторок",
+    "wednesday": "Середа",
+    "thursday": "Четвер",
+    "friday": "П'ятниця",
+    "saturday": "Субота",
+    "sunday": "Неділя"
+  },
+  "status": {
+    "active": "Активний",
+    "inactive": "Неактивний"
+  }
+}

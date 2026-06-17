@@ -8,6 +8,10 @@
 
 # cd backend && uv run fastapi dev app/main.py
 
+#  cd frontend && npm run dev
+
+# cd backend && uv run python -m app.initial_data
+
 
 import sentry_sdk
 from app.api.main import api_router

@@ -1,5 +1,7 @@
 import { AxiosError } from "axios"
+
 import type { ApiError } from "./client"
+import i18next from "./i18n"
 
 function extractErrorMessage(err: ApiError): string {
   if (err instanceof AxiosError) {
@@ -10,7 +12,7 @@ function extractErrorMessage(err: ApiError): string {
   if (Array.isArray(errDetail) && errDetail.length > 0) {
     return errDetail[0].msg
   }
-  return errDetail || "Something went wrong."
+  return errDetail || i18next.t("common.states.error")
 }
 
 export const handleError = function (

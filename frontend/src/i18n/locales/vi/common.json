@@ -1,0 +1,145 @@
+{
+  "nav": {
+    "dashboard": "Bảng điều khiển",
+    "doctors": "Bác sĩ",
+    "availability": "Lịch làm việc",
+    "appointments": "Lịch hẹn",
+    "settings": "Cài đặt",
+    "admin": "Quản trị",
+    "logout": "Đăng xuất",
+    "language": "Ngôn ngữ"
+  },
+  "actions": {
+    "create": "Thêm mới",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "clear": "Xóa bộ lọc",
+    "close": "Đóng",
+    "back": "Quay lại",
+    "copy": "Sao chép ID"
+  },
+  "pagination": {
+    "showing": "Hiển thị {from} đến {to} trong tổng số {total}",
+    "previous": "Trang trước",
+    "next": "Trang sau",
+    "rowsPerPage": "Số dòng mỗi trang",
+    "page": "Trang",
+    "of": "của",
+    "entries": "mục",
+    "goToFirstPage": "Đến trang đầu",
+    "goToPreviousPage": "Đến trang trước",
+    "goToNextPage": "Đến trang sau",
+    "goToLastPage": "Đến trang cuối"
+  },
+  "states": {
+    "loading": "Đang tải...",
+    "empty": "Không có dữ liệu",
+    "error": "Đã xảy ra lỗi",
+    "notFound": "Không tìm thấy"
+  },
+  "errors": {
+    "title": "Lỗi",
+    "alreadyBooked": "Khung giờ này đã được đặt",
+    "notFound": "Không tìm thấy",
+    "overlap": "Khung giờ bị trùng lặp",
+    "invalidTime": "Thời gian không hợp lệ",
+    "unauthorized": "Vui lòng đăng nhập",
+    "forbidden": "Bạn không có quyền thực hiện hành động này"
+  },
+  "confirmations": {
+    "deleteTitle": "Xác nhận xóa",
+    "deleteMessage": "Bạn có chắc chắn muốn xóa {item}?",
+    "cancelTitle": "Xác nhận hủy",
+    "cancelMessage": "Bạn có chắc chắn muốn hủy lịch hẹn này?"
+  },
+  "toasts": {
+    "createSuccess": "Tạo thành công",
+    "updateSuccess": "Cập nhật thành công",
+    "deleteSuccess": "Xóa thành công",
+    "errorOccurred": "Đã xảy ra lỗi"
+  },
+  "validation": {
+    "invalidEmail": "Email không hợp lệ",
+    "passwordRequired": "Mật khẩu là bắt buộc",
+    "passwordMinLength": "Mật khẩu phải có ít nhất 8 ký tự",
+    "confirmPasswordRequired": "Vui lòng xác nhận mật khẩu",
+    "passwordsDontMatch": "Mật khẩu không khớp",
+    "fullNameRequired": "Họ và tên là bắt buộc",
+    "experienceYearsRange": "Số năm kinh nghiệm phải từ 0 đến 100"
+  },
+  "sections": {
+    "contactInfo": "Thông tin liên hệ",
+    "professionalInfo": "Thông tin chuyên môn"
+  },
+  "items": {
+    "addItem": "Thêm mục",
+    "editItem": "Chỉnh sửa mục",
+    "deleteItem": "Xóa mục",
+    "title": "Tiêu đề",
+    "description": "Mô tả",
+    "addDescription": "Điền thông tin để thêm mục mới.",
+    "editDescription": "Cập nhật thông tin mục bên dưới.",
+    "deleteDescription": "Mục này sẽ bị xóa vĩnh viễn. Bạn có chắc chắn? Hành động này không thể hoàn tác.",
+    "noDescription": "Không có mô tả",
+    "titleRequired": "Tiêu đề là bắt buộc",
+    "created": "Mục đã được tạo thành công",
+    "updated": "Mục đã được cập nhật thành công",
+    "deleted": "Mục đã được xóa thành công",
+    "emptyTitle": "Bạn chưa có mục nào",
+    "emptyDescription": "Thêm mục mới để bắt đầu",
+    "pageTitle": "Mục",
+    "pageDescription": "Tạo và quản lý các mục của bạn"
+  },
+  "users": {
+    "fullName": "Họ và tên",
+    "email": "Email",
+    "role": "Vai trò",
+    "status": "Trạng thái",
+    "deleteAccount": "Xóa tài khoản",
+    "deleteConfirmationTitle": "Yêu cầu xác nhận",
+    "deleteConfirmationDescription": "Tất cả dữ liệu tài khoản của bạn sẽ bị xóa vĩnh viễn. Nếu bạn chắc chắn, vui lòng nhấp \"Xác nhận\" để tiếp tục. Hành động này không thể hoàn tác.",
+    "accountDeleted": "Tài khoản của bạn đã được xóa thành công",
+    "addUserDescription": "Điền thông tin bên dưới để thêm người dùng mới vào hệ thống.",
+    "email": "Email",
+    "setPassword": "Đặt mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "isSuperuser": "Là quản trị viên?",
+    "isActive": "Đang hoạt động?",
+    "you": "Bạn",
+    "superuser": "Quản trị viên",
+    "user": "Người dùng",
+    "active": "Hoạt động",
+    "inactive": "Không hoạt động",
+    "nA": "N/A",
+    "manageDescription": "Quản lý tài khoản người dùng và quyền hạn",
+    "editUserDescription": "Cập nhật thông tin người dùng bên dưới."
+  },
+  "settings": {
+    "myProfile": "Hồ sơ của tôi",
+    "password": "Mật khẩu",
+    "dangerZone": "Khu vực nguy hiểm",
+    "manageDescription": "Quản lý cài đặt và tùy chọn tài khoản của bạn",
+    "changePassword": "Đổi mật khẩu",
+    "currentPassword": "Mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "updatePassword": "Cập nhật mật khẩu",
+    "passwordRequired": "Mật khẩu là bắt buộc",
+    "passwordMinLength": "Mật khẩu phải có ít nhất 8 ký tự",
+    "confirmPasswordRequired": "Vui lòng xác nhận mật khẩu",
+    "passwordsDontMatch": "Mật khẩu không khớp"
+  },
+  "password": {
+    "show": "Hiện mật khẩu",
+    "hide": "Ẩn mật khẩu"
+  },
+  "userSettings": "Cài đặt người dùng",
+  "footer": {
+    "copyright": "Full Stack FastAPI Template"
+  }
+}

@@ -43,5 +43,11 @@
   "status": {
     "active": "Active",
     "inactive": "Inactive"
+  },
+  "admin": {
+    "noDoctor": {
+      "title": "Select a doctor to manage availability.",
+      "description": "You are viewing the admin panel. To manage availability, please select a doctor profile first."
+    }
   }
 }

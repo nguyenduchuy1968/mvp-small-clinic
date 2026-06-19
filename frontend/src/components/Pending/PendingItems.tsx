@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table"
 
 const PendingItems = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('common')
   return (
     <Table>
       <TableHeader>

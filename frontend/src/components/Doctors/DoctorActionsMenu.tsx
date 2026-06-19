@@ -8,6 +8,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import useAuth from "@/hooks/useAuth"
 import DeleteDoctor from "./DeleteDoctor"
 import EditDoctor from "./EditDoctor"
 
@@ -17,6 +18,13 @@ interface DoctorActionsMenuProps {
 
 export const DoctorActionsMenu = ({ doctor }: DoctorActionsMenuProps) => {
   const [open, setOpen] = useState(false)
+  const { user } = useAuth()
+
+  const canManageDoctors = user?.is_superuser === true
+
+  if (!canManageDoctors) {
+    return null
+  }
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>

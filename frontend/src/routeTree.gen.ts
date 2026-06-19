@@ -13,8 +13,10 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as BookingRouteImport } from './routes/booking'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as BookingConfirmationRouteImport } from './routes/booking/confirmation'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutDoctorsRouteImport } from './routes/_layout/doctors'
 import { Route as LayoutAvailabilityRouteImport } from './routes/_layout/availability'
@@ -45,6 +47,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookingRoute = BookingRouteImport.update({
+  id: '/booking',
+  path: '/booking',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
@@ -53,6 +60,11 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => LayoutRoute,
+} as any)
+const BookingConfirmationRoute = BookingConfirmationRouteImport.update({
+  id: '/confirmation',
+  path: '/confirmation',
+  getParentRoute: () => BookingRoute,
 } as any)
 const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   id: '/settings',
@@ -103,6 +115,7 @@ const LayoutAvailabilityIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
+  '/booking': typeof BookingRouteWithChildren
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -111,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/availability': typeof LayoutAvailabilityRouteWithChildren
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
+  '/booking/confirmation': typeof BookingConfirmationRoute
   '/availability/new': typeof LayoutAvailabilityNewRoute
   '/doctors/$id': typeof LayoutDoctorsIdRouteWithChildren
   '/doctors/new': typeof LayoutDoctorsNewRoute
@@ -118,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/doctors/$id/edit': typeof LayoutDoctorsIdEditRoute
 }
 export interface FileRoutesByTo {
+  '/booking': typeof BookingRouteWithChildren
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -126,6 +141,7 @@ export interface FileRoutesByTo {
   '/availability': typeof LayoutAvailabilityRouteWithChildren
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
+  '/booking/confirmation': typeof BookingConfirmationRoute
   '/': typeof LayoutIndexRoute
   '/availability/new': typeof LayoutAvailabilityNewRoute
   '/doctors/$id': typeof LayoutDoctorsIdRouteWithChildren
@@ -136,6 +152,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
+  '/booking': typeof BookingRouteWithChildren
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -144,6 +161,7 @@ export interface FileRoutesById {
   '/_layout/availability': typeof LayoutAvailabilityRouteWithChildren
   '/_layout/doctors': typeof LayoutDoctorsRouteWithChildren
   '/_layout/settings': typeof LayoutSettingsRoute
+  '/booking/confirmation': typeof BookingConfirmationRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/availability/new': typeof LayoutAvailabilityNewRoute
   '/_layout/doctors/$id': typeof LayoutDoctorsIdRouteWithChildren
@@ -155,6 +173,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/booking'
     | '/login'
     | '/recover-password'
     | '/reset-password'
@@ -163,6 +182,7 @@ export interface FileRouteTypes {
     | '/availability'
     | '/doctors'
     | '/settings'
+    | '/booking/confirmation'
     | '/availability/new'
     | '/doctors/$id'
     | '/doctors/new'
@@ -170,6 +190,7 @@ export interface FileRouteTypes {
     | '/doctors/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/booking'
     | '/login'
     | '/recover-password'
     | '/reset-password'
@@ -178,6 +199,7 @@ export interface FileRouteTypes {
     | '/availability'
     | '/doctors'
     | '/settings'
+    | '/booking/confirmation'
     | '/'
     | '/availability/new'
     | '/doctors/$id'
@@ -187,6 +209,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_layout'
+    | '/booking'
     | '/login'
     | '/recover-password'
     | '/reset-password'
@@ -195,6 +218,7 @@ export interface FileRouteTypes {
     | '/_layout/availability'
     | '/_layout/doctors'
     | '/_layout/settings'
+    | '/booking/confirmation'
     | '/_layout/'
     | '/_layout/availability/new'
     | '/_layout/doctors/$id'
@@ -205,6 +229,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
+  BookingRoute: typeof BookingRouteWithChildren
   LoginRoute: typeof LoginRoute
   RecoverPasswordRoute: typeof RecoverPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -241,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking': {
+      id: '/booking'
+      path: '/booking'
+      fullPath: '/booking'
+      preLoaderRoute: typeof BookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout': {
       id: '/_layout'
       path: ''
@@ -254,6 +286,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
+    }
+    '/booking/confirmation': {
+      id: '/booking/confirmation'
+      path: '/confirmation'
+      fullPath: '/booking/confirmation'
+      preLoaderRoute: typeof BookingConfirmationRouteImport
+      parentRoute: typeof BookingRoute
     }
     '/_layout/settings': {
       id: '/_layout/settings'
@@ -379,8 +418,20 @@ const LayoutRouteChildren: LayoutRouteChildren = {
 const LayoutRouteWithChildren =
   LayoutRoute._addFileChildren(LayoutRouteChildren)
 
+interface BookingRouteChildren {
+  BookingConfirmationRoute: typeof BookingConfirmationRoute
+}
+
+const BookingRouteChildren: BookingRouteChildren = {
+  BookingConfirmationRoute: BookingConfirmationRoute,
+}
+
+const BookingRouteWithChildren =
+  BookingRoute._addFileChildren(BookingRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
+  BookingRoute: BookingRouteWithChildren,
   LoginRoute: LoginRoute,
   RecoverPasswordRoute: RecoverPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,

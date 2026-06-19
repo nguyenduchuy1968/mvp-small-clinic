@@ -4,13 +4,13 @@ import i18next from "@/i18n"
 
 const useCustomToast = () => {
   const showSuccessToast = (description: string) => {
-    toast.success(i18next.t("common.toasts.createSuccess"), {
+    toast.success(i18next.t("toasts.createSuccess", { ns: "common" }), {
       description,
     })
   }
 
   const showErrorToast = (description: string) => {
-    toast.error(i18next.t("common.toasts.errorOccurred"), {
+    toast.error(i18next.t("toasts.errorOccurred", { ns: "common" }), {
       description,
     })
   }

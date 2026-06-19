@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { DoctorsService } from '@/client';
 import { DataTable } from '@/components/Common/DataTable';
 import PendingItems from '@/components/Pending/PendingItems';
-import { columns } from './columns';
+import useAuth from '@/hooks/useAuth';
+import { buildColumns } from './columns';
 import CreateDoctor from './CreateDoctor';
 
 function getDoctorsQueryOptions() {
@@ -19,6 +20,7 @@ function getDoctorsQueryOptions() {
 function DoctorsTableContent() {
   const { t } = useTranslation('doctors');
   const { data: doctors } = useSuspenseQuery(getDoctorsQueryOptions());
+  const { user } = useAuth();
 
   if (doctors.data.length === 0) {
     return (
@@ -31,7 +33,7 @@ function DoctorsTableContent() {
     );
   }
 
-  return <DataTable columns={columns} data={doctors.data} />;
+  return <DataTable columns={buildColumns(user)} data={doctors.data} />;
 }
 
 function DoctorsTable() {
@@ -44,6 +46,9 @@ function DoctorsTable() {
 
 export function DoctorList() {
   const { t } = useTranslation(['doctors', 'common']);
+  const { user } = useAuth();
+
+  const canManageDoctors = user?.is_superuser === true;
 
   return (
     <div className="flex flex-col gap-6">
@@ -54,7 +59,7 @@ export function DoctorList() {
           </h1>
           <p className="text-muted-foreground">{t('doctors:list.title')}</p>
         </div>
-        <CreateDoctor />
+        {canManageDoctors && <CreateDoctor />}
       </div>
       <DoctorsTable />
     </div>

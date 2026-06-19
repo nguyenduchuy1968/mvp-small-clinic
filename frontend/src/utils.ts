@@ -12,7 +12,7 @@ function extractErrorMessage(err: ApiError): string {
   if (Array.isArray(errDetail) && errDetail.length > 0) {
     return errDetail[0].msg
   }
-  return errDetail || i18next.t("common.states.error")
+  return errDetail || i18next.t("states.error", { ns: "common" })
 }
 
 export const handleError = function (

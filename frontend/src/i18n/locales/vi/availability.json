@@ -43,5 +43,11 @@
   "status": {
     "active": "Đang hoạt động",
     "inactive": "Ngừng hoạt động"
+  },
+  "admin": {
+    "noDoctor": {
+      "title": "Chọn bác sĩ để quản lý lịch làm việc.",
+      "description": "Bạn đang xem trang quản trị. Để quản lý lịch làm việc, vui lòng chọn hồ sơ bác sĩ trước."
+    }
   }
 }

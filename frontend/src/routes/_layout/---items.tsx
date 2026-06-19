@@ -29,7 +29,7 @@ export const Route = createFileRoute('/_layout/items')({
 });
 
 function ItemsTableContent() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const { data: items } = useSuspenseQuery(getItemsQueryOptions());
 
   if (items.data.length === 0) {
@@ -39,10 +39,10 @@ function ItemsTableContent() {
           <Search className="h-8 w-8 text-muted-foreground" />
         </div>
         <h3 className="text-lg font-semibold">
-          {t('common.items.emptyTitle')}
+          {t('items.emptyTitle')}
         </h3>
         <p className="text-muted-foreground">
-          {t('common.items.emptyDescription')}
+          {t('items.emptyDescription')}
         </p>
       </div>
     );
@@ -60,16 +60,16 @@ function ItemsTable() {
 }
 
 function Items() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            {t('common.items.pageTitle')}
+            {t('items.pageTitle')}
           </h1>
           <p className="text-muted-foreground">
-            {t('common.items.pageDescription')}
+            {t('items.pageDescription')}
           </p>
         </div>
         <AddItem />

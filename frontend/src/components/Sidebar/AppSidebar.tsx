@@ -1,4 +1,4 @@
-import { Briefcase, CalendarClock, Home, Stethoscope, Users } from 'lucide-react';
+import { CalendarClock, Home, Stethoscope, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { SidebarAppearance } from '@/components/Common/Appearance';
@@ -21,7 +21,6 @@ function AppSidebar() {
     { icon: Home, title: t('nav.dashboard'), path: '/' },
     { icon: Stethoscope, title: t('nav.doctors'), path: '/doctors' },
     { icon: CalendarClock, title: t('nav.availability'), path: '/availability' },
-    { icon: Briefcase, title: 'Items', path: '/items' },
   ];
 
   const items = currentUser?.is_superuser

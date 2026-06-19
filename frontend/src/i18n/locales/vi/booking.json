@@ -13,6 +13,8 @@
     "patientEmail": "Email",
     "contactMethod": "Phương thức liên hệ",
     "notes": "Ghi chú",
+    "nameRequired": "Vui lòng nhập họ tên bệnh nhân",
+    "phoneRequired": "Vui lòng nhập số điện thoại",
     "contactMethods": {
       "phone": "Điện thoại",
       "email": "Email",
@@ -27,6 +29,28 @@
     "success": "Đặt lịch hẹn thành công!",
     "error": "Đặt lịch hẹn thất bại"
   },
+  "confirmation": {
+    "title": "Đã xác nhận lịch hẹn",
+    "message": "Lịch hẹn của bạn với bác sĩ {doctorName} đã được xác nhận vào ngày {date} lúc {time}.",
+    "bookingId": "Mã đặt lịch: {id}",
+    "newBooking": "Đặt lịch hẹn khác"
+  },
+  "errors": {
+    "slotAlreadyBooked": "Khung giờ này vừa được đặt. Vui lòng chọn thời gian khác.",
+    "selectDoctor": "Vui lòng chọn bác sĩ",
+    "selectDate": "Vui lòng chọn ngày",
+    "selectTime": "Vui lòng chọn khung giờ"
+  },
   "noSlots": "Không có khung giờ trống cho ngày này",
-  "noDoctors": "Không có bác sĩ nào"
+  "noDoctors": "Không có bác sĩ nào",
+  "navigation": {
+    "back": "Quay lại",
+    "next": "Tiếp theo",
+    "confirm": "Xác nhận"
+  },
+  "datePicker": {
+    "today": "Hôm nay",
+    "tomorrow": "Ngày mai",
+    "nextWeek": "Tuần sau"
+  }
 }

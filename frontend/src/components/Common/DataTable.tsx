@@ -39,7 +39,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const { t } = useTranslation()
+  const { t } = useTranslation('common')
   const table = useReactTable({
     data,
     columns,

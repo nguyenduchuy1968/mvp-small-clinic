@@ -5,7 +5,7 @@
     "selectDate": "Select Date",
     "selectTime": "Select Time",
     "patientInfo": "Patient Information",
-    "confirm": "Confirm"
+    "confirm": "Confirmation"
   },
   "form": {
     "patientName": "Patient Full Name",
@@ -13,6 +13,8 @@
     "patientEmail": "Email",
     "contactMethod": "Contact Method",
     "notes": "Notes",
+    "nameRequired": "Patient name is required",
+    "phoneRequired": "Phone number is required",
     "contactMethods": {
       "phone": "Phone",
       "email": "Email",
@@ -27,6 +29,28 @@
     "success": "Appointment booked successfully!",
     "error": "Failed to book appointment"
   },
+  "confirmation": {
+    "title": "Appointment Confirmed",
+    "message": "Your appointment with {doctorName} has been confirmed for {date} at {time}.",
+    "bookingId": "Booking ID: {id}",
+    "newBooking": "Book Another Appointment"
+  },
+  "errors": {
+    "slotAlreadyBooked": "This slot was just booked. Please select another time.",
+    "selectDoctor": "Please select a doctor",
+    "selectDate": "Please select a date",
+    "selectTime": "Please select a time slot"
+  },
   "noSlots": "No available slots for this date",
-  "noDoctors": "No doctors available"
+  "noDoctors": "No doctors available",
+  "navigation": {
+    "back": "Back",
+    "next": "Next",
+    "confirm": "Confirm"
+  },
+  "datePicker": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "nextWeek": "Next Week"
+  }
 }

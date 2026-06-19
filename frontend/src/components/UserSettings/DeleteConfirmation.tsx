@@ -20,7 +20,7 @@ import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 
 const DeleteConfirmation = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('common')
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const { handleSubmit } = useForm()

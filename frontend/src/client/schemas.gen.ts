@@ -148,6 +148,18 @@ export const AppointmentPublicSchema = {
                 }
             ],
             title: 'Updated At'
+        },
+        doctor_name: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Doctor Name'
         }
     },
     type: 'object',
@@ -226,6 +238,17 @@ export const AvailableSlotsResponseSchema = {
         count: {
             type: 'integer',
             title: 'Count'
+        },
+        reason: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Reason'
         }
     },
     type: 'object',

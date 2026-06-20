@@ -7,9 +7,7 @@
       "weekday": "Day",
       "startTime": "Start Time",
       "endTime": "End Time",
-      "duration": "Duration",
-      "status": "Status",
-      "actions": "Actions"
+      "duration": "Duration"
     }
   },
   "create": {
@@ -40,14 +38,26 @@
     "saturday": "Saturday",
     "sunday": "Sunday"
   },
-  "status": {
-    "active": "Active",
-    "inactive": "Inactive"
-  },
   "admin": {
     "noDoctor": {
       "title": "Select a doctor to manage availability.",
       "description": "You are viewing the admin panel. To manage availability, please select a doctor profile first."
+    },
+    "doctorSelector": {
+      "placeholder": "Choose a doctor..."
     }
+  },
+  "templates": {
+    "monFri": {
+      "action": "Apply Mon–Fri",
+      "confirm": "This will create schedules for Monday through Friday with the same settings.",
+      "success": "Mon–Fri schedules created successfully.",
+      "partialSuccess": "Created {{count}} of {{total}} schedules.",
+      "error": "Failed to create Mon–Fri schedules."
+    }
+  },
+  "noDoctorProfile": {
+    "title": "No doctor profile found",
+    "description": "You do not have a doctor profile yet. Please contact an administrator to create one before managing your availability."
   }
 }

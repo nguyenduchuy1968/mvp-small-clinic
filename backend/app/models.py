@@ -313,6 +313,7 @@ class AppointmentPublic(AppointmentBase):
     id: uuid.UUID
     created_at: datetime | None = None
     updated_at: datetime | None = None
+    doctor_name: str | None = None
 
 
 class AppointmentsPublic(SQLModel):
@@ -334,6 +335,11 @@ class AvailableSlotsResponse(SQLModel):
     date: date
     slots: list[AvailableSlot]
     count: int
+    reason: str | None = None
+    """Reason why no slots are available, when count is 0.
+    One of: 'weekend', 'no_schedule', 'doctor_unavailable', 'fully_booked',
+    or None if slots exist.
+    """
 
 
 # Generic message

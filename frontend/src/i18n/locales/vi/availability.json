@@ -7,9 +7,7 @@
       "weekday": "Thứ",
       "startTime": "Giờ bắt đầu",
       "endTime": "Giờ kết thúc",
-      "duration": "Thời lượng",
-      "status": "Trạng thái",
-      "actions": "Thao tác"
+      "duration": "Thời lượng"
     }
   },
   "create": {
@@ -40,14 +38,26 @@
     "saturday": "Thứ Bảy",
     "sunday": "Chủ Nhật"
   },
-  "status": {
-    "active": "Đang hoạt động",
-    "inactive": "Ngừng hoạt động"
-  },
   "admin": {
     "noDoctor": {
       "title": "Chọn bác sĩ để quản lý lịch làm việc.",
       "description": "Bạn đang xem trang quản trị. Để quản lý lịch làm việc, vui lòng chọn hồ sơ bác sĩ trước."
+    },
+    "doctorSelector": {
+      "placeholder": "Chọn bác sĩ..."
     }
+  },
+  "templates": {
+    "monFri": {
+      "action": "Áp dụng Thứ Hai–Thứ Sáu",
+      "confirm": "Thao tác này sẽ tạo lịch làm việc từ Thứ Hai đến Thứ Sáu với cùng cài đặt.",
+      "success": "Đã tạo lịch Thứ Hai–Thứ Sáu thành công.",
+      "partialSuccess": "Đã tạo {{count}}/{{total}} lịch.",
+      "error": "Không thể tạo lịch Thứ Hai–Thứ Sáu."
+    }
+  },
+  "noDoctorProfile": {
+    "title": "Không tìm thấy hồ sơ bác sĩ",
+    "description": "Bạn chưa có hồ sơ bác sĩ. Vui lòng liên hệ quản trị viên để tạo hồ sơ trước khi quản lý lịch làm việc."
   }
 }

@@ -41,7 +41,25 @@
     "selectDate": "Vui lòng chọn ngày",
     "selectTime": "Vui lòng chọn khung giờ"
   },
-  "noSlots": "Không có khung giờ trống cho ngày này",
+  "noSlots": {
+    "default": "Không có khung giờ trống cho ngày này",
+    "weekend": {
+      "title": "Bác sĩ không làm việc vào cuối tuần.",
+      "hint": "Vui lòng chọn ngày trong tuần."
+    },
+    "noSchedule": {
+      "title": "Chưa có lịch làm việc cho ngày này.",
+      "hint": ""
+    },
+    "doctorUnavailable": {
+      "title": "Bác sĩ tạm nghỉ trong ngày này.",
+      "hint": "Xin vui lòng chọn ngày khác."
+    },
+    "fullyBooked": {
+      "title": "Tất cả khung giờ trong ngày này đã được đặt.",
+      "hint": ""
+    }
+  },
   "noDoctors": "Không có bác sĩ nào",
   "navigation": {
     "back": "Quay lại",
@@ -50,7 +68,6 @@
   },
   "datePicker": {
     "today": "Hôm nay",
-    "tomorrow": "Ngày mai",
-    "nextWeek": "Tuần sau"
+    "tomorrow": "Ngày mai"
   }
 }

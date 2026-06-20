@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import type { DoctorAvailabilityPublic } from '@/client';
 import { cn } from '@/lib/utils';
+import { formatTimeHHmm } from '@/utils';
 import { AvailabilityActionsMenu } from './AvailabilityActionsMenu';
 
 export const columns: ColumnDef<DoctorAvailabilityPublic>[] = [
@@ -15,7 +16,12 @@ export const columns: ColumnDef<DoctorAvailabilityPublic>[] = [
     cell: ({ row }) => {
       const { t } = useTranslation('availability');
       return (
-        <span className="font-medium">
+        <span
+          className={cn(
+            'font-medium',
+            !row.original.is_active && 'text-muted-foreground line-through'
+          )}
+        >
           {t(`weekdays.${row.original.weekday}`)}
         </span>
       );
@@ -28,7 +34,14 @@ export const columns: ColumnDef<DoctorAvailabilityPublic>[] = [
       return <>{t('list.columns.startTime')}</>;
     },
     cell: ({ row }) => (
-      <span className="text-muted-foreground">{row.original.start_time}</span>
+      <span
+        className={cn(
+          'text-muted-foreground',
+          !row.original.is_active && 'line-through opacity-50'
+        )}
+      >
+        {formatTimeHHmm(row.original.start_time)}
+      </span>
     ),
   },
   {
@@ -38,7 +51,14 @@ export const columns: ColumnDef<DoctorAvailabilityPublic>[] = [
       return <>{t('list.columns.endTime')}</>;
     },
     cell: ({ row }) => (
-      <span className="text-muted-foreground">{row.original.end_time}</span>
+      <span
+        className={cn(
+          'text-muted-foreground',
+          !row.original.is_active && 'line-through opacity-50'
+        )}
+      >
+        {formatTimeHHmm(row.original.end_time)}
+      </span>
     ),
   },
   {
@@ -48,37 +68,15 @@ export const columns: ColumnDef<DoctorAvailabilityPublic>[] = [
       return <>{t('list.columns.duration')}</>;
     },
     cell: ({ row }) => (
-      <span className="text-muted-foreground">
+      <span
+        className={cn(
+          'text-muted-foreground',
+          !row.original.is_active && 'line-through opacity-50'
+        )}
+      >
         {row.original.duration_minutes ?? 30} min
       </span>
     ),
-  },
-  {
-    accessorKey: 'is_active',
-    header: () => {
-      const { t } = useTranslation('availability');
-      return <>{t('list.columns.status')}</>;
-    },
-    cell: ({ row }) => {
-      const { t } = useTranslation('availability');
-      return (
-        <div className="flex items-center gap-2">
-          <span
-            className={cn(
-              'size-2 rounded-full',
-              row.original.is_active ? 'bg-green-500' : 'bg-gray-400'
-            )}
-          />
-          <span
-            className={row.original.is_active ? '' : 'text-muted-foreground'}
-          >
-            {row.original.is_active
-              ? t('status.active')
-              : t('status.inactive')}
-          </span>
-        </div>
-      );
-    },
   },
   {
     id: 'actions',

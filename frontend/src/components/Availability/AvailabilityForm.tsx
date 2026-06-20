@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { forwardRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
@@ -62,11 +63,8 @@ interface AvailabilityFormProps {
   children?: React.ReactNode;
 }
 
-export function AvailabilityForm({
-  onSubmit,
-  defaultValues,
-  children,
-}: AvailabilityFormProps) {
+export const AvailabilityForm = forwardRef<HTMLFormElement, AvailabilityFormProps>(
+  function AvailabilityForm({ onSubmit, defaultValues, children }, ref) {
   const { t } = useTranslation(['availability', 'common']);
   const formSchema = getFormSchema(t);
 
@@ -86,7 +84,7 @@ export function AvailabilityForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form ref={ref} onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
@@ -131,7 +129,7 @@ export function AvailabilityForm({
                   <span className="text-destructive">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input type="time" placeholder="HH:MM" {...field} required />
+                  <Input type="time" step="60" placeholder="HH:MM" {...field} required />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -148,7 +146,7 @@ export function AvailabilityForm({
                   <span className="text-destructive">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input type="time" placeholder="HH:MM" {...field} required />
+                  <Input type="time" step="60" placeholder="HH:MM" {...field} required />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -200,3 +198,4 @@ export function AvailabilityForm({
     </Form>
   );
 }
+);

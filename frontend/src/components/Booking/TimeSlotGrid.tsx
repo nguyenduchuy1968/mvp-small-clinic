@@ -10,6 +10,7 @@ interface TimeSlotGridProps {
   selectedTime: string | null;
   onSelect: (time: string) => void;
   isLoading: boolean;
+  reason?: string | null;
 }
 
 export function TimeSlotGrid({
@@ -17,6 +18,7 @@ export function TimeSlotGrid({
   selectedTime,
   onSelect,
   isLoading,
+  reason,
 }: TimeSlotGridProps) {
   const { t } = useTranslation('booking');
 
@@ -32,9 +34,53 @@ export function TimeSlotGrid({
 
   if (!slots || slots.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-muted-foreground">
-        {t('noSlots')}
-      </p>
+      <div className="py-8 text-center">
+        {reason === 'weekend' && (
+          <>
+            <p className="text-sm font-medium text-muted-foreground">
+              {t('noSlots.weekend.title')}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t('noSlots.weekend.hint')}
+            </p>
+          </>
+        )}
+        {reason === 'no_schedule' && (
+          <>
+            <p className="text-sm font-medium text-muted-foreground">
+              {t('noSlots.noSchedule.title')}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t('noSlots.noSchedule.hint')}
+            </p>
+          </>
+        )}
+        {reason === 'doctor_unavailable' && (
+          <>
+            <p className="text-sm font-medium text-muted-foreground">
+              {t('noSlots.doctorUnavailable.title')}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t('noSlots.doctorUnavailable.hint')}
+            </p>
+          </>
+        )}
+        {reason === 'fully_booked' && (
+          <>
+            <p className="text-sm font-medium text-muted-foreground">
+              {t('noSlots.fullyBooked.title')}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t('noSlots.fullyBooked.hint')}
+            </p>
+          </>
+        )}
+        {(!reason || reason === '') && (
+          <p className="text-sm text-muted-foreground">
+            {t('noSlots.default')}
+          </p>
+        )}
+      </div>
     );
   }
 

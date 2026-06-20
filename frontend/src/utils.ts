@@ -31,3 +31,23 @@ export const getInitials = (name: string): string => {
     .join("")
     .toUpperCase()
 }
+
+/**
+ * Ensures a time string is displayed in 24-hour HH:mm format.
+ * Handles edge cases like "8:00" → "08:00", null/undefined → fallback.
+ */
+export function formatTimeHHmm(
+  time: string | null | undefined,
+  fallback = ""
+): string {
+  if (!time) return fallback;
+
+  // Match HH:mm or H:mm (with optional AM/PM suffix)
+  const match = time.match(/^(\d{1,2}):(\d{2})(?:\s*[APap][Mm])?$/);
+  if (!match) return time;
+
+  const hours = Number.parseInt(match[1], 10);
+  const minutes = match[2];
+
+  return `${String(hours).padStart(2, "0")}:${minutes}`;
+}

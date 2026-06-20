@@ -2,14 +2,12 @@ import uuid
 from datetime import date, datetime, timezone
 from typing import Any
 
-from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, select
-
 from app.core.config import settings
 from app.core.security import get_password_hash, verify_password
 from app.models import (
     Appointment,
     AppointmentCreate,
+    AppointmentPublic,
     AppointmentStatus,
     AppointmentStatusUpdate,
     ContactMethod,
@@ -26,6 +24,8 @@ from app.models import (
     UserUpdate,
     Weekday,
 )
+from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session, select
 
 
 def create_user(*, session: Session, user_create: UserCreate) -> User:
@@ -85,7 +85,7 @@ def create_doctor_with_user(
     *, session: Session, doctor_in: DoctorCreateWithUser
 ) -> Doctor:
     """Atomically create a User (role=DOCTOR) and a Doctor profile.
-    
+
     If Doctor creation fails, User creation is rolled back.
     """
     # 1. Create User with role=DOCTOR
@@ -110,9 +110,7 @@ def create_doctor_with_user(
             consultation_duration=doctor_in.consultation_duration,
             is_active=doctor_in.is_active,
         )
-        db_obj = Doctor.model_validate(
-            doctor_create, update={"user_id": user.id}
-        )
+        db_obj = Doctor.model_validate(doctor_create, update={"user_id": user.id})
         session.add(db_obj)
         session.commit()
         session.refresh(db_obj)
@@ -125,9 +123,7 @@ def create_doctor_with_user(
 def create_doctor(
     *, session: Session, doctor_create: DoctorCreate, user_id: uuid.UUID
 ) -> Doctor:
-    db_obj = Doctor.model_validate(
-        doctor_create, update={"user_id": user_id}
-    )
+    db_obj = Doctor.model_validate(doctor_create, update={"user_id": user_id})
     session.add(db_obj)
     session.commit()
     session.refresh(db_obj)
@@ -144,12 +140,7 @@ def get_doctors(
     count_statement = select(Doctor).where(Doctor.is_active == True)
     count = len(session.exec(count_statement).all())
 
-    statement = (
-        select(Doctor)
-        .where(Doctor.is_active == True)
-        .offset(skip)
-        .limit(limit)
-    )
+    statement = select(Doctor).where(Doctor.is_active == True).offset(skip).limit(limit)
     doctors = session.exec(statement).all()
     return list(doctors), count
 
@@ -176,6 +167,7 @@ def update_doctor(
     if user_update_data:
         # Eagerly load the user relationship to ensure it's available
         from sqlalchemy.orm import selectinload
+
         stmt = (
             select(Doctor)
             .where(Doctor.id == db_doctor.id)
@@ -225,9 +217,9 @@ def _intervals_overlap(
     Intervals that touch (e.g., 09:00-12:00 and 12:00-17:00) are NOT considered
     overlapping. This is the correct behavior for scheduling adjacent shifts.
     """
-    return _time_to_minutes(new_start) < _time_to_minutes(existing_end) and _time_to_minutes(
-        new_end
-    ) > _time_to_minutes(existing_start)
+    return _time_to_minutes(new_start) < _time_to_minutes(
+        existing_end
+    ) and _time_to_minutes(new_end) > _time_to_minutes(existing_start)
 
 
 def _validate_availability_time_range(
@@ -406,29 +398,28 @@ def get_doctor_availabilities(
         DoctorAvailability.doctor_id == doctor_id,
     )
     if weekday is not None:
-        count_statement = count_statement.where(
-            DoctorAvailability.weekday == weekday
-        )
+        count_statement = count_statement.where(DoctorAvailability.weekday == weekday)
     if active_only:
-        count_statement = count_statement.where(
-            DoctorAvailability.is_active == True
-        )
+        count_statement = count_statement.where(DoctorAvailability.is_active == True)
     count = len(session.exec(count_statement).all())
 
     # Build data query with deterministic ordering
     # PostgreSQL ENUM sorts by declaration order (calendar order: monday=0..sunday=6)
-    statement = (
-        select(DoctorAvailability)
-        .where(DoctorAvailability.doctor_id == doctor_id)
+    statement = select(DoctorAvailability).where(
+        DoctorAvailability.doctor_id == doctor_id
     )
     if weekday is not None:
         statement = statement.where(DoctorAvailability.weekday == weekday)
     if active_only:
         statement = statement.where(DoctorAvailability.is_active == True)
-    statement = statement.order_by(
-        DoctorAvailability.weekday,
-        DoctorAvailability.start_time.asc(),
-    ).offset(skip).limit(limit)
+    statement = (
+        statement.order_by(
+            DoctorAvailability.weekday,
+            DoctorAvailability.start_time.asc(),
+        )
+        .offset(skip)
+        .limit(limit)
+    )
 
     records = session.exec(statement).all()
     return list(records), count
@@ -477,9 +468,7 @@ def update_doctor_availability(
 
     # 2. Validate duration_minutes if provided
     if availability_in.duration_minutes is not None:
-        _validate_duration_minutes(
-            effective_start, effective_end, effective_duration
-        )
+        _validate_duration_minutes(effective_start, effective_end, effective_duration)
 
     # 3. Check for overlapping intervals (exclude self)
     _check_overlapping_availability(
@@ -547,7 +536,9 @@ def _validate_doctor_active(*, session: Session, doctor_id: uuid.UUID) -> Doctor
     return doctor
 
 
-def _validate_appointment_date(*, appointment_date: date, appointment_time: str) -> None:
+def _validate_appointment_date(
+    *, appointment_date: date, appointment_time: str
+) -> None:
     """Validate that the appointment date/time is not in the past.
 
     Raises ValueError if the appointment is in the past.
@@ -556,8 +547,7 @@ def _validate_appointment_date(*, appointment_date: date, appointment_time: str)
 
     if appointment_date < today:
         raise ValueError(
-            f"Appointment date {appointment_date} is in the past. "
-            f"Today is {today}."
+            f"Appointment date {appointment_date} is in the past. " f"Today is {today}."
         )
 
     if appointment_date == today:
@@ -620,8 +610,7 @@ def _validate_availability_window(
 
     if not intervals:
         raise ValueError(
-            f"No active availability found for doctor {doctor_id} "
-            f"on {weekday_name}"
+            f"No active availability found for doctor {doctor_id} " f"on {weekday_name}"
         )
 
     appointment_minutes = _time_to_minutes(appointment_time)
@@ -686,9 +675,7 @@ def _validate_contact_info(
 
     if contact_method == ContactMethod.EMAIL:
         if not patient_email or not patient_email.strip():
-            raise ValueError(
-                "patient_email is required for contact method 'email'"
-            )
+            raise ValueError("patient_email is required for contact method 'email'")
 
     if contact_method == ContactMethod.TELEGRAM:
         has_phone = bool(patient_phone and patient_phone.strip())
@@ -719,7 +706,9 @@ def _check_double_booking(
         Appointment.doctor_id == doctor_id,
         Appointment.appointment_date == appointment_date,
         Appointment.appointment_time == appointment_time,
-        Appointment.status.in_([AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED]),
+        Appointment.status.in_(
+            [AppointmentStatus.PENDING, AppointmentStatus.CONFIRMED]
+        ),
     )
 
     if exclude_id is not None:
@@ -752,7 +741,10 @@ def _validate_status_transition(
     Raises ValueError on invalid transition.
     """
     valid_transitions = {
-        AppointmentStatus.PENDING: {AppointmentStatus.CONFIRMED, AppointmentStatus.CANCELLED},
+        AppointmentStatus.PENDING: {
+            AppointmentStatus.CONFIRMED,
+            AppointmentStatus.CANCELLED,
+        },
         AppointmentStatus.CONFIRMED: {AppointmentStatus.CANCELLED},
         AppointmentStatus.CANCELLED: set(),  # No transitions allowed from CANCELLED
     }
@@ -764,6 +756,28 @@ def _validate_status_transition(
             f"Allowed transitions from '{current_status.value}' are: "
             f"{', '.join(s.value for s in allowed) if allowed else 'none'}"
         )
+
+
+def _appointment_to_public(appointment: Appointment) -> AppointmentPublic:
+    """Convert an Appointment DB model to AppointmentPublic with doctor_name."""
+    doctor_name = None
+    if appointment.doctor is not None:
+        doctor_name = appointment.doctor.full_name
+    return AppointmentPublic(
+        id=appointment.id,
+        doctor_id=appointment.doctor_id,
+        patient_name=appointment.patient_name,
+        patient_phone=appointment.patient_phone,
+        patient_email=appointment.patient_email,
+        contact_method=appointment.contact_method,
+        appointment_date=appointment.appointment_date,
+        appointment_time=appointment.appointment_time,
+        status=appointment.status,
+        notes=appointment.notes,
+        created_at=appointment.created_at,
+        updated_at=appointment.updated_at,
+        doctor_name=doctor_name,
+    )
 
 
 def create_appointment(
@@ -846,16 +860,20 @@ def create_appointment(
             )
         raise
     session.refresh(db_obj)
-    return db_obj
+    return _appointment_to_public(db_obj)
 
 
 def get_appointment(
     *,
     session: Session,
     appointment_id: uuid.UUID,
-) -> Appointment | None:
-    """Get a single appointment by ID."""
-    return session.get(Appointment, appointment_id)
+) -> AppointmentPublic | None:
+    """Get a single appointment by ID with doctor_name populated."""
+    statement = select(Appointment).where(Appointment.id == appointment_id)
+    appointment = session.exec(statement).first()
+    if appointment is None:
+        return None
+    return _appointment_to_public(appointment)
 
 
 def get_appointments(
@@ -866,8 +884,8 @@ def get_appointments(
     status: AppointmentStatus | None = None,
     skip: int = 0,
     limit: int = 100,
-) -> tuple[list[Appointment], int]:
-    """Get appointments with optional filters.
+) -> tuple[list[AppointmentPublic], int]:
+    """Get appointments with optional filters and doctor_name populated.
 
     Args:
         session: Database session.
@@ -878,7 +896,7 @@ def get_appointments(
         limit: Maximum number of records to return (pagination).
 
     Returns:
-        Tuple of (list of appointments, total count).
+        Tuple of (list of AppointmentPublic with doctor_name, total count).
     """
     # Build count query
     count_statement = select(Appointment)
@@ -900,13 +918,17 @@ def get_appointments(
         statement = statement.where(Appointment.appointment_date == appointment_date)
     if status is not None:
         statement = statement.where(Appointment.status == status)
-    statement = statement.order_by(
-        Appointment.appointment_date.asc(),
-        Appointment.appointment_time.asc(),
-    ).offset(skip).limit(limit)
+    statement = (
+        statement.order_by(
+            Appointment.appointment_date.asc(),
+            Appointment.appointment_time.asc(),
+        )
+        .offset(skip)
+        .limit(limit)
+    )
 
     records = session.exec(statement).all()
-    return list(records), count
+    return [_appointment_to_public(r) for r in records], count
 
 
 def update_appointment_status(
@@ -914,7 +936,7 @@ def update_appointment_status(
     session: Session,
     db_appointment: Appointment,
     status_update: AppointmentStatusUpdate,
-) -> Appointment:
+) -> AppointmentPublic:
     """Update an appointment's status with transition validation.
 
     Validates:
@@ -930,7 +952,7 @@ def update_appointment_status(
     session.add(db_appointment)
     session.commit()
     session.refresh(db_appointment)
-    return db_appointment
+    return _appointment_to_public(db_appointment)
 
 
 def delete_appointment(

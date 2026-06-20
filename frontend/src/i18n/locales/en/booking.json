@@ -41,7 +41,25 @@
     "selectDate": "Please select a date",
     "selectTime": "Please select a time slot"
   },
-  "noSlots": "No available slots for this date",
+  "noSlots": {
+    "default": "No available slots for this date",
+    "weekend": {
+      "title": "Doctor does not work on weekends.",
+      "hint": "Please choose a weekday."
+    },
+    "noSchedule": {
+      "title": "No working schedule has been configured for this day.",
+      "hint": ""
+    },
+    "doctorUnavailable": {
+      "title": "The doctor is unavailable on this day.",
+      "hint": "Please choose another date."
+    },
+    "fullyBooked": {
+      "title": "All appointment slots for this day have already been booked.",
+      "hint": ""
+    }
+  },
   "noDoctors": "No doctors available",
   "navigation": {
     "back": "Back",
@@ -50,7 +68,6 @@
   },
   "datePicker": {
     "today": "Today",
-    "tomorrow": "Tomorrow",
-    "nextWeek": "Next Week"
+    "tomorrow": "Tomorrow"
   }
 }

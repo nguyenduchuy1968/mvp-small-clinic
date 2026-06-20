@@ -165,6 +165,7 @@ export function BookingWizard({
             selectedTime={bookingState.time}
             onSelect={handleTimeSelect}
             isLoading={isLoadingSlots}
+            reason={slotsData?.reason}
           />
         );
 

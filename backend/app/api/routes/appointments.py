@@ -47,7 +47,7 @@ def _get_doctor_or_404(*, session: SessionDep, doctor_id: uuid.UUID) -> Doctor:
 
 def _get_appointment_or_404(
     *, session: SessionDep, appointment_id: uuid.UUID
-) -> Appointment:
+) -> AppointmentPublic:
     """Get an appointment by ID or raise 404."""
     appointment = crud.get_appointment(session=session, appointment_id=appointment_id)
     if not appointment:
@@ -58,7 +58,7 @@ def _get_appointment_or_404(
     return appointment
 
 
-def _check_appointment_access(*, current_user: User, appointment: Appointment) -> None:
+def _check_appointment_access(*, current_user: User, appointment: AppointmentPublic) -> None:
     """Check if the current user can access the given appointment.
 
     Admins can access any appointment. Doctors can only access their own

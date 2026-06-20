@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import type { AppointmentPublic } from '@/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatDateLong } from '@/utils/date';
 
 interface BookingConfirmationProps {
   appointment: AppointmentPublic;
@@ -12,22 +13,8 @@ function formatTime(time: string): string {
   return time.length > 5 ? time.slice(0, 5) : time;
 }
 
-function formatDate(dateStr: string): string {
-  // Display date in a user-friendly format
-  try {
-    const date = new Date(dateStr + 'T00:00:00');
-    return date.toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  } catch {
-    return dateStr;
-  }
-}
-
 export function BookingConfirmation({ appointment }: BookingConfirmationProps) {
-  const { t } = useTranslation('booking');
+  const { t, i18n } = useTranslation('booking');
 
   return (
     <div className="mx-auto max-w-lg space-y-6">
@@ -43,8 +30,8 @@ export function BookingConfirmation({ appointment }: BookingConfirmationProps) {
         <CardContent className="space-y-4">
           <p className="text-center text-sm text-muted-foreground">
             {t('confirmation.message', {
-              doctorName: appointment.doctor_id,
-              date: formatDate(appointment.appointment_date),
+              doctorName: appointment.doctor_name ?? appointment.doctor_id,
+              date: formatDateLong(appointment.appointment_date, i18n.language),
               time: formatTime(appointment.appointment_time),
             })}
           </p>

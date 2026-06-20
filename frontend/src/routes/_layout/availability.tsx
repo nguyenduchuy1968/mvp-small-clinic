@@ -1,9 +1,17 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { AvailabilityList } from '@/components/Availability/AvailabilityList';
 import { WeeklySchedule } from '@/components/Availability/WeeklySchedule';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { DoctorsService } from '@/client';
 import useAuth from '@/hooks/useAuth';
 
@@ -13,19 +21,23 @@ function AvailabilityPage() {
 
   const isAdmin = user?.is_superuser === true;
 
-  // Fetch all doctors and find the one linked to the current user
+  // Fetch all doctors
   const { data: doctorsData } = useQuery({
     queryFn: () => DoctorsService.readDoctors({ skip: 0, limit: 100 }),
     queryKey: ['doctors'],
     enabled: !!user?.id,
   });
 
+  // Admin: selected doctor ID (stateful)
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string>('');
+
+  // Doctor user: automatically resolve doctor_id from user_id
   const currentDoctor = doctorsData?.data?.find(
     (doctor) => doctor.user_id === user?.id
   );
-  const doctorId = currentDoctor?.id ?? '';
+  const doctorId = isAdmin ? selectedDoctorId : (currentDoctor?.id ?? '');
 
-  // Admin users without a linked doctor profile see an informative message
+  // Admin without a selected doctor — show the selector
   if (isAdmin && !doctorId) {
     return (
       <div className="flex flex-col items-center justify-center text-center py-16">
@@ -44,13 +56,56 @@ function AvailabilityPage() {
             />
           </svg>
         </div>
-        <h2 className="text-xl font-semibold mb-2">
+        <h2 className="text-xl font-semibold mb-4">
           {t('admin.noDoctor.title', 'Select a doctor to manage availability.')}
+        </h2>
+        <div className="w-full max-w-xs">
+          <Select value={selectedDoctorId} onValueChange={setSelectedDoctorId}>
+            <SelectTrigger>
+              <SelectValue
+                placeholder={t('admin.doctorSelector.placeholder', 'Choose a doctor...')}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {doctorsData?.data?.map((doctor) => (
+                <SelectItem key={doctor.id} value={doctor.id}>
+                  {doctor.full_name}
+                  {doctor.specialty ? ` (${doctor.specialty})` : ''}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    );
+  }
+
+  // Regular doctor users without a profile see a different message
+  if (!doctorId) {
+    return (
+      <div className="flex flex-col items-center justify-center text-center py-16">
+        <div className="rounded-full bg-muted p-6 mb-6">
+          <svg
+            className="h-10 w-10 text-muted-foreground"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+            />
+          </svg>
+        </div>
+        <h2 className="text-xl font-semibold mb-2">
+          {t('noDoctorProfile.title', 'No doctor profile found')}
         </h2>
         <p className="text-muted-foreground max-w-md">
           {t(
-            'admin.noDoctor.description',
-            'You are viewing the admin panel. To manage availability, please select a doctor profile first.'
+            'noDoctorProfile.description',
+            'You do not have a doctor profile yet. Please contact an administrator to create one before managing your availability.'
           )}
         </p>
       </div>

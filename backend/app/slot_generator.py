@@ -69,6 +69,8 @@ def generate_available_slots(
     4. Remove slots that are already booked (PENDING or CONFIRMED).
     5. If target_date is today, remove slots in the past.
     6. Sort remaining slots ascending.
+    7. If no slots remain, set a reason:
+       'weekend', 'no_schedule', 'doctor_unavailable', or 'fully_booked'.
 
     Args:
         session: SQLModel database session.
@@ -134,9 +136,33 @@ def generate_available_slots(
 
     # 6. Build response
     slot_objects = [AvailableSlot(time=t) for t in available]
+
+    # 7. Determine reason when no slots are available
+    reason: str | None = None
+    if len(slot_objects) == 0:
+        weekday_number = target_date.weekday()  # Monday=0, Sunday=6
+        if weekday_number >= 5:  # Saturday=5, Sunday=6
+            reason = "weekend"
+        elif not intervals:
+            # No active intervals — check if any schedule records exist at all
+            # for this weekday (even inactive ones)
+            any_schedule_statement = select(DoctorAvailability).where(
+                DoctorAvailability.doctor_id == doctor_id,
+                DoctorAvailability.weekday == weekday,
+            )
+            any_schedules = session.exec(any_schedule_statement).all()
+            if any_schedules:
+                # Schedule records exist but all are inactive
+                reason = "doctor_unavailable"
+            else:
+                reason = "no_schedule"
+        else:
+            reason = "fully_booked"
+
     return AvailableSlotsResponse(
         doctor_id=doctor_id,
         date=target_date,
         slots=slot_objects,
         count=len(slot_objects),
+        reason=reason,
     )

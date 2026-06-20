@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { AvailabilityService } from '@/client';
 import PendingItems from '@/components/Pending/PendingItems';
 import { cn } from '@/lib/utils';
+import { formatTimeHHmm } from '@/utils';
 
 const WEEKDAYS = [
   'monday',
@@ -54,7 +55,7 @@ function WeeklyScheduleContent({ doctorId }: WeeklyScheduleContentProps) {
           <div
             key={day}
             className={cn(
-              'rounded-lg border p-3 min-h-[120px]',
+              'rounded-lg border p-3 min-h-30',
               hasSlots ? 'bg-card' : 'bg-muted/30'
             )}
           >
@@ -71,7 +72,8 @@ function WeeklyScheduleContent({ doctorId }: WeeklyScheduleContentProps) {
                   className="text-xs bg-primary/10 text-primary rounded px-2 py-1"
                 >
                   <span className="font-medium">
-                    {slot.start_time}–{slot.end_time}
+                    {formatTimeHHmm(slot.start_time)}–
+                    {formatTimeHHmm(slot.end_time)}
                   </span>
                   {slot.duration_minutes && (
                     <span className="ml-1 opacity-70">
@@ -86,7 +88,8 @@ function WeeklyScheduleContent({ doctorId }: WeeklyScheduleContentProps) {
                   className="text-xs bg-muted text-muted-foreground rounded px-2 py-1 line-through"
                 >
                   <span className="font-medium">
-                    {slot.start_time}–{slot.end_time}
+                    {formatTimeHHmm(slot.start_time)}–
+                    {formatTimeHHmm(slot.end_time)}
                   </span>
                 </div>
               ))}

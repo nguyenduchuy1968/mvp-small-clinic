@@ -1,32 +1,32 @@
 fastapi>=0.115.0
-uvicorn[standard]>=0.35.0
+uvicorn[standard]>=0.49.0
 
-sqlmodel>=0.0.24
+sqlmodel>=0.0.38
 sqlalchemy>=2.0.40
-alembic>=1.16.0
+alembic>=1.18.4
 
-psycopg[binary]>=3.2.0
+psycopg[binary]>=3.3.4
 
-pydantic>=2.11.0
-pydantic-settings>=2.10.0
+pydantic>=2.13.4
+pydantic-settings>=2.14.1
 
-python-jose[cryptography]>=3.3.0
-PyJWT>=2.10.0
+python-jose[cryptography]>=3.5.0
+PyJWT>=2.13.0
 
 pwdlib[argon2,bcrypt]>=0.2.1
 
-python-multipart>=0.0.20
+python-multipart>=0.0.32
 
-emails>=0.6
+emails>=1.1.2
 jinja2>=3.1.0
 
-sentry-sdk[fastapi]>=2.30.0
+sentry-sdk[fastapi]>=2.62.0
 
 httpx>=0.28.0
 
-pytest>=8.4.0
-pytest-cov>=6.2.0
+pytest>=9.1.0
+pytest-cov>=7.1.0
 
-tenacity>=9.1.0
+tenacity>=9.1.4
 
 email-validator>=2.2.0

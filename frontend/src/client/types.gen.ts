@@ -363,6 +363,12 @@ export type DoctorsReadDoctorsPublicData = {
 
 export type DoctorsReadDoctorsPublicResponse = DoctorsPublic;
 
+export type DoctorsReadDoctorMeData = {
+  [key: string]: unknown;
+};
+
+export type DoctorsReadDoctorMeResponse = DoctorPublic;
+
 export type DoctorsReadDoctorData = {
   doctorId: string;
 };

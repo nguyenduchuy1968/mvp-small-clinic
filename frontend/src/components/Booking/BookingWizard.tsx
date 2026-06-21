@@ -1,81 +1,81 @@
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
+import { useState } from "react"
+import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
 
 import type {
   AppointmentCreate,
   AppointmentPublic,
   DoctorPublic,
-} from '@/client';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LoadingButton } from '@/components/ui/loading-button';
-import { useAvailableSlots } from '@/hooks/useAvailableSlots';
-import { useCreateAppointment } from '@/hooks/useCreateAppointment';
-import { useDoctorsPublic } from '@/hooks/useDoctorsPublic';
+} from "@/client"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { LoadingButton } from "@/components/ui/loading-button"
+import { useAvailableSlots } from "@/hooks/useAvailableSlots"
+import { useCreateAppointment } from "@/hooks/useCreateAppointment"
+import { useDoctorsPublic } from "@/hooks/useDoctorsPublic"
 
-import { DatePicker } from './DatePicker';
-import { DoctorCard } from './DoctorCard';
-import { PatientInfoForm } from './PatientInfoForm';
-import { StepIndicator } from './StepIndicator';
-import { TimeSlotGrid } from './TimeSlotGrid';
+import { DatePicker } from "./DatePicker"
+import { DoctorCard } from "./DoctorCard"
+import { PatientInfoForm } from "./PatientInfoForm"
+import { StepIndicator } from "./StepIndicator"
+import { TimeSlotGrid } from "./TimeSlotGrid"
 
 interface BookingState {
-  doctor: DoctorPublic | null;
-  date: string | null;
-  time: string | null;
+  doctor: DoctorPublic | null
+  date: string | null
+  time: string | null
 }
 
 interface BookingWizardProps {
-  onConfirmed: (appointment: AppointmentPublic) => void;
-  onSlotAlreadyBooked: () => void;
+  onConfirmed: (appointment: AppointmentPublic) => void
+  onSlotAlreadyBooked: () => void
 }
 
 export function BookingWizard({
   onConfirmed,
   onSlotAlreadyBooked,
 }: BookingWizardProps) {
-  const { t } = useTranslation('booking');
-  const [step, setStep] = useState(1);
+  const { t } = useTranslation("booking")
+  const [step, setStep] = useState(1)
   const [bookingState, setBookingState] = useState<BookingState>({
     doctor: null,
     date: null,
     time: null,
-  });
+  })
 
-  const { data: doctorsData, isLoading: isLoadingDoctors } = useDoctorsPublic();
+  const { data: doctorsData, isLoading: isLoadingDoctors } = useDoctorsPublic()
   const { data: slotsData, isLoading: isLoadingSlots } = useAvailableSlots(
     bookingState.doctor?.id ?? null,
-    bookingState.date
-  );
-  const createAppointment = useCreateAppointment();
+    bookingState.date,
+  )
+  const createAppointment = useCreateAppointment()
 
   const steps = [
-    { label: t('steps.selectDoctor') },
-    { label: t('steps.selectDate') },
-    { label: t('steps.selectTime') },
-    { label: t('steps.patientInfo') },
-    { label: t('steps.confirm') },
-  ];
+    { label: t("steps.selectDoctor") },
+    { label: t("steps.selectDate") },
+    { label: t("steps.selectTime") },
+    { label: t("steps.patientInfo") },
+    { label: t("steps.confirm") },
+  ]
 
   const handleDoctorSelect = (doctor: DoctorPublic) => {
-    setBookingState((prev) => ({ ...prev, doctor, date: null, time: null }));
-    setStep(2);
-  };
+    setBookingState((prev) => ({ ...prev, doctor, date: null, time: null }))
+    setStep(2)
+  }
 
   const handleDateSelect = (date: string) => {
-    setBookingState((prev) => ({ ...prev, date, time: null }));
-    setStep(3);
-  };
+    setBookingState((prev) => ({ ...prev, date, time: null }))
+    setStep(3)
+  }
 
   const handleTimeSelect = (time: string) => {
-    setBookingState((prev) => ({ ...prev, time }));
-    setStep(4);
-  };
+    setBookingState((prev) => ({ ...prev, time }))
+    setStep(4)
+  }
 
   const handlePatientInfoSubmit = (data: AppointmentCreate) => {
     if (!bookingState.doctor || !bookingState.date || !bookingState.time) {
-      return;
+      return
     }
 
     const appointmentData: AppointmentCreate = {
@@ -83,44 +83,42 @@ export function BookingWizard({
       doctor_id: bookingState.doctor.id,
       appointment_date: bookingState.date,
       appointment_time: bookingState.time,
-    };
+    }
 
     createAppointment.mutate(appointmentData, {
       onSuccess: (appointment) => {
-        setStep(5);
-        onConfirmed(appointment);
+        setStep(5)
+        onConfirmed(appointment)
       },
       onError: (err) => {
-        const errDetail = (err as any)?.body?.detail;
-        const status = (err as any)?.status;
-        if (
-          errDetail === 'Appointment slot already booked' ||
-          status === 409
-        ) {
-          onSlotAlreadyBooked();
-          setStep(3);
+        const errDetail = (err as any)?.body?.detail
+        const status = (err as any)?.status
+        if (errDetail === "Appointment slot already booked" || status === 409) {
+          onSlotAlreadyBooked()
+          setStep(3)
         } else {
           const errorMessage =
-            typeof errDetail === 'string'
+            typeof errDetail === "string"
               ? errDetail
-              : errDetail?.[0]?.msg || t('common:states.error', 'An error occurred');
-          toast.error(errorMessage);
+              : errDetail?.[0]?.msg ||
+                t("common:states.error", "An error occurred")
+          toast.error(errorMessage)
         }
       },
-    });
-  };
+    })
+  }
 
   const handleBack = () => {
     if (step > 1) {
-      setStep((prev) => prev - 1);
+      setStep((prev) => prev - 1)
     }
-  };
+  }
 
   const handleReset = () => {
-    setStep(1);
-    setBookingState({ doctor: null, date: null, time: null });
-    createAppointment.reset();
-  };
+    setStep(1)
+    setBookingState({ doctor: null, date: null, time: null })
+    createAppointment.reset()
+  }
 
   const renderStep = () => {
     switch (step) {
@@ -129,11 +127,11 @@ export function BookingWizard({
           <div className="space-y-4">
             {isLoadingDoctors ? (
               <p className="text-center text-muted-foreground">
-                {t('common:states.loading', 'Loading...')}
+                {t("common:states.loading", "Loading...")}
               </p>
             ) : !doctorsData || doctorsData.data.length === 0 ? (
               <p className="text-center text-muted-foreground">
-                {t('noDoctors')}
+                {t("noDoctors")}
               </p>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -148,7 +146,7 @@ export function BookingWizard({
               </div>
             )}
           </div>
-        );
+        )
 
       case 2:
         return (
@@ -156,7 +154,7 @@ export function BookingWizard({
             selectedDate={bookingState.date}
             onSelect={handleDateSelect}
           />
-        );
+        )
 
       case 3:
         return (
@@ -166,8 +164,9 @@ export function BookingWizard({
             onSelect={handleTimeSelect}
             isLoading={isLoadingSlots}
             reason={slotsData?.reason}
+            date={bookingState.date}
           />
-        );
+        )
 
       case 4:
         return (
@@ -175,15 +174,15 @@ export function BookingWizard({
             onSubmit={handlePatientInfoSubmit}
             isPending={createAppointment.isPending}
           />
-        );
+        )
 
       case 5:
-        return null; // Handled by parent via onConfirmed
+        return null // Handled by parent via onConfirmed
 
       default:
-        return null;
+        return null
     }
-  };
+  }
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
@@ -199,21 +198,21 @@ export function BookingWizard({
       {step < 5 && (
         <div className="flex justify-between">
           <Button variant="outline" onClick={handleBack} disabled={step === 1}>
-            {t('navigation.back')}
+            {t("navigation.back")}
           </Button>
 
           {step === 4 && (
             <LoadingButton
               onClick={() => {
                 // Trigger form submit by dispatching to the form
-                const form = document.querySelector('form');
+                const form = document.querySelector("form")
                 if (form) {
-                  form.requestSubmit();
+                  form.requestSubmit()
                 }
               }}
               loading={createAppointment.isPending}
             >
-              {t('submit.button')}
+              {t("submit.button")}
             </LoadingButton>
           )}
         </div>
@@ -222,10 +221,10 @@ export function BookingWizard({
       {step === 5 && (
         <div className="flex justify-center">
           <Button variant="outline" onClick={handleReset}>
-            {t('confirmation.newBooking')}
+            {t("confirmation.newBooking")}
           </Button>
         </div>
       )}
     </div>
-  );
+  )
 }

@@ -1,41 +1,40 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
-
-import { AvailabilityList } from '@/components/Availability/AvailabilityList';
-import { WeeklySchedule } from '@/components/Availability/WeeklySchedule';
+import { useQuery } from "@tanstack/react-query"
+import { createFileRoute } from "@tanstack/react-router"
+import { useState } from "react"
+import { useTranslation } from "react-i18next"
+import { DoctorsService } from "@/client"
+import { AvailabilityList } from "@/components/Availability/AvailabilityList"
+import { WeeklySchedule } from "@/components/Availability/WeeklySchedule"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { DoctorsService } from '@/client';
-import useAuth from '@/hooks/useAuth';
+} from "@/components/ui/select"
+import useAuth from "@/hooks/useAuth"
 
 function AvailabilityPage() {
-  const { t } = useTranslation('availability');
-  const { user } = useAuth();
+  const { t } = useTranslation("availability")
+  const { user } = useAuth()
 
-  const isAdmin = user?.is_superuser === true;
+  const isAdmin = user?.is_superuser === true
 
   // Fetch all doctors
   const { data: doctorsData } = useQuery({
     queryFn: () => DoctorsService.readDoctors({ skip: 0, limit: 100 }),
-    queryKey: ['doctors'],
+    queryKey: ["doctors"],
     enabled: !!user?.id,
-  });
+  })
 
   // Admin: selected doctor ID (stateful)
-  const [selectedDoctorId, setSelectedDoctorId] = useState<string>('');
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string>("")
 
   // Doctor user: automatically resolve doctor_id from user_id
   const currentDoctor = doctorsData?.data?.find(
-    (doctor) => doctor.user_id === user?.id
-  );
-  const doctorId = isAdmin ? selectedDoctorId : (currentDoctor?.id ?? '');
+    (doctor) => doctor.user_id === user?.id,
+  )
+  const doctorId = isAdmin ? selectedDoctorId : (currentDoctor?.id ?? "")
 
   // Admin without a selected doctor — show the selector
   if (isAdmin && !doctorId) {
@@ -57,27 +56,30 @@ function AvailabilityPage() {
           </svg>
         </div>
         <h2 className="text-xl font-semibold mb-4">
-          {t('admin.noDoctor.title', 'Select a doctor to manage availability.')}
+          {t("admin.noDoctor.title", "Select a doctor to manage availability.")}
         </h2>
         <div className="w-full max-w-xs">
           <Select value={selectedDoctorId} onValueChange={setSelectedDoctorId}>
             <SelectTrigger>
               <SelectValue
-                placeholder={t('admin.doctorSelector.placeholder', 'Choose a doctor...')}
+                placeholder={t(
+                  "admin.doctorSelector.placeholder",
+                  "Choose a doctor...",
+                )}
               />
             </SelectTrigger>
             <SelectContent>
               {doctorsData?.data?.map((doctor) => (
                 <SelectItem key={doctor.id} value={doctor.id}>
                   {doctor.full_name}
-                  {doctor.specialty ? ` (${doctor.specialty})` : ''}
+                  {doctor.specialty ? ` (${doctor.specialty})` : ""}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
       </div>
-    );
+    )
   }
 
   // Regular doctor users without a profile see a different message
@@ -100,16 +102,16 @@ function AvailabilityPage() {
           </svg>
         </div>
         <h2 className="text-xl font-semibold mb-2">
-          {t('noDoctorProfile.title', 'No doctor profile found')}
+          {t("noDoctorProfile.title", "No doctor profile found")}
         </h2>
         <p className="text-muted-foreground max-w-md">
           {t(
-            'noDoctorProfile.description',
-            'You do not have a doctor profile yet. Please contact an administrator to create one before managing your availability.'
+            "noDoctorProfile.description",
+            "You do not have a doctor profile yet. Please contact an administrator to create one before managing your availability.",
           )}
         </p>
       </div>
-    );
+    )
   }
 
   return (
@@ -117,20 +119,20 @@ function AvailabilityPage() {
       <AvailabilityList doctorId={doctorId} />
       <WeeklySchedule doctorId={doctorId} />
     </div>
-  );
+  )
 }
 
-export const Route = createFileRoute('/_layout/availability')({
+export const Route = createFileRoute("/_layout/availability")({
   component: RouteComponent,
   head: () => ({
     meta: [
       {
-        title: 'Schedule',
+        title: "Schedule",
       },
     ],
   }),
-});
+})
 
 function RouteComponent() {
-  return <AvailabilityPage />;
+  return <AvailabilityPage />
 }

@@ -87,6 +87,30 @@ def read_doctors_public(session: SessionDep, skip: int = 0, limit: int = 100) ->
 
 
 @router.get(
+    "/me",
+    response_model=DoctorPublic,
+)
+def read_current_doctor(
+    session: SessionDep,
+    current_user: CurrentUser,
+) -> Any:
+    """
+    Get the doctor profile for the currently authenticated user.
+    Returns the doctor profile linked to the current user's account.
+    Raises 404 if the user does not have a doctor profile.
+    """
+    if current_user.doctor is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Doctor profile not found for the current user",
+        )
+    return DoctorPublic.model_validate(
+        current_user.doctor,
+        update={"email": current_user.doctor.user.email if current_user.doctor.user else None},
+    )
+
+
+@router.get(
     "/{doctor_id}",
     response_model=DoctorPublic,
 )

@@ -4,6 +4,7 @@
     "title": "Danh sách lịch hẹn",
     "empty": "Chưa có lịch hẹn nào",
     "columns": {
+      "id": "ID",
       "patientName": "Tên bệnh nhân",
       "patientPhone": "Số điện thoại",
       "date": "Ngày hẹn",
@@ -17,8 +18,10 @@
     "title": "Chi tiết lịch hẹn",
     "patientInfo": "Thông tin bệnh nhân",
     "appointmentInfo": "Thông tin lịch hẹn",
+    "doctorInfo": "Thông tin bác sĩ",
     "contactMethod": "Phương thức liên hệ",
-    "notes": "Ghi chú"
+    "notes": "Ghi chú",
+    "createdAt": "Ngày tạo"
   },
   "status": {
     "pending": "Chờ xác nhận",

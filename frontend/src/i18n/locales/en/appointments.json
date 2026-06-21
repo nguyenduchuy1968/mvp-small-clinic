@@ -4,6 +4,7 @@
     "title": "Appointment List",
     "empty": "No appointments yet",
     "columns": {
+      "id": "ID",
       "patientName": "Patient Name",
       "patientPhone": "Phone",
       "date": "Date",
@@ -17,8 +18,10 @@
     "title": "Appointment Details",
     "patientInfo": "Patient Information",
     "appointmentInfo": "Appointment Information",
+    "doctorInfo": "Doctor Information",
     "contactMethod": "Contact Method",
-    "notes": "Notes"
+    "notes": "Notes",
+    "createdAt": "Created At"
   },
   "status": {
     "pending": "Pending",

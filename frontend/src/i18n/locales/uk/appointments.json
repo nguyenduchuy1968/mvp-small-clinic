@@ -4,6 +4,7 @@
     "title": "Список записів",
     "empty": "Ще немає записів",
     "columns": {
+      "id": "ID",
       "patientName": "Ім'я пацієнта",
       "patientPhone": "Телефон",
       "date": "Дата",
@@ -17,8 +18,10 @@
     "title": "Деталі запису",
     "patientInfo": "Інформація про пацієнта",
     "appointmentInfo": "Інформація про запис",
+    "doctorInfo": "Інформація про лікаря",
     "contactMethod": "Спосіб зв'язку",
-    "notes": "Нотатки"
+    "notes": "Нотатки",
+    "createdAt": "Створено"
   },
   "status": {
     "pending": "Очікує підтвердження",

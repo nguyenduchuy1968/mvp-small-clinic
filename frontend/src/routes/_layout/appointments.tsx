@@ -1,5 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router"
-import { AppointmentList } from "@/components/Appointments/AppointmentList"
+import { createFileRoute, Outlet } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_layout/appointments")({
   component: RouteComponent,
@@ -13,6 +12,5 @@ export const Route = createFileRoute("/_layout/appointments")({
 })
 
 function RouteComponent() {
-  return <AppointmentList />
+  return <Outlet />
 }
-

@@ -2,7 +2,9 @@ import { useSuspenseQuery } from "@tanstack/react-query"
 import { Search } from "lucide-react"
 import { Suspense } from "react"
 import { useTranslation } from "react-i18next"
+import { useNavigate } from "@tanstack/react-router"
 
+import type { AppointmentPublic } from "@/client"
 import { AppointmentsService } from "@/client"
 import { DataTable } from "@/components/Common/DataTable"
 import PendingItems from "@/components/Pending/PendingItems"
@@ -18,6 +20,7 @@ function getAppointmentsQueryOptions() {
 
 function AppointmentsTableContent() {
   const { t } = useTranslation("appointments")
+  const navigate = useNavigate()
   const { data: appointments } = useSuspenseQuery(getAppointmentsQueryOptions())
 
   if (appointments.data.length === 0) {
@@ -31,7 +34,17 @@ function AppointmentsTableContent() {
     )
   }
 
-  return <DataTable columns={buildColumns()} data={appointments.data} />
+  const handleRowClick = (row: AppointmentPublic) => {
+    navigate({ to: "/appointments/$id", params: { id: row.id } })
+  }
+
+  return (
+    <DataTable
+      columns={buildColumns()}
+      data={appointments.data}
+      onRowClick={handleRowClick}
+    />
+  )
 }
 
 function AppointmentsTable() {

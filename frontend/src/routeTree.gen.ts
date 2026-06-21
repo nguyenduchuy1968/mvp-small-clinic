@@ -22,9 +22,11 @@ import { Route as LayoutDoctorsRouteImport } from './routes/_layout/doctors'
 import { Route as LayoutAvailabilityRouteImport } from './routes/_layout/availability'
 import { Route as LayoutAppointmentsRouteImport } from './routes/_layout/appointments'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
+import { Route as LayoutAppointmentsIndexRouteImport } from './routes/_layout/appointments.index'
 import { Route as LayoutDoctorsNewRouteImport } from './routes/_layout/doctors.new'
 import { Route as LayoutDoctorsIdRouteImport } from './routes/_layout/doctors.$id'
 import { Route as LayoutAvailabilityNewRouteImport } from './routes/_layout/availability.new'
+import { Route as LayoutAppointmentsIdRouteImport } from './routes/_layout/appointments.$id'
 import { Route as LayoutDoctorsIdEditRouteImport } from './routes/_layout/doctors.$id.edit'
 import { Route as LayoutAvailabilityIdEditRouteImport } from './routes/_layout/availability.$id.edit'
 
@@ -92,6 +94,11 @@ const LayoutAdminRoute = LayoutAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutAppointmentsIndexRoute = LayoutAppointmentsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LayoutAppointmentsRoute,
+} as any)
 const LayoutDoctorsNewRoute = LayoutDoctorsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -106,6 +113,11 @@ const LayoutAvailabilityNewRoute = LayoutAvailabilityNewRouteImport.update({
   id: '/new',
   path: '/new',
   getParentRoute: () => LayoutAvailabilityRoute,
+} as any)
+const LayoutAppointmentsIdRoute = LayoutAppointmentsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => LayoutAppointmentsRoute,
 } as any)
 const LayoutDoctorsIdEditRoute = LayoutDoctorsIdEditRouteImport.update({
   id: '/edit',
@@ -127,14 +139,16 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
-  '/appointments': typeof LayoutAppointmentsRoute
+  '/appointments': typeof LayoutAppointmentsRouteWithChildren
   '/availability': typeof LayoutAvailabilityRouteWithChildren
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/booking/confirmation': typeof BookingConfirmationRoute
+  '/appointments/$id': typeof LayoutAppointmentsIdRoute
   '/availability/new': typeof LayoutAvailabilityNewRoute
   '/doctors/$id': typeof LayoutDoctorsIdRouteWithChildren
   '/doctors/new': typeof LayoutDoctorsNewRoute
+  '/appointments/': typeof LayoutAppointmentsIndexRoute
   '/availability/$id/edit': typeof LayoutAvailabilityIdEditRoute
   '/doctors/$id/edit': typeof LayoutDoctorsIdEditRoute
 }
@@ -145,15 +159,16 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
-  '/appointments': typeof LayoutAppointmentsRoute
   '/availability': typeof LayoutAvailabilityRouteWithChildren
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/booking/confirmation': typeof BookingConfirmationRoute
   '/': typeof LayoutIndexRoute
+  '/appointments/$id': typeof LayoutAppointmentsIdRoute
   '/availability/new': typeof LayoutAvailabilityNewRoute
   '/doctors/$id': typeof LayoutDoctorsIdRouteWithChildren
   '/doctors/new': typeof LayoutDoctorsNewRoute
+  '/appointments': typeof LayoutAppointmentsIndexRoute
   '/availability/$id/edit': typeof LayoutAvailabilityIdEditRoute
   '/doctors/$id/edit': typeof LayoutDoctorsIdEditRoute
 }
@@ -166,15 +181,17 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
-  '/_layout/appointments': typeof LayoutAppointmentsRoute
+  '/_layout/appointments': typeof LayoutAppointmentsRouteWithChildren
   '/_layout/availability': typeof LayoutAvailabilityRouteWithChildren
   '/_layout/doctors': typeof LayoutDoctorsRouteWithChildren
   '/_layout/settings': typeof LayoutSettingsRoute
   '/booking/confirmation': typeof BookingConfirmationRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/appointments/$id': typeof LayoutAppointmentsIdRoute
   '/_layout/availability/new': typeof LayoutAvailabilityNewRoute
   '/_layout/doctors/$id': typeof LayoutDoctorsIdRouteWithChildren
   '/_layout/doctors/new': typeof LayoutDoctorsNewRoute
+  '/_layout/appointments/': typeof LayoutAppointmentsIndexRoute
   '/_layout/availability/$id/edit': typeof LayoutAvailabilityIdEditRoute
   '/_layout/doctors/$id/edit': typeof LayoutDoctorsIdEditRoute
 }
@@ -193,9 +210,11 @@ export interface FileRouteTypes {
     | '/doctors'
     | '/settings'
     | '/booking/confirmation'
+    | '/appointments/$id'
     | '/availability/new'
     | '/doctors/$id'
     | '/doctors/new'
+    | '/appointments/'
     | '/availability/$id/edit'
     | '/doctors/$id/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -206,15 +225,16 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
-    | '/appointments'
     | '/availability'
     | '/doctors'
     | '/settings'
     | '/booking/confirmation'
     | '/'
+    | '/appointments/$id'
     | '/availability/new'
     | '/doctors/$id'
     | '/doctors/new'
+    | '/appointments'
     | '/availability/$id/edit'
     | '/doctors/$id/edit'
   id:
@@ -232,9 +252,11 @@ export interface FileRouteTypes {
     | '/_layout/settings'
     | '/booking/confirmation'
     | '/_layout/'
+    | '/_layout/appointments/$id'
     | '/_layout/availability/new'
     | '/_layout/doctors/$id'
     | '/_layout/doctors/new'
+    | '/_layout/appointments/'
     | '/_layout/availability/$id/edit'
     | '/_layout/doctors/$id/edit'
   fileRoutesById: FileRoutesById
@@ -341,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/appointments/': {
+      id: '/_layout/appointments/'
+      path: '/'
+      fullPath: '/appointments/'
+      preLoaderRoute: typeof LayoutAppointmentsIndexRouteImport
+      parentRoute: typeof LayoutAppointmentsRoute
+    }
     '/_layout/doctors/new': {
       id: '/_layout/doctors/new'
       path: '/new'
@@ -362,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAvailabilityNewRouteImport
       parentRoute: typeof LayoutAvailabilityRoute
     }
+    '/_layout/appointments/$id': {
+      id: '/_layout/appointments/$id'
+      path: '/$id'
+      fullPath: '/appointments/$id'
+      preLoaderRoute: typeof LayoutAppointmentsIdRouteImport
+      parentRoute: typeof LayoutAppointmentsRoute
+    }
     '/_layout/doctors/$id/edit': {
       id: '/_layout/doctors/$id/edit'
       path: '/edit'
@@ -378,6 +414,19 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface LayoutAppointmentsRouteChildren {
+  LayoutAppointmentsIdRoute: typeof LayoutAppointmentsIdRoute
+  LayoutAppointmentsIndexRoute: typeof LayoutAppointmentsIndexRoute
+}
+
+const LayoutAppointmentsRouteChildren: LayoutAppointmentsRouteChildren = {
+  LayoutAppointmentsIdRoute: LayoutAppointmentsIdRoute,
+  LayoutAppointmentsIndexRoute: LayoutAppointmentsIndexRoute,
+}
+
+const LayoutAppointmentsRouteWithChildren =
+  LayoutAppointmentsRoute._addFileChildren(LayoutAppointmentsRouteChildren)
 
 interface LayoutAvailabilityRouteChildren {
   LayoutAvailabilityNewRoute: typeof LayoutAvailabilityNewRoute
@@ -420,7 +469,7 @@ const LayoutDoctorsRouteWithChildren = LayoutDoctorsRoute._addFileChildren(
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
-  LayoutAppointmentsRoute: typeof LayoutAppointmentsRoute
+  LayoutAppointmentsRoute: typeof LayoutAppointmentsRouteWithChildren
   LayoutAvailabilityRoute: typeof LayoutAvailabilityRouteWithChildren
   LayoutDoctorsRoute: typeof LayoutDoctorsRouteWithChildren
   LayoutSettingsRoute: typeof LayoutSettingsRoute
@@ -429,7 +478,7 @@ interface LayoutRouteChildren {
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
-  LayoutAppointmentsRoute: LayoutAppointmentsRoute,
+  LayoutAppointmentsRoute: LayoutAppointmentsRouteWithChildren,
   LayoutAvailabilityRoute: LayoutAvailabilityRouteWithChildren,
   LayoutDoctorsRoute: LayoutDoctorsRouteWithChildren,
   LayoutSettingsRoute: LayoutSettingsRoute,

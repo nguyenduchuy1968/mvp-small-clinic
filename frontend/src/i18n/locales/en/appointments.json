@@ -26,6 +26,7 @@
     "cancelled": "Cancelled"
   },
   "actions": {
+    "viewDetails": "View Details",
     "confirm": "Confirm",
     "cancel": "Cancel Appointment",
     "delete": "Delete"

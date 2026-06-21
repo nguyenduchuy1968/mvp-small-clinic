@@ -26,6 +26,7 @@
     "cancelled": "Đã hủy"
   },
   "actions": {
+    "viewDetails": "Xem chi tiết",
     "confirm": "Xác nhận",
     "cancel": "Hủy lịch hẹn",
     "delete": "Xóa"

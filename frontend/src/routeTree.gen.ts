@@ -20,6 +20,7 @@ import { Route as BookingConfirmationRouteImport } from './routes/booking/confir
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutDoctorsRouteImport } from './routes/_layout/doctors'
 import { Route as LayoutAvailabilityRouteImport } from './routes/_layout/availability'
+import { Route as LayoutAppointmentsRouteImport } from './routes/_layout/appointments'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 import { Route as LayoutDoctorsNewRouteImport } from './routes/_layout/doctors.new'
 import { Route as LayoutDoctorsIdRouteImport } from './routes/_layout/doctors.$id'
@@ -81,6 +82,11 @@ const LayoutAvailabilityRoute = LayoutAvailabilityRouteImport.update({
   path: '/availability',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutAppointmentsRoute = LayoutAppointmentsRouteImport.update({
+  id: '/appointments',
+  path: '/appointments',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutAdminRoute = LayoutAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/appointments': typeof LayoutAppointmentsRoute
   '/availability': typeof LayoutAvailabilityRouteWithChildren
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/appointments': typeof LayoutAppointmentsRoute
   '/availability': typeof LayoutAvailabilityRouteWithChildren
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
+  '/_layout/appointments': typeof LayoutAppointmentsRoute
   '/_layout/availability': typeof LayoutAvailabilityRouteWithChildren
   '/_layout/doctors': typeof LayoutDoctorsRouteWithChildren
   '/_layout/settings': typeof LayoutSettingsRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/appointments'
     | '/availability'
     | '/doctors'
     | '/settings'
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/appointments'
     | '/availability'
     | '/doctors'
     | '/settings'
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/_layout/admin'
+    | '/_layout/appointments'
     | '/_layout/availability'
     | '/_layout/doctors'
     | '/_layout/settings'
@@ -315,6 +327,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAvailabilityRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/appointments': {
+      id: '/_layout/appointments'
+      path: '/appointments'
+      fullPath: '/appointments'
+      preLoaderRoute: typeof LayoutAppointmentsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/admin': {
       id: '/_layout/admin'
       path: '/admin'
@@ -401,6 +420,7 @@ const LayoutDoctorsRouteWithChildren = LayoutDoctorsRoute._addFileChildren(
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
+  LayoutAppointmentsRoute: typeof LayoutAppointmentsRoute
   LayoutAvailabilityRoute: typeof LayoutAvailabilityRouteWithChildren
   LayoutDoctorsRoute: typeof LayoutDoctorsRouteWithChildren
   LayoutSettingsRoute: typeof LayoutSettingsRoute
@@ -409,6 +429,7 @@ interface LayoutRouteChildren {
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
+  LayoutAppointmentsRoute: LayoutAppointmentsRoute,
   LayoutAvailabilityRoute: LayoutAvailabilityRouteWithChildren,
   LayoutDoctorsRoute: LayoutDoctorsRouteWithChildren,
   LayoutSettingsRoute: LayoutSettingsRoute,

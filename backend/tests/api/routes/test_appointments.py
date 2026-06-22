@@ -423,23 +423,21 @@ class TestAutoConfirmAppointment:
         detail = r2.json()["detail"].lower()
         assert "already booked" in detail
 
-    def test_race_condition_integrity_error_returns_409(
+    def test_rebook_after_cancellation_succeeds(
         self, client: TestClient, superuser_token_headers: dict[str, str], db: Session
     ) -> None:
-        """Simulate a DB unique constraint violation (race condition) → 409 Conflict.
+        """Re-booking a cancelled slot succeeds (regression test for the partial unique index fix).
 
         The application-level double booking check (_check_double_booking) catches
-        most conflicts. However, in high-concurrency scenarios, two requests may
-        pass the check simultaneously. The DB-level UNIQUE constraint
-        (uq_appointment_slot on doctor_id, appointment_date, appointment_time)
-        acts as a safety net, and the IntegrityError handler converts it to 409.
+        most conflicts. The DB-level partial unique index (uq_appointment_slot_active)
+        only enforces uniqueness for PENDING/CONFIRMED appointments, allowing
+        re-booking after cancellation.
 
-        This test verifies the IntegrityError path by:
+        This test verifies the fix by:
         1. Creating an appointment at a slot
         2. Cancelling it (so the app-level check allows re-booking)
-        3. Attempting to book the same slot — the app-level check passes
-           (CANCELLED doesn't block), but the DB UNIQUE constraint fires
-           because the constraint applies regardless of status.
+        3. Re-booking the same slot — both the app-level check and the DB
+           partial unique index allow it because CANCELLED is excluded.
         """
         from app.models import Appointment, AppointmentStatus
 
@@ -465,16 +463,16 @@ class TestAutoConfirmAppointment:
         )
         assert r.status_code == 200
 
-        # Step 3: Try to book the same slot again
-        # The app-level _check_double_booking only blocks PENDING/CONFIRMED,
-        # so it will pass. But the DB UNIQUE constraint will fire.
+        # Step 3: Re-book the same slot — should succeed because the partial
+        # unique index (uq_appointment_slot_active) only blocks PENDING/CONFIRMED
         r = client.post(
             f"{settings.API_V1_STR}/appointments",
             json=payload,
         )
-        # This should be 409 because the IntegrityError handler converts it
-        assert r.status_code == 409
-        assert "already booked" in r.json()["detail"].lower()
+        # This should be 201 because the partial unique index allows re-booking
+        assert r.status_code == 201
+        assert r.json()["status"] == "confirmed"
+        assert r.json()["booking_number"] is not None
 
 
 # ---------------------------------------------------------------------------

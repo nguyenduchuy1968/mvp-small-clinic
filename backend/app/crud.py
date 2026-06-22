@@ -1,6 +1,9 @@
 import uuid
-from datetime import date, datetime, timezone
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 from typing import Any
+
+from sqlalchemy import text
 
 from app.core.config import settings
 from app.core.security import get_password_hash, verify_password
@@ -504,9 +507,15 @@ def delete_doctor_availability(
 # =============================================================================
 
 
-def _get_today_utc() -> date:
-    """Get today's date in UTC."""
-    return datetime.now(timezone.utc).date()
+def _get_today_local() -> date:
+    """Get today's date in the clinic's local timezone.
+
+    Uses settings.CLINIC_TIMEZONE (default: Asia/Ho_Chi_Minh).
+    All date comparisons for appointment availability must use
+    the clinic's local time, not UTC.
+    """
+    clinic_tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+    return datetime.now(clinic_tz).date()
 
 
 def _time_to_minutes(time_str: str) -> int:
@@ -541,27 +550,32 @@ def _validate_appointment_date(
 ) -> None:
     """Validate that the appointment date/time is not in the past.
 
+    Uses the clinic's local timezone (settings.CLINIC_TIMEZONE) for all
+    comparisons, ensuring that slot times stored in local time are correctly
+    evaluated against the current local time at the clinic.
+
     Raises ValueError if the appointment is in the past.
     """
-    today = _get_today_utc()
+    clinic_tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+    now_local = datetime.now(clinic_tz)
+    today_local = now_local.date()
 
-    if appointment_date < today:
+    if appointment_date < today_local:
         raise ValueError(
-            f"Appointment date {appointment_date} is in the past. " f"Today is {today}."
+            f"Appointment date {appointment_date} is in the past. "
+            f"Today is {today_local}."
         )
 
-    if appointment_date == today:
+    if appointment_date == today_local:
         # Check that the time hasn't passed yet
-        now = datetime.now(timezone.utc)
-        current_minutes = now.hour * 60 + now.minute
+        current_minutes = now_local.hour * 60 + now_local.minute
         appointment_minutes = _time_to_minutes(appointment_time)
 
         if appointment_minutes <= current_minutes:
             raise ValueError(
                 f"Appointment time {appointment_time} has already passed today. "
-                f"Current time is {now.hour:02d}:{now.minute:02d}."
+                f"Current time is {now_local.hour:02d}:{now_local.minute:02d}."
             )
-
 
 def _validate_availability_window(
     *,
@@ -757,6 +771,17 @@ def _validate_status_transition(
             f"{', '.join(s.value for s in allowed) if allowed else 'none'}"
         )
 
+def _generate_booking_number(session: Session) -> str:
+    """Generate a unique booking reference number using a DB sequence.
+
+    Format: BK-000001, BK-000002, ...
+    Uses PostgreSQL sequence for atomic, race-condition-free generation.
+    """
+    result = session.execute(
+        text("SELECT 'BK-' || LPAD(nextval('booking_number_seq')::text, 6, '0')")
+    )
+    return result.scalar()
+
 
 def _appointment_to_public(appointment: Appointment) -> AppointmentPublic:
     """Convert an Appointment DB model to AppointmentPublic with doctor_name."""
@@ -774,10 +799,12 @@ def _appointment_to_public(appointment: Appointment) -> AppointmentPublic:
         appointment_time=appointment.appointment_time,
         status=appointment.status,
         notes=appointment.notes,
+        booking_number=appointment.booking_number,
         created_at=appointment.created_at,
         updated_at=appointment.updated_at,
         doctor_name=doctor_name,
     )
+
 
 
 def create_appointment(
@@ -845,14 +872,20 @@ def create_appointment(
     # 7. Create the appointment with the determined status
     appointment_data = appointment_in.model_dump()
     appointment_data["status"] = appointment_status
+
+    # 8. Generate booking number before commit (uses PostgreSQL sequence)
+    appointment_data["booking_number"] = _generate_booking_number(session)
+
     db_obj = Appointment.model_validate(appointment_data)
     session.add(db_obj)
     try:
         session.commit()
     except IntegrityError as exc:
         session.rollback()
-        # Check if it's the unique constraint for double booking
-        if "uq_appointment_slot" in str(exc):
+        # Check if it's the unique index for double booking
+        # (partial index uq_appointment_slot_active only applies to
+        #  PENDING/CONFIRMED, so this correctly allows re-booking cancelled slots)
+        if "uq_appointment_slot_active" in str(exc):
             raise ValueError(
                 f"Slot on {appointment_in.appointment_date} at "
                 f"{appointment_in.appointment_time} for "

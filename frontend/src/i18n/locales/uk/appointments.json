@@ -5,6 +5,7 @@
     "empty": "Ще немає записів",
     "columns": {
       "id": "ID",
+      "bookingRef": "Номер бронювання",
       "patientName": "Ім'я пацієнта",
       "patientPhone": "Телефон",
       "date": "Дата",

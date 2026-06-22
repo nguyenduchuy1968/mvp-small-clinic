@@ -5,6 +5,7 @@
     "empty": "Chưa có lịch hẹn nào",
     "columns": {
       "id": "ID",
+      "bookingRef": "Mã tham chiếu",
       "patientName": "Tên bệnh nhân",
       "patientPhone": "Số điện thoại",
       "date": "Ngày hẹn",

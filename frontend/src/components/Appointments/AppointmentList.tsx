@@ -8,6 +8,7 @@ import type { AppointmentPublic } from "@/client"
 import { AppointmentsService } from "@/client"
 import { DataTable } from "@/components/Common/DataTable"
 import PendingItems from "@/components/Pending/PendingItems"
+import { isClinicToday, isPastAppointment } from "@/utils/date"
 import { buildColumns } from "./columns"
 
 function getAppointmentsQueryOptions() {
@@ -38,11 +39,27 @@ function AppointmentsTableContent() {
     navigate({ to: "/appointments/$id", params: { id: row.id } })
   }
 
+  const getRowClassName = (row: AppointmentPublic): string | undefined => {
+    // Past appointments get muted styling
+    if (isPastAppointment(row.appointment_date, row.appointment_time)) {
+      return "text-muted-foreground opacity-60"
+    }
+    // Today's non-cancelled appointments get a subtle highlight
+    if (
+      row.status !== "cancelled" &&
+      isClinicToday(row.appointment_date)
+    ) {
+      return "bg-primary/15"
+    }
+    return undefined
+  }
+
   return (
     <DataTable
       columns={buildColumns()}
       data={appointments.data}
       onRowClick={handleRowClick}
+      getRowClassName={getRowClassName}
     />
   )
 }

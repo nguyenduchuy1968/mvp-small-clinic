@@ -31,8 +31,15 @@
   },
   "confirmation": {
     "title": "Запис підтверджено",
+    "successMessage": "Запис успішно створено!",
     "message": "Ваш запис до лікаря {doctorName} підтверджено на {date} о {time}.",
     "bookingId": "ID запису: {id}",
+    "bookingReference": "Номер бронювання",
+    "doctor": "Лікар:",
+    "date": "Дата:",
+    "time": "Час:",
+    "attentionTitle": "⚠ Увага",
+    "attentionMessage": "Будь ласка, збережіть номер бронювання. Він може знадобитися при зверненні до клініки.",
     "newBooking": "Записатися ще"
   },
   "errors": {

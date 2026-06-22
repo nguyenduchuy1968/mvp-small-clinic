@@ -34,12 +34,15 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onRowClick?: (row: TData) => void;
+  /** Optional callback to compute a className for each row. */
+  getRowClassName?: (row: TData) => string | undefined;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   onRowClick,
+  getRowClassName,
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation('common');
   const table = useReactTable({
@@ -79,7 +82,14 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 onClick={() => onRowClick?.(row.original)}
-                className={onRowClick ? 'cursor-pointer' : undefined}
+                className={
+                  [
+                    onRowClick ? 'cursor-pointer' : undefined,
+                    getRowClassName?.(row.original),
+                  ]
+                    .filter(Boolean)
+                    .join(' ') || undefined
+                }
               >
                 {row.getVisibleCells().map((cell) => {
                   const meta = cell.column.columnDef.meta as

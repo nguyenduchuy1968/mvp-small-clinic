@@ -3,11 +3,17 @@
 These tests verify the validation functions directly without requiring a database.
 Database-dependent functions (_validate_doctor_active, _validate_availability_window,
 _check_double_booking) are tested in integration tests.
+
+All time comparisons use the clinic's configured timezone
+(settings.CLINIC_TIMEZONE) rather than UTC, ensuring that slot
+availability correctly reflects the local date/time at the clinic.
 """
 
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 import pytest
+from app.core.config import settings
 from app.crud import (
     _validate_appointment_date,
     _validate_contact_info,
@@ -31,6 +37,48 @@ class TestValidateAppointmentDate:
                 appointment_date=date(2020, 1, 1),
                 appointment_time="10:00",
             )
+
+    def test_today_past_time_rejected(self):
+        """A time today that has already passed should be rejected.
+
+        Uses clinic local timezone (settings.CLINIC_TIMEZONE) so that
+        the comparison correctly reflects the current local time at the
+        clinic, not UTC.
+        """
+        clinic_tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+        now_local = datetime.now(clinic_tz)
+        # Use a time that is definitely in the past (1 hour ago).
+        # Handle midnight edge case: if now_local.hour == 0, use 00:00
+        # as the past time (which is always in the past at 00:xx).
+        if now_local.hour == 0:
+            past_time = "00:00"
+        else:
+            past_hour = now_local.hour - 1
+            past_time = f"{past_hour:02d}:{now_local.minute:02d}"
+
+        with pytest.raises(ValueError, match="has already passed today"):
+            _validate_appointment_date(
+                appointment_date=now_local.date(),
+                appointment_time=past_time,
+            )
+
+    def test_today_future_time_accepted(self):
+        """A time today that is still in the future should be accepted.
+
+        Uses clinic local timezone (settings.CLINIC_TIMEZONE) so that
+        the comparison correctly reflects the current local time at the
+        clinic, not UTC.
+        """
+        clinic_tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+        now_local = datetime.now(clinic_tz)
+        # Use a time that is definitely in the future (2 hours from now)
+        future_hour = (now_local.hour + 2) % 24
+        future_time = f"{future_hour:02d}:00"
+
+        _validate_appointment_date(
+            appointment_date=now_local.date(),
+            appointment_time=future_time,
+        )
 
 
 class TestValidateContactInfo:

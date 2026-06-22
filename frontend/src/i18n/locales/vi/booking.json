@@ -31,8 +31,15 @@
   },
   "confirmation": {
     "title": "Đã xác nhận lịch hẹn",
+    "successMessage": "Đặt lịch hẹn thành công!",
     "message": "Lịch hẹn của bạn với bác sĩ {doctorName} đã được xác nhận vào ngày {date} lúc {time}.",
     "bookingId": "Mã đặt lịch: {id}",
+    "bookingReference": "Mã tham chiếu",
+    "doctor": "Bác sĩ:",
+    "date": "Ngày:",
+    "time": "Giờ:",
+    "attentionTitle": "⚠ Chú ý",
+    "attentionMessage": "Vui lòng lưu mã đặt lịch. Bạn có thể cần nó khi liên hệ với phòng khám.",
     "newBooking": "Đặt lịch hẹn khác"
   },
   "errors": {

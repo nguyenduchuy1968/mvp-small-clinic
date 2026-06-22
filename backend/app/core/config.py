@@ -53,6 +53,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str
     SENTRY_DSN: HttpUrl | None = None
     AUTO_CONFIRM_APPOINTMENTS: bool = True
+    CLINIC_TIMEZONE: str = "Asia/Ho_Chi_Minh"
     POSTGRES_SERVER: str
     POSTGRES_PORT: int = 5432
     POSTGRES_USER: str

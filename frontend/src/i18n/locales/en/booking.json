@@ -31,8 +31,15 @@
   },
   "confirmation": {
     "title": "Appointment Confirmed",
+    "successMessage": "Appointment booked successfully",
     "message": "Your appointment with {doctorName} has been confirmed for {date} at {time}.",
     "bookingId": "Booking ID: {id}",
+    "bookingReference": "Booking Reference",
+    "doctor": "Doctor:",
+    "date": "Date:",
+    "time": "Time:",
+    "attentionTitle": "⚠ Attention",
+    "attentionMessage": "Please save your booking number. You may need it when contacting the clinic.",
     "newBooking": "Book Another Appointment"
   },
   "errors": {

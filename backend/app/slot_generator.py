@@ -7,11 +7,17 @@ generated slots.
 
 Uses the same slot alignment logic as the CRUD validation layer
 (offset_minutes % duration_minutes == 0) to ensure consistency.
+
+All time comparisons use the clinic's configured timezone
+(settings.CLINIC_TIMEZONE) rather than UTC, ensuring that slot
+availability correctly reflects the local date/time at the clinic.
 """
 
 import uuid
-from datetime import date, datetime, timezone
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
+from app.core.config import settings
 from app.crud import _format_time, _time_to_minutes
 from app.models import (
     Appointment,
@@ -67,10 +73,17 @@ def generate_available_slots(
     2. Load active DoctorAvailability records for doctor_id + weekday.
     3. For each interval, generate slots using duration_minutes.
     4. Remove slots that are already booked (PENDING or CONFIRMED).
-    5. If target_date is today, remove slots in the past.
+    5. Filter slots based on clinic local time (settings.CLINIC_TIMEZONE):
+       - Past date (target_date < today_local): return empty.
+       - Today (target_date == today_local): remove past slots.
+       - Future date (target_date > today_local): all slots valid.
     6. Sort remaining slots ascending.
     7. If no slots remain, set a reason:
        'weekend', 'no_schedule', 'doctor_unavailable', or 'fully_booked'.
+
+    All date/time comparisons use the clinic's configured timezone, not the
+    user's browser timezone. This ensures identical behavior for users in
+    any geographic location.
 
     Args:
         session: SQLModel database session.
@@ -127,12 +140,28 @@ def generate_available_slots(
     booked_times = set(session.exec(booked_statement).all())
     available = [t for t in all_slots if t not in booked_times]
 
-    # 5. If target_date is today, remove past slots
-    today_utc = datetime.now(timezone.utc).date()
-    if target_date == today_utc:
-        now = datetime.now(timezone.utc)
-        current_minutes = now.hour * 60 + now.minute
+    # 5. Filter slots based on clinic local time
+    #    Uses clinic local timezone (settings.CLINIC_TIMEZONE) so that slot
+    #    times stored in local time are correctly compared against the current
+    #    local time at the clinic. This is the single source of truth for
+    #    date/time comparisons — the frontend's browser timezone is irrelevant.
+    #
+    #    Three cases:
+    #      Case 1 — target_date < today_local:  Past date → return empty
+    #      Case 2 — target_date == today_local: Today → filter past slots
+    #      Case 3 — target_date > today_local:  Future date → all slots valid
+    clinic_tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+    now_local = datetime.now(clinic_tz)
+    today_local = now_local.date()
+
+    if target_date < today_local:
+        # Case 1: Past date — no slots can be booked
+        available = []
+    elif target_date == today_local:
+        # Case 2: Today — remove slots that have already passed
+        current_minutes = now_local.hour * 60 + now_local.minute
         available = [t for t in available if _time_to_minutes(t) > current_minutes]
+    # Case 3: Future date — all slots remain valid (no filtering needed)
 
     # 6. Build response
     slot_objects = [AvailableSlot(time=t) for t in available]

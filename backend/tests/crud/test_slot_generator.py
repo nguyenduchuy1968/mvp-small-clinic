@@ -2,10 +2,17 @@
 
 Tests the slot generation logic directly (no API).
 Verifies slot alignment, booking removal, past-time filtering, and ordering.
+
+All time comparisons use the clinic's configured timezone
+(settings.CLINIC_TIMEZONE) rather than UTC, ensuring that slot
+availability correctly reflects the local date/time at the clinic.
 """
 
 import uuid
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
+
+from app.core.config import settings
 
 import pytest
 from app import crud, slot_generator
@@ -606,10 +613,20 @@ class TestOrdering:
 
 
 class TestPastTimeFiltering:
-    """When target_date is today, past slots must be excluded."""
+    """When target_date is today, past slots must be excluded.
+
+    All time comparisons use the clinic's configured timezone
+    (settings.CLINIC_TIMEZONE) rather than UTC, ensuring that slot
+    availability correctly reflects the local date/time at the clinic.
+    """
 
     def test_past_slots_excluded_for_today(self, db: Session) -> None:
-        """If target_date is today, slots before now are excluded."""
+        """If target_date is today, slots before now are excluded.
+
+        Uses clinic local timezone (settings.CLINIC_TIMEZONE) for the
+        comparison, not UTC. This ensures that slot times stored in local
+        time are correctly evaluated against the current local time.
+        """
         _, doctor = _create_doctor_user(db)
         _create_availability(
             db,
@@ -626,15 +643,85 @@ class TestPastTimeFiltering:
             target_date=date.today(),
         )
 
-        # All returned slots should be in the future
-        now = datetime.now(timezone.utc)
-        current_minutes = now.hour * 60 + now.minute
+        # All returned slots should be in the future (clinic local time)
+        clinic_tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+        now_local = datetime.now(clinic_tz)
+        current_minutes = now_local.hour * 60 + now_local.minute
         for slot in result.slots:
             parts = slot.time.split(":")
             slot_minutes = int(parts[0]) * 60 + int(parts[1])
             assert (
                 slot_minutes > current_minutes
             ), f"Slot {slot.time} is in the past but was returned"
+
+    def test_future_slot_today_included(self, db: Session) -> None:
+        """If target_date is today, slots after now are included.
+
+        Verifies that future slots for today are still returned when
+        using clinic local timezone.
+        """
+        _, doctor = _create_doctor_user(db)
+        clinic_tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+        now_local = datetime.now(clinic_tz)
+        # Create availability for a future time slot today
+        future_hour = (now_local.hour + 2) % 24
+        future_start = f"{future_hour:02d}:00"
+        future_end = f"{(future_hour + 1) % 24:02d}:00"
+
+        _create_availability(
+            db,
+            doctor.id,
+            weekday=Weekday(now_local.strftime("%A").lower()),
+            start_time=future_start,
+            end_time=future_end,
+            duration_minutes=30,
+        )
+
+        result = slot_generator.generate_available_slots(
+            session=db,
+            doctor_id=doctor.id,
+            target_date=now_local.date(),
+        )
+
+        # Future slots for today should be returned
+        assert result.count > 0, "Future slots for today should be returned"
+        for slot in result.slots:
+            parts = slot.time.split(":")
+            slot_minutes = int(parts[0]) * 60 + int(parts[1])
+            assert (
+                slot_minutes > now_local.hour * 60 + now_local.minute
+            ), f"Slot {slot.time} is in the past but was returned"
+
+    def test_tomorrow_all_slots_included(self, db: Session) -> None:
+        """If target_date is tomorrow, all valid slots are included regardless of time.
+
+        No past-slot filtering should apply for future dates.
+        """
+        _, doctor = _create_doctor_user(db)
+        clinic_tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+        now_local = datetime.now(clinic_tz)
+        tomorrow = now_local.date() + timedelta(days=1)
+
+        _create_availability(
+            db,
+            doctor.id,
+            weekday=Weekday(tomorrow.strftime("%A").lower()),
+            start_time="09:00",
+            end_time="12:00",
+            duration_minutes=30,
+        )
+
+        result = slot_generator.generate_available_slots(
+            session=db,
+            doctor_id=doctor.id,
+            target_date=tomorrow,
+        )
+
+        # All 6 slots should be available (future date, no time filtering)
+        assert result.count == 6, (
+            f"Expected 6 slots for tomorrow, got {result.count}. "
+            f"Tomorrow is {tomorrow} ({tomorrow.strftime('%A')})"
+        )
 
     def test_future_date_all_slots_included(self, db: Session) -> None:
         """If target_date is in the future, all slots are included."""
@@ -657,6 +744,45 @@ class TestPastTimeFiltering:
 
         # All 6 slots should be available (future date)
         assert result.count == 6
+
+    def test_past_date_returns_empty_slots(self, db: Session) -> None:
+        """If target_date is before today (clinic local time), return empty.
+
+        Case 1: target_date < today_local → no slots should ever be returned
+        for a date that is already in the past according to the clinic's
+        local timezone. This prevents users in different timezones from
+        booking slots on a date that is still 'today' for them but already
+        'yesterday' at the clinic.
+        """
+        _, doctor = _create_doctor_user(db)
+        _create_availability(
+            db,
+            doctor.id,
+            weekday=Weekday.MONDAY,
+            start_time="09:00",
+            end_time="12:00",
+            duration_minutes=30,
+        )
+
+        # Use a date guaranteed to be in the past (clinic local time)
+        clinic_tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+        now_local = datetime.now(clinic_tz)
+        yesterday = now_local.date() - timedelta(days=1)
+
+        result = slot_generator.generate_available_slots(
+            session=db,
+            doctor_id=doctor.id,
+            target_date=yesterday,
+        )
+
+        # Past date must return empty slots
+        assert result.count == 0, (
+            f"Expected 0 slots for past date {yesterday}, "
+            f"got {result.count}: {[s.time for s in result.slots]}"
+        )
+        assert result.slots == [], (
+            f"Expected empty slots list for past date {yesterday}"
+        )
 
 
 # ---------------------------------------------------------------------------

@@ -269,6 +269,7 @@ class AppointmentBase(SQLModel):
         ),
     )
     notes: str | None = Field(default=None, max_length=2000)
+    booking_number: str | None = Field(default=None, max_length=30, nullable=True)
 
 
 class AppointmentCreate(SQLModel):
@@ -301,10 +302,15 @@ class Appointment(AppointmentBase, table=True):
     doctor: Optional["Doctor"] = Relationship(back_populates="appointments")
 
     __table_args__ = (
-        # Prevent double booking: same doctor, same date, same time
-        sa.UniqueConstraint(
+        # Prevent double booking for active appointments only.
+        # Partial unique index allows CANCELLED appointments to coexist at the
+        # same slot while preventing double-booking of PENDING or CONFIRMED.
+        # This is critical for the cancel-and-rebook flow.
+        sa.Index(
+            "uq_appointment_slot_active",
             "doctor_id", "appointment_date", "appointment_time",
-            name="uq_appointment_slot",
+            unique=True,
+            postgresql_where=sa.text("status IN ('pending', 'confirmed')"),
         ),
     )
 

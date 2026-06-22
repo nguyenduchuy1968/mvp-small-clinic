@@ -6,7 +6,69 @@
  *
  * Backend stores dates in YYYY-MM-DD format — this is never changed.
  * Only UI display formatting is handled here.
+ *
+ * Clinic timezone: Asia/Ho_Chi_Minh (UTC+7).
+ * All "today" / "past" / "new" checks use the clinic timezone as the
+ * single source of truth, NOT the browser's local timezone.
  */
+
+/** Clinic timezone identifier — must match backend settings.CLINIC_TIMEZONE. */
+export const CLINIC_TIMEZONE = 'Asia/Ho_Chi_Minh';
+
+/**
+ * Get today's date in the clinic timezone (YYYY-MM-DD string).
+ *
+ * This is the single source of truth for "what is today" in the UI.
+ * All date comparisons (TODAY badge, past-appointment styling) must
+ * use this function rather than `new Date()`.
+ */
+export function getClinicTodayString(): string {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: CLINIC_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  return formatter.format(new Date()); // "2026-06-23"
+}
+
+/**
+ * Check whether an appointment date is "today" in the clinic timezone.
+ *
+ * @param dateStr - Date string in YYYY-MM-DD format.
+ * @returns `true` if the appointment date matches clinic today.
+ */
+export function isClinicToday(dateStr: string): boolean {
+  return dateStr === getClinicTodayString();
+}
+
+/**
+ * Check whether an appointment datetime has already passed in the clinic
+ * timezone.
+ *
+ * @param dateStr - Appointment date in YYYY-MM-DD format.
+ * @param timeStr - Appointment time in HH:MM format.
+ * @returns `true` if the appointment is in the past (clinic timezone).
+ */
+export function isPastAppointment(dateStr: string, timeStr: string): boolean {
+  try {
+    const clinicDateStr = getClinicTodayString();
+    if (dateStr < clinicDateStr) return true;
+    if (dateStr > clinicDateStr) return false;
+
+    // Same day — compare time
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: CLINIC_TIMEZONE,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+    const nowTimeStr = formatter.format(new Date()); // "HH:MM"
+    return timeStr <= nowTimeStr;
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Format a date string (YYYY-MM-DD) for display according to the given locale.

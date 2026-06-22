@@ -59,12 +59,27 @@ def run_migrations() -> None:
     Uses SQLModel.metadata.create_all() which reads the model definitions
     directly — no Alembic patching needed.
 
+    Also creates PostgreSQL sequences that are managed by Alembic migrations
+    (e.g. booking_number_seq) since SQLModel metadata does not handle sequences.
+
     Must be called after create_database_if_not_exists().
     """
-    from sqlmodel import SQLModel
+    from sqlmodel import SQLModel, text
 
     engine = create_test_engine()
     SQLModel.metadata.create_all(engine)
+
+    # Create PostgreSQL sequences that Alembic migrations would normally create
+    with engine.connect() as conn:
+        # Check if booking_number_seq exists; create if not
+        result = conn.execute(
+            text("SELECT 1 FROM pg_sequences WHERE sequencename = 'booking_number_seq'")
+        )
+        if not result.scalar():
+            conn.execute(text("CREATE SEQUENCE booking_number_seq START 1"))
+            conn.commit()
+            logger.info("Created booking_number_seq sequence")
+
     engine.dispose()
     logger.info("Created all tables in test database via SQLModel metadata")
 

@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   Calendar,
   Clock,
+  Hash,
   Mail,
   Phone,
   StickyNote,
@@ -39,6 +40,19 @@ function AppointmentInfoCard({
         <CardTitle className="text-lg">{t("detail.appointmentInfo")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {appointment.booking_number && (
+          <div className="flex items-center gap-3">
+            <Hash className="h-4 w-4 text-muted-foreground shrink-0" />
+            <div>
+              <p className="text-sm font-mono font-bold text-primary">
+                {appointment.booking_number}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t("list.columns.bookingRef")}
+              </p>
+            </div>
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">
             {t("list.columns.status")}

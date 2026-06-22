@@ -5,6 +5,7 @@
     "empty": "No appointments yet",
     "columns": {
       "id": "ID",
+      "bookingRef": "Booking Ref",
       "patientName": "Patient Name",
       "patientPhone": "Phone",
       "date": "Date",

@@ -66,6 +66,19 @@ function ActionsCell({ appointment }: { appointment: AppointmentPublic }) {
 export function buildColumns(): ColumnDef<AppointmentPublic>[] {
   const columns: ColumnDef<AppointmentPublic>[] = [
     {
+      accessorKey: 'booking_number',
+      header: () => {
+        const { t } = useTranslation('appointments');
+        return <>{t('list.columns.bookingRef')}</>;
+      },
+      cell: ({ row }) => (
+        <span className="font-mono text-xs font-bold text-primary">
+          {row.original.booking_number ?? '—'}
+        </span>
+      ),
+      meta: { className: 'hidden sm:table-cell' },
+    },
+    {
       accessorKey: 'appointment_date',
       header: () => {
         const { t } = useTranslation('appointments');
@@ -93,9 +106,20 @@ export function buildColumns(): ColumnDef<AppointmentPublic>[] {
         const { t } = useTranslation('appointments');
         return <>{t('list.columns.doctor')}</>;
       },
-      cell: ({ row }) => (
-        <span className="font-medium">{row.original.doctor_name ?? '—'}</span>
-      ),
+      cell: ({ row }) => {
+        const isCancelled = row.original.status === 'cancelled';
+        return (
+          <span
+            className={
+              isCancelled
+                ? 'font-medium text-destructive line-through'
+                : 'font-medium'
+            }
+          >
+            {row.original.doctor_name ?? '—'}
+          </span>
+        );
+      },
       meta: { className: 'hidden md:table-cell' },
     },
     {
@@ -104,9 +128,20 @@ export function buildColumns(): ColumnDef<AppointmentPublic>[] {
         const { t } = useTranslation('appointments');
         return <>{t('list.columns.patientName')}</>;
       },
-      cell: ({ row }) => (
-        <span className="font-medium">{row.original.patient_name}</span>
-      ),
+      cell: ({ row }) => {
+        const isCancelled = row.original.status === 'cancelled';
+        return (
+          <span
+            className={
+              isCancelled
+                ? 'font-medium text-destructive line-through'
+                : 'font-medium'
+            }
+          >
+            {row.original.patient_name}
+          </span>
+        );
+      },
     },
     {
       accessorKey: 'patient_phone',

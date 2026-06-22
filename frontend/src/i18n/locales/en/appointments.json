@@ -11,6 +11,7 @@
       "time": "Time",
       "doctor": "Doctor",
       "status": "Status",
+      "cancel": "Cancel",
       "actions": "Actions"
     }
   },

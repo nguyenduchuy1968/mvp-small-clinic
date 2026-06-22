@@ -47,9 +47,9 @@ def _get_doctor_or_404(*, session: SessionDep, doctor_id: uuid.UUID) -> Doctor:
 
 def _get_appointment_or_404(
     *, session: SessionDep, appointment_id: uuid.UUID
-) -> AppointmentPublic:
-    """Get an appointment by ID or raise 404."""
-    appointment = crud.get_appointment(session=session, appointment_id=appointment_id)
+) -> Appointment:
+    """Get an appointment ORM model by ID or raise 404."""
+    appointment = session.get(Appointment, appointment_id)
     if not appointment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -58,7 +58,7 @@ def _get_appointment_or_404(
     return appointment
 
 
-def _check_appointment_access(*, current_user: User, appointment: AppointmentPublic) -> None:
+def _check_appointment_access(*, current_user: User, appointment: Appointment) -> None:
     """Check if the current user can access the given appointment.
 
     Admins can access any appointment. Doctors can only access their own
@@ -253,7 +253,7 @@ def read_appointment(
     # Check permissions
     _check_appointment_access(current_user=current_user, appointment=db_appointment)
 
-    return db_appointment
+    return crud._appointment_to_public(db_appointment)
 
 
 @router.get(

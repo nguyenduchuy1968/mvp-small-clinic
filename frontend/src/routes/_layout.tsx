@@ -27,7 +27,7 @@ function Layout() {
       <AppSidebar />
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center justify-between border-b px-4">
-          <SidebarTrigger className="-ml-1 text-muted-foreground" />
+          <SidebarTrigger />
           <LanguageSwitcher />
         </header>
         <main className="flex-1 p-6 md:p-8">

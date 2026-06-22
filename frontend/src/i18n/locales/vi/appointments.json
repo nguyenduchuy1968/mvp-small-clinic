@@ -11,6 +11,7 @@
       "time": "Giờ hẹn",
       "doctor": "Bác sĩ",
       "status": "Trạng thái",
+      "cancel": "Hủy",
       "actions": "Thao tác"
     }
   },

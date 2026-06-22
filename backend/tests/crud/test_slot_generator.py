@@ -420,10 +420,14 @@ class TestBookedSlotsRemoved:
             appointment_date=target_date,
             appointment_time="10:00",
         )
-        appointment = crud.create_appointment(session=db, appointment_in=appointment_in)
+        appointment_public = crud.create_appointment(
+            session=db, appointment_in=appointment_in
+        )
+        # Fetch the ORM model from the database for status update
+        db_appointment = db.get(Appointment, appointment_public.id)
         crud.update_appointment_status(
             session=db,
-            db_appointment=appointment,
+            db_appointment=db_appointment,
             status_update=AppointmentStatusUpdate(status=AppointmentStatus.CANCELLED),
         )
 

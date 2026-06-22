@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
-import { EllipsisVertical, Eye } from 'lucide-react';
+import { EllipsisVertical, Eye, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useUpdateAppointmentStatus } from '@/hooks/useUpdateAppointmentStatus';
 
 interface AppointmentActionsMenuProps {
   appointment: AppointmentPublic;
@@ -22,6 +23,18 @@ export const AppointmentActionsMenu = ({
   const [open, setOpen] = useState(false);
   const { t } = useTranslation('appointments');
   const navigate = useNavigate();
+  const updateStatus = useUpdateAppointmentStatus();
+
+  const handleCancel = () => {
+    const confirmed = window.confirm(t('updateStatus.cancelMessage'));
+    if (!confirmed) return;
+
+    updateStatus.mutate({
+      appointmentId: appointment.id,
+      requestBody: { status: 'cancelled' },
+    });
+    setOpen(false);
+  };
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -42,7 +55,16 @@ export const AppointmentActionsMenu = ({
           <Eye className="mr-2 h-4 w-4" />
           {t('actions.viewDetails')}
         </DropdownMenuItem>
-        {/* TODO: Enable in Sprint 6.3 — Confirm/Cancel/Reschedule actions */}
+        {appointment.status === 'confirmed' && (
+          <DropdownMenuItem
+            onClick={handleCancel}
+            disabled={updateStatus.isPending}
+            className="text-destructive focus:text-destructive"
+          >
+            <XCircle className="mr-2 h-4 w-4" />
+            {t('actions.cancel')}
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

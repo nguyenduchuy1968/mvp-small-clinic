@@ -1,11 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
-import { UsersService, type UserUpdateMe } from "@/client"
+import { DoctorsService, UsersService, type UserUpdateMe } from "@/client"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -37,6 +37,14 @@ const UserInformation = () => {
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const [editMode, setEditMode] = useState(false)
   const { user: currentUser } = useAuth()
+
+  // Fetch doctor profile to get phone number (if user is a doctor)
+  const { data: doctorProfile } = useQuery({
+    queryFn: () => DoctorsService.readCurrentDoctor(),
+    queryKey: ["currentDoctor"],
+    enabled: currentUser?.role === "doctor",
+  })
+
   const formSchema = getFormSchema(t)
 
   const form = useForm<FormData>({
@@ -141,6 +149,16 @@ const UserInformation = () => {
               )
             }
           />
+
+          {/* Phone number — read-only, displayed only for doctors */}
+          {currentUser?.role === "doctor" && (
+            <FormItem>
+              <FormLabel>{t("users.phone")}</FormLabel>
+              <p className="py-2 truncate max-w-sm">
+                {doctorProfile?.phone || t("users.nA")}
+              </p>
+            </FormItem>
+          )}
 
           <div className="flex gap-3">
             {editMode ? (

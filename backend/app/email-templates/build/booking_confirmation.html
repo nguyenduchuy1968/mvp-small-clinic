@@ -86,17 +86,17 @@
                   <tbody>
                     <tr>
                       <td align="center" style="font-size:0px;padding:35px;word-break:break-word;">
-                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:20px;line-height:1;text-align:center;color:#333333;">{{ project_name }} - Appointment Confirmation</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:20px;line-height:1;text-align:center;color:#333333;">{{ project_name }} - Xác nhận đặt lịch khám</div>
                       </td>
                     </tr>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;padding-right:25px;padding-left:25px;word-break:break-word;">
-                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:center;color:#555555;"><span>Hello {{ patient_name }}</span></div>
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:center;color:#555555;"><span>Xin chào {{ patient_name }}</span></div>
                       </td>
                     </tr>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;padding-right:25px;padding-left:25px;word-break:break-word;">
-                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:center;color:#555555;">Your appointment has been booked successfully!</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:center;color:#555555;">Lịch khám của bạn đã được đặt thành công!</div>
                       </td>
                     </tr>
                     <tr>
@@ -109,22 +109,50 @@
                     </tr>
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;padding-right:25px;padding-left:25px;word-break:break-word;">
-                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;"><strong>Booking Reference:</strong> {{ booking_number }}</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;"><strong>Mã đặt lịch:</strong> {{ booking_number }}</div>
                       </td>
                     </tr>
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;padding-right:25px;padding-left:25px;word-break:break-word;">
-                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;"><strong>Doctor:</strong> {{ doctor_name }}</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;"><strong>Bác sĩ:</strong> {{ doctor_name }}</div>
                       </td>
                     </tr>
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;padding-right:25px;padding-left:25px;word-break:break-word;">
-                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;"><strong>Date:</strong> {{ appointment_date }}</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;"><strong>Ngày:</strong> {{ appointment_date }}</div>
                       </td>
                     </tr>
                     <tr>
                       <td align="left" style="font-size:0px;padding:10px 25px;padding-right:25px;padding-left:25px;word-break:break-word;">
-                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;"><strong>Time:</strong> {{ appointment_time }}</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;"><strong>Giờ:</strong> {{ appointment_time }}</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
+                        <p style="border-top:solid 2px #009688;font-size:1px;margin:0px auto;width:100%;">
+                        </p>
+                        <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 2px #009688;font-size:1px;margin:0px auto;width:510px;" role="presentation" width="510px" ><tr><td style="height:0;line-height:0;"> &nbsp;
+</td></tr></table><![endif]-->
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="left" style="font-size:0px;padding:10px 25px;padding-right:25px;padding-left:25px;word-break:break-word;">
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;"><strong>Thông tin bác sĩ:</strong></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="left" style="font-size:0px;padding:10px 25px;padding-right:25px;padding-left:25px;word-break:break-word;">
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;">Bác sĩ: {{ doctor_name }}</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="left" style="font-size:0px;padding:10px 25px;padding-right:25px;padding-left:25px;word-break:break-word;">
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;">Điện thoại: {{ doctor_phone }}</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="left" style="font-size:0px;padding:10px 25px;padding-right:25px;padding-left:25px;word-break:break-word;">
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1;text-align:left;color:#555555;">Email: {{ doctor_email }}</div>
                       </td>
                     </tr>
                     <tr>
@@ -137,7 +165,7 @@
                     </tr>
                     <tr>
                       <td align="center" style="font-size:0px;padding:10px 25px;padding-right:25px;padding-left:25px;word-break:break-word;">
-                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:1;text-align:center;color:#555555;">Please arrive 10 minutes before your scheduled time. If you need to reschedule, please contact the clinic.</div>
+                        <div style="font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:1;text-align:center;color:#555555;">Vui lòng đến trước giờ hẹn 10 phút. Nếu cần thay đổi lịch, vui lòng liên hệ phòng khám.</div>
                       </td>
                     </tr>
                   </tbody>

@@ -25,7 +25,7 @@ class EmailData:
 def render_email_template(*, template_name: str, context: dict[str, Any]) -> str:
     template_str = (
         Path(__file__).parent / "email-templates" / "build" / template_name
-    ).read_text()
+    ).read_text(encoding="utf-8")
     html_content = Template(template_str).render(context)
     return html_content
 
@@ -153,6 +153,8 @@ def generate_booking_confirmation_email(
     patient_name: str,
     booking_number: str,
     doctor_name: str,
+    doctor_phone: str | None,
+    doctor_email: str | None,
     appointment_date: str,
     appointment_time: str,
 ) -> EmailData:
@@ -162,7 +164,7 @@ def generate_booking_confirmation_email(
     with FastAPI BackgroundTasks (no ORM objects).
     """
     project_name = settings.PROJECT_NAME
-    subject = f"{project_name} - Appointment Confirmation - {booking_number}"
+    subject = f"{project_name} - Xác nhận đặt lịch khám - {booking_number}"
     html_content = render_email_template(
         template_name="booking_confirmation.html",
         context={
@@ -170,6 +172,8 @@ def generate_booking_confirmation_email(
             "patient_name": patient_name,
             "booking_number": booking_number,
             "doctor_name": doctor_name,
+            "doctor_phone": doctor_phone or "",
+            "doctor_email": doctor_email or "",
             "appointment_date": appointment_date,
             "appointment_time": appointment_time,
         },
@@ -181,6 +185,7 @@ def generate_doctor_notification_email(
     *,
     doctor_name: str,
     patient_name: str,
+    patient_phone: str,
     patient_email: str,
     booking_number: str,
     appointment_date: str,
@@ -192,13 +197,14 @@ def generate_doctor_notification_email(
     with FastAPI BackgroundTasks (no ORM objects).
     """
     project_name = settings.PROJECT_NAME
-    subject = f"{project_name} - New Appointment - {booking_number}"
+    subject = f"{project_name} - Lịch hẹn mới - {booking_number}"
     html_content = render_email_template(
         template_name="doctor_new_appointment.html",
         context={
             "project_name": project_name,
             "doctor_name": doctor_name,
             "patient_name": patient_name,
+            "patient_phone": patient_phone,
             "patient_email": patient_email,
             "booking_number": booking_number,
             "appointment_date": appointment_date,

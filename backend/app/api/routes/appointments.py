@@ -220,12 +220,20 @@ def create_appointment(
     # Schedule emails via BackgroundTasks (async after HTTP response).
     # Booking creation is never rolled back due to email failure.
     if settings.emails_enabled:
+        # Resolve doctor while session is still active.
+        # doctor.user.email and doctor.phone are ORM traversals, but we
+        # extract the string values here and pass only primitives to
+        # BackgroundTasks.
+        doctor = session.get(Doctor, appointment_in.doctor_id)
+
         # --- Patient confirmation email ---
         if appointment.patient_email:
             patient_email_data = generate_booking_confirmation_email(
                 patient_name=appointment.patient_name,
                 booking_number=appointment.booking_number,
                 doctor_name=appointment.doctor_name,
+                doctor_phone=doctor.phone if doctor else None,
+                doctor_email=doctor.user.email if doctor and doctor.user else None,
                 appointment_date=str(appointment.appointment_date),
                 appointment_time=appointment.appointment_time,
             )
@@ -239,14 +247,11 @@ def create_appointment(
             )
 
         # --- Doctor notification email ---
-        # Resolve doctor email while session is still active.
-        # doctor.user.email is an ORM traversal, but we extract the string
-        # value here and pass only primitives to BackgroundTasks.
-        doctor = session.get(Doctor, appointment_in.doctor_id)
         if doctor is not None and doctor.user is not None and doctor.user.email:
             doctor_email_data = generate_doctor_notification_email(
                 doctor_name=appointment.doctor_name,
                 patient_name=appointment.patient_name,
+                patient_phone=appointment.patient_phone,
                 patient_email=appointment.patient_email,
                 booking_number=appointment.booking_number,
                 appointment_date=str(appointment.appointment_date),

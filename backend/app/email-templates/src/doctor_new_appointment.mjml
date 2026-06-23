@@ -2,17 +2,18 @@
   <mj-body background-color="#fafbfc">
     <mj-section background-color="#fff" padding="40px 20px">
       <mj-column vertical-align="middle" width="100%">
-        <mj-text align="center" padding="35px" font-size="20px" font-family="Arial, Helvetica, sans-serif" color="#333">{{ project_name }} - New Appointment Notification</mj-text>
-        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><span>Hello Dr. {{ doctor_name }}</span></mj-text>
-        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555">A new appointment has been booked with you.</mj-text>
+        <mj-text align="center" padding="35px" font-size="20px" font-family="Arial, Helvetica, sans-serif" color="#333">{{ project_name }} - Lịch hẹn mới</mj-text>
+        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><span>Xin chào Bác sĩ {{ doctor_name }}</span></mj-text>
+        <mj-text align="center" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555">Một lịch hẹn mới đã được đặt với bạn.</mj-text>
         <mj-divider border-color="#009688" border-width="2px"></mj-divider>
-        <mj-text align="left" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><strong>Patient Name:</strong> {{ patient_name }}</mj-text>
-        <mj-text align="left" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><strong>Patient Email:</strong> {{ patient_email }}</mj-text>
-        <mj-text align="left" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><strong>Booking Reference:</strong> {{ booking_number }}</mj-text>
-        <mj-text align="left" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><strong>Date:</strong> {{ appointment_date }}</mj-text>
-        <mj-text align="left" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><strong>Time:</strong> {{ appointment_time }}</mj-text>
+        <mj-text align="left" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><strong>Tên bệnh nhân:</strong> {{ patient_name }}</mj-text>
+        <mj-text align="left" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><strong>Số điện thoại:</strong> {{ patient_phone }}</mj-text>
+        <mj-text align="left" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><strong>Email:</strong> {{ patient_email }}</mj-text>
+        <mj-text align="left" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><strong>Mã đặt lịch:</strong> {{ booking_number }}</mj-text>
+        <mj-text align="left" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><strong>Ngày:</strong> {{ appointment_date }}</mj-text>
+        <mj-text align="left" font-size="16px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555"><strong>Giờ:</strong> {{ appointment_time }}</mj-text>
         <mj-divider border-color="#ccc" border-width="2px"></mj-divider>
-        <mj-text align="center" font-size="14px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555">Please check your schedule and prepare for the appointment.</mj-text>
+        <mj-text align="center" font-size="14px" padding-left="25px" padding-right="25px" font-family="Arial, Helvetica, sans-serif" color="#555">Vui lòng kiểm tra lịch làm việc và chuẩn bị cho buổi hẹn.</mj-text>
       </mj-column>
     </mj-section>
   </mj-body>

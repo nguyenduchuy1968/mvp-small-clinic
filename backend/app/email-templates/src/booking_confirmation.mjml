@@ -8,7 +8,7 @@
           font-size="20px"
           font-family="Arial, Helvetica, sans-serif"
           color="#333"
-          >{{ project_name }} - Appointment Confirmation</mj-text
+          >{{ project_name }} - Xác nhận đặt lịch khám</mj-text
         >
         <mj-text
           align="center"
@@ -17,7 +17,7 @@
           padding-right="25px"
           font-family="Arial, Helvetica, sans-serif"
           color="#555"
-          ><span>Hello {{ patient_name }}</span></mj-text
+          ><span>Xin chào {{ patient_name }}</span></mj-text
         >
         <mj-text
           align="center"
@@ -26,7 +26,7 @@
           padding-right="25px"
           font-family="Arial, Helvetica, sans-serif"
           color="#555"
-          >Your appointment has been booked successfully!</mj-text
+          >Lịch khám của bạn đã được đặt thành công!</mj-text
         >
         <mj-divider border-color="#009688" border-width="2px"></mj-divider>
         <mj-text
@@ -36,7 +36,7 @@
           padding-right="25px"
           font-family="Arial, Helvetica, sans-serif"
           color="#555"
-          ><strong>Booking Reference:</strong> {{ booking_number }}</mj-text
+          ><strong>Mã đặt lịch:</strong> {{ booking_number }}</mj-text
         >
         <mj-text
           align="left"
@@ -45,7 +45,7 @@
           padding-right="25px"
           font-family="Arial, Helvetica, sans-serif"
           color="#555"
-          ><strong>Doctor:</strong> {{ doctor_name }}</mj-text
+          ><strong>Bác sĩ:</strong> {{ doctor_name }}</mj-text
         >
         <mj-text
           align="left"
@@ -54,7 +54,7 @@
           padding-right="25px"
           font-family="Arial, Helvetica, sans-serif"
           color="#555"
-          ><strong>Date:</strong> {{ appointment_date }}</mj-text
+          ><strong>Ngày:</strong> {{ appointment_date }}</mj-text
         >
         <mj-text
           align="left"
@@ -63,7 +63,44 @@
           padding-right="25px"
           font-family="Arial, Helvetica, sans-serif"
           color="#555"
-          ><strong>Time:</strong> {{ appointment_time }}</mj-text
+          ><strong>Giờ:</strong> {{ appointment_time }}</mj-text
+        >
+        <mj-divider border-color="#009688" border-width="1px"></mj-divider>
+        <mj-text
+          align="left"
+          font-size="16px"
+          padding-left="25px"
+          padding-right="25px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#555"
+          ><strong>Thông tin bác sĩ:</strong></mj-text
+        >
+        <mj-text
+          align="left"
+          font-size="16px"
+          padding-left="25px"
+          padding-right="25px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#555"
+          >Bác sĩ: {{ doctor_name }}</mj-text
+        >
+        <mj-text
+          align="left"
+          font-size="16px"
+          padding-left="25px"
+          padding-right="25px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#555"
+          >Điện thoại: {{ doctor_phone }}</mj-text
+        >
+        <mj-text
+          align="left"
+          font-size="16px"
+          padding-left="25px"
+          padding-right="25px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#555"
+          >Email: {{ doctor_email }}</mj-text
         >
         <mj-divider border-color="#ccc" border-width="2px"></mj-divider>
         <mj-text
@@ -73,8 +110,7 @@
           padding-right="25px"
           font-family="Arial, Helvetica, sans-serif"
           color="#555"
-          >Please arrive 10 minutes before your scheduled time. If you need to
-          reschedule, please contact the clinic.</mj-text
+          >Vui lòng đến trước giờ hẹn 10 phút. Nếu cần thay đổi lịch, vui lòng liên hệ phòng khám.</mj-text
         >
       </mj-column>
     </mj-section>

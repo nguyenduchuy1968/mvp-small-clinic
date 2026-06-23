@@ -9,6 +9,13 @@
     "logout": "Đăng xuất",
     "language": "Ngôn ngữ"
   },
+  "appearance": {
+    "title": "Giao diện",
+    "light": "Sáng",
+    "dark": "Tối",
+    "system": "Theo hệ thống",
+    "toggle": "Chuyển đổi giao diện"
+  },
   "actions": {
     "create": "Thêm mới",
     "edit": "Chỉnh sửa",
@@ -98,6 +105,7 @@
   "users": {
     "fullName": "Họ và tên",
     "email": "Email",
+    "phone": "Số điện thoại",
     "role": "Vai trò",
     "status": "Trạng thái",
     "deleteAccount": "Xóa tài khoản",
@@ -138,8 +146,5 @@
     "show": "Hiện mật khẩu",
     "hide": "Ẩn mật khẩu"
   },
-  "userSettings": "Cài đặt người dùng",
-  "footer": {
-    "copyright": "Full Stack FastAPI Template"
-  }
+  "userSettings": "Cài đặt người dùng"
 }

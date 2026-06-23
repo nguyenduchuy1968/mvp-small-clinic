@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 import { SidebarAppearance } from '@/components/Common/Appearance';
 import { Logo } from '@/components/Common/Logo';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import {
   Sidebar,
@@ -23,6 +24,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import useAuth from '@/hooks/useAuth';
+import { getInitials } from '@/utils';
 import { type Item, Main } from './Main';
 
 function AppSidebar() {
@@ -67,6 +69,26 @@ function AppSidebar() {
       <SidebarHeader className="px-4 py-6 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
         <Logo variant="responsive" />
       </SidebarHeader>
+
+      {/* Identity Block — visible for all authenticated users (doctors & admins) */}
+      {currentUser && (
+        <div className="flex flex-col items-center gap-2 px-4 pb-4 group-data-[collapsible=icon]:hidden">
+          <Avatar className="size-12">
+            <AvatarFallback className="bg-zinc-600 text-white text-base">
+              {getInitials(currentUser.full_name || (currentUser.is_superuser ? 'Admin' : 'Dr.'))}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col items-center text-center min-w-0">
+            <p className="text-sm font-semibold truncate w-full">
+              {currentUser.full_name}
+            </p>
+            <p className="text-xs text-muted-foreground truncate w-full">
+              {currentUser.email}
+            </p>
+          </div>
+        </div>
+      )}
+
       <SidebarContent>
         <Main items={items} />
 

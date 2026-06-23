@@ -577,6 +577,7 @@ def _validate_appointment_date(
                 f"Current time is {now_local.hour:02d}:{now_local.minute:02d}."
             )
 
+
 def _validate_availability_window(
     *,
     session: Session,
@@ -771,6 +772,7 @@ def _validate_status_transition(
             f"{', '.join(s.value for s in allowed) if allowed else 'none'}"
         )
 
+
 def _generate_booking_number(session: Session) -> str:
     """Generate a unique booking reference number using a DB sequence.
 
@@ -804,7 +806,6 @@ def _appointment_to_public(appointment: Appointment) -> AppointmentPublic:
         updated_at=appointment.updated_at,
         doctor_name=doctor_name,
     )
-
 
 
 def create_appointment(
@@ -943,7 +944,7 @@ def get_appointments(
         count_statement = count_statement.where(Appointment.status == status)
     count = len(session.exec(count_statement).all())
 
-    # Build data query with deterministic ordering
+    # Build data query with deterministic ordering — newest first
     statement = select(Appointment)
     if doctor_id is not None:
         statement = statement.where(Appointment.doctor_id == doctor_id)
@@ -952,12 +953,7 @@ def get_appointments(
     if status is not None:
         statement = statement.where(Appointment.status == status)
     statement = (
-        statement.order_by(
-            Appointment.appointment_date.asc(),
-            Appointment.appointment_time.asc(),
-        )
-        .offset(skip)
-        .limit(limit)
+        statement.order_by(Appointment.created_at.desc()).offset(skip).limit(limit)
     )
 
     records = session.exec(statement).all()

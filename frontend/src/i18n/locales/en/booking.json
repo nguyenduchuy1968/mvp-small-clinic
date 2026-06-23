@@ -39,7 +39,8 @@
     "date": "Date:",
     "time": "Time:",
     "attentionTitle": "⚠ Attention",
-    "attentionMessage": "Please save your booking number. You may need it when contacting the clinic.",
+    "attentionMessage": "A confirmation email has been sent to:",
+    "attentionMessageEmail": "Please check your inbox\nand save your booking number.\n\nYou may need this number when contacting the clinic.",
     "newBooking": "Book Another Appointment"
   },
   "errors": {

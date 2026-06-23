@@ -95,7 +95,13 @@ export function BookingConfirmation({ appointment }: BookingConfirmationProps) {
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>{t('confirmation.attentionTitle')}</AlertTitle>
         <AlertDescription>
-          {t('confirmation.attentionMessage')}
+          <p>{t('confirmation.attentionMessage')}</p>
+          <p className="font-medium text-foreground mt-1">
+            {appointment.patient_email}
+          </p>
+          <p className="whitespace-pre-line mt-1">
+            {t('confirmation.attentionMessageEmail')}
+          </p>
         </AlertDescription>
       </Alert>
 

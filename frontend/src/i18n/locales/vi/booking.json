@@ -39,7 +39,8 @@
     "date": "Ngày:",
     "time": "Giờ:",
     "attentionTitle": "⚠ Chú ý",
-    "attentionMessage": "Vui lòng lưu mã đặt lịch. Bạn có thể cần nó khi liên hệ với phòng khám.",
+    "attentionMessage": "Email xác nhận đã được gửi tới:",
+    "attentionMessageEmail": "Xin vui lòng kiểm tra hộp thư\nvà lưu mã đặt lịch.\n\nBạn có thể cần mã này khi liên hệ với phòng khám.",
     "newBooking": "Đặt lịch hẹn khác"
   },
   "errors": {

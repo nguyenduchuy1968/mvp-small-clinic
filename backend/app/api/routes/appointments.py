@@ -10,6 +10,7 @@ from typing import Any
 
 from app import crud
 from app.api.deps import CurrentUser, SessionDep
+from app.core.config import settings
 from app.models import (
     Appointment,
     AppointmentCreate,
@@ -24,7 +25,12 @@ from app.models import (
     UserRole,
 )
 from app.slot_generator import generate_available_slots
-from fastapi import APIRouter, HTTPException, Query, status
+from app.utils import (
+    generate_booking_confirmation_email,
+    generate_doctor_notification_email,
+    send_email_safe,
+)
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Query, status
 
 router = APIRouter(tags=["appointments"])
 
@@ -185,6 +191,7 @@ def get_available_slots(
 def create_appointment(
     session: SessionDep,
     appointment_in: AppointmentCreate,
+    background_tasks: BackgroundTasks,
 ) -> Any:
     """
     Create a new appointment booking.
@@ -209,6 +216,50 @@ def create_appointment(
         )
     except ValueError as exc:
         _handle_crud_error(exc)
+
+    # Schedule emails via BackgroundTasks (async after HTTP response).
+    # Booking creation is never rolled back due to email failure.
+    if settings.emails_enabled:
+        # --- Patient confirmation email ---
+        if appointment.patient_email:
+            patient_email_data = generate_booking_confirmation_email(
+                patient_name=appointment.patient_name,
+                booking_number=appointment.booking_number,
+                doctor_name=appointment.doctor_name,
+                appointment_date=str(appointment.appointment_date),
+                appointment_time=appointment.appointment_time,
+            )
+            background_tasks.add_task(
+                send_email_safe,
+                email_type="booking_confirmation",
+                appointment_id=str(appointment.id),
+                email_to=appointment.patient_email,
+                subject=patient_email_data.subject,
+                html_content=patient_email_data.html_content,
+            )
+
+        # --- Doctor notification email ---
+        # Resolve doctor email while session is still active.
+        # doctor.user.email is an ORM traversal, but we extract the string
+        # value here and pass only primitives to BackgroundTasks.
+        doctor = session.get(Doctor, appointment_in.doctor_id)
+        if doctor is not None and doctor.user is not None and doctor.user.email:
+            doctor_email_data = generate_doctor_notification_email(
+                doctor_name=appointment.doctor_name,
+                patient_name=appointment.patient_name,
+                patient_email=appointment.patient_email,
+                booking_number=appointment.booking_number,
+                appointment_date=str(appointment.appointment_date),
+                appointment_time=appointment.appointment_time,
+            )
+            background_tasks.add_task(
+                send_email_safe,
+                email_type="doctor_notification",
+                appointment_id=str(appointment.id),
+                email_to=doctor.user.email,
+                subject=doctor_email_data.subject,
+                html_content=doctor_email_data.html_content,
+            )
 
     return appointment
 

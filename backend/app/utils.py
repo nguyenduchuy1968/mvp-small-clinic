@@ -55,6 +55,54 @@ def send_email(
     logger.info(f"send email result: {response}")
 
 
+def send_email_safe(
+    *,
+    email_type: str,
+    appointment_id: str,
+    email_to: str,
+    subject: str,
+    html_content: str,
+) -> None:
+    """
+    Safe email sender that never raises exceptions to the caller.
+
+    Wraps send_email() in try/except and logs all failures with structured
+    fields for debugging. Designed for use with FastAPI BackgroundTasks
+    where email failure must not affect the primary operation.
+
+    Logging fields:
+    - email_type:     Type of email (e.g., "booking_confirmation", "doctor_notification")
+    - appointment_id: The appointment UUID as string
+    - email_to:       Recipient email address
+    - error_message:  Exception message if sending fails
+    """
+    try:
+        send_email(
+            email_to=email_to,
+            subject=subject,
+            html_content=html_content,
+        )
+        logger.info(
+            "Email sent successfully",
+            extra={
+                "email_type": email_type,
+                "appointment_id": appointment_id,
+                "email_to": email_to,
+            },
+        )
+    except Exception as exc:
+        logger.error(
+            "Email sending failed",
+            extra={
+                "email_type": email_type,
+                "appointment_id": appointment_id,
+                "email_to": email_to,
+                "error_message": str(exc),
+            },
+            exc_info=True,
+        )
+
+
 def generate_test_email(email_to: str) -> EmailData:
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Test email"
@@ -95,6 +143,66 @@ def generate_new_account_email(
             "password": password,
             "email": email_to,
             "link": settings.FRONTEND_HOST,
+        },
+    )
+    return EmailData(html_content=html_content, subject=subject)
+
+
+def generate_booking_confirmation_email(
+    *,
+    patient_name: str,
+    booking_number: str,
+    doctor_name: str,
+    appointment_date: str,
+    appointment_time: str,
+) -> EmailData:
+    """
+    Generate a booking confirmation email for the patient.
+    All parameters are primitive types (strings) to ensure safe usage
+    with FastAPI BackgroundTasks (no ORM objects).
+    """
+    project_name = settings.PROJECT_NAME
+    subject = f"{project_name} - Appointment Confirmation - {booking_number}"
+    html_content = render_email_template(
+        template_name="booking_confirmation.html",
+        context={
+            "project_name": project_name,
+            "patient_name": patient_name,
+            "booking_number": booking_number,
+            "doctor_name": doctor_name,
+            "appointment_date": appointment_date,
+            "appointment_time": appointment_time,
+        },
+    )
+    return EmailData(html_content=html_content, subject=subject)
+
+
+def generate_doctor_notification_email(
+    *,
+    doctor_name: str,
+    patient_name: str,
+    patient_email: str,
+    booking_number: str,
+    appointment_date: str,
+    appointment_time: str,
+) -> EmailData:
+    """
+    Generate a new appointment notification email for the doctor.
+    All parameters are primitive types (strings) to ensure safe usage
+    with FastAPI BackgroundTasks (no ORM objects).
+    """
+    project_name = settings.PROJECT_NAME
+    subject = f"{project_name} - New Appointment - {booking_number}"
+    html_content = render_email_template(
+        template_name="doctor_new_appointment.html",
+        context={
+            "project_name": project_name,
+            "doctor_name": doctor_name,
+            "patient_name": patient_name,
+            "patient_email": patient_email,
+            "booking_number": booking_number,
+            "appointment_date": appointment_date,
+            "appointment_time": appointment_time,
         },
     )
     return EmailData(html_content=html_content, subject=subject)

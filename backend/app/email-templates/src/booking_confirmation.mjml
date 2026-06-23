@@ -1,0 +1,82 @@
+<mjml>
+  <mj-body background-color="#fafbfc">
+    <mj-section background-color="#fff" padding="40px 20px">
+      <mj-column vertical-align="middle" width="100%">
+        <mj-text
+          align="center"
+          padding="35px"
+          font-size="20px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#333"
+          >{{ project_name }} - Appointment Confirmation</mj-text
+        >
+        <mj-text
+          align="center"
+          font-size="16px"
+          padding-left="25px"
+          padding-right="25px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#555"
+          ><span>Hello {{ patient_name }}</span></mj-text
+        >
+        <mj-text
+          align="center"
+          font-size="16px"
+          padding-left="25px"
+          padding-right="25px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#555"
+          >Your appointment has been booked successfully!</mj-text
+        >
+        <mj-divider border-color="#009688" border-width="2px"></mj-divider>
+        <mj-text
+          align="left"
+          font-size="16px"
+          padding-left="25px"
+          padding-right="25px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#555"
+          ><strong>Booking Reference:</strong> {{ booking_number }}</mj-text
+        >
+        <mj-text
+          align="left"
+          font-size="16px"
+          padding-left="25px"
+          padding-right="25px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#555"
+          ><strong>Doctor:</strong> {{ doctor_name }}</mj-text
+        >
+        <mj-text
+          align="left"
+          font-size="16px"
+          padding-left="25px"
+          padding-right="25px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#555"
+          ><strong>Date:</strong> {{ appointment_date }}</mj-text
+        >
+        <mj-text
+          align="left"
+          font-size="16px"
+          padding-left="25px"
+          padding-right="25px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#555"
+          ><strong>Time:</strong> {{ appointment_time }}</mj-text
+        >
+        <mj-divider border-color="#ccc" border-width="2px"></mj-divider>
+        <mj-text
+          align="center"
+          font-size="14px"
+          padding-left="25px"
+          padding-right="25px"
+          font-family="Arial, Helvetica, sans-serif"
+          color="#555"
+          >Please arrive 10 minutes before your scheduled time. If you need to
+          reschedule, please contact the clinic.</mj-text
+        >
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

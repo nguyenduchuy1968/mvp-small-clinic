@@ -122,12 +122,14 @@ function AvailabilityPage() {
   )
 }
 
+import i18next from "@/i18n"
+
 export const Route = createFileRoute("/_layout/availability")({
   component: RouteComponent,
   head: () => ({
     meta: [
       {
-        title: "Schedule",
+        title: i18next.t("availability:title"),
       },
     ],
   }),

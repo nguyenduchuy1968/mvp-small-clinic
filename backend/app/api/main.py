@@ -8,13 +8,14 @@
 # password: Admin123456
 
 
-from app.api.routes import appointments, availability, doctors, login, private, users, utils
+from app.api.routes import appointments, availability, blocked_dates, doctors, login, private, users, utils
 from app.core.config import settings
 from fastapi import APIRouter
 
 api_router = APIRouter()
 api_router.include_router(appointments.router)
 api_router.include_router(availability.router)
+api_router.include_router(blocked_dates.router)
 api_router.include_router(doctors.router)
 api_router.include_router(login.router)
 api_router.include_router(users.router)

@@ -15,6 +15,8 @@
     "notes": "Ghi chú",
     "nameRequired": "Vui lòng nhập họ tên bệnh nhân",
     "phoneRequired": "Vui lòng nhập số điện thoại",
+    "phoneInvalid": "Vui lòng nhập số điện thoại hợp lệ (ví dụ: +84 123 456 789 hoặc 0123 456 789)",
+    "emailInvalid": "Vui lòng nhập email hợp lệ",
     "contactMethods": {
       "phone": "Điện thoại",
       "email": "Email",
@@ -32,8 +34,8 @@
   "confirmation": {
     "title": "Đã xác nhận lịch hẹn",
     "successMessage": "Đặt lịch hẹn thành công!",
-    "message": "Lịch hẹn của bạn với bác sĩ {doctorName} đã được xác nhận vào ngày {date} lúc {time}.",
-    "bookingId": "Mã đặt lịch: {id}",
+    "message": "Lịch hẹn của bạn với bác sĩ {{doctorName}} đã được xác nhận vào ngày {{date}} lúc {{time}}.",
+    "bookingId": "Mã đặt lịch: {{id}}",
     "bookingReference": "Mã tham chiếu",
     "doctor": "Bác sĩ:",
     "date": "Ngày:",
@@ -41,7 +43,9 @@
     "attentionTitle": "⚠ Chú ý",
     "attentionMessage": "Email xác nhận đã được gửi tới:",
     "attentionMessageEmail": "Xin vui lòng kiểm tra hộp thư\nvà lưu mã đặt lịch.\n\nBạn có thể cần mã này khi liên hệ với phòng khám.",
-    "newBooking": "Đặt lịch hẹn khác"
+    "newBooking": "Đặt lịch hẹn khác",
+    "copyTooltip": "Sao chép mã đặt lịch",
+    "copySuccess": "Đã sao chép mã đặt lịch!"
   },
   "errors": {
     "slotAlreadyBooked": "Khung giờ này vừa được đặt. Vui lòng chọn thời gian khác.",
@@ -70,9 +74,11 @@
   },
   "noDoctors": "Không có bác sĩ nào",
   "navigation": {
-    "back": "Quay lại",
+    "back": "← Quay lại",
     "next": "Tiếp theo",
-    "confirm": "Xác nhận"
+    "confirm": "Xác nhận",
+    "previousDay": "◀ Ngày trước",
+    "nextDay": "Ngày sau ▶"
   },
   "datePicker": {
     "today": "Hôm nay",

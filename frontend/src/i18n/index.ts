@@ -5,6 +5,7 @@ import { initReactI18next } from 'react-i18next';
 import appointmentsVi from './locales/vi/appointments.json';
 import authVi from './locales/vi/auth.json';
 import availabilityVi from './locales/vi/availability.json';
+import blockedDatesVi from './locales/vi/blockedDates.json';
 import bookingVi from './locales/vi/booking.json';
 import commonVi from './locales/vi/common.json';
 import dashboardVi from './locales/vi/dashboard.json';
@@ -13,6 +14,7 @@ import doctorsVi from './locales/vi/doctors.json';
 import appointmentsEn from './locales/en/appointments.json';
 import authEn from './locales/en/auth.json';
 import availabilityEn from './locales/en/availability.json';
+import blockedDatesEn from './locales/en/blockedDates.json';
 import bookingEn from './locales/en/booking.json';
 import commonEn from './locales/en/common.json';
 import dashboardEn from './locales/en/dashboard.json';
@@ -21,6 +23,7 @@ import doctorsEn from './locales/en/doctors.json';
 import appointmentsUk from './locales/uk/appointments.json';
 import authUk from './locales/uk/auth.json';
 import availabilityUk from './locales/uk/availability.json';
+import blockedDatesUk from './locales/uk/blockedDates.json';
 import bookingUk from './locales/uk/booking.json';
 import commonUk from './locales/uk/common.json';
 import dashboardUk from './locales/uk/dashboard.json';
@@ -33,6 +36,7 @@ const resources = {
     dashboard: dashboardVi,
     doctors: doctorsVi,
     availability: availabilityVi,
+    blockedDates: blockedDatesVi,
     appointments: appointmentsVi,
     booking: bookingVi,
   },
@@ -42,6 +46,7 @@ const resources = {
     dashboard: dashboardEn,
     doctors: doctorsEn,
     availability: availabilityEn,
+    blockedDates: blockedDatesEn,
     appointments: appointmentsEn,
     booking: bookingEn,
   },
@@ -51,6 +56,7 @@ const resources = {
     dashboard: dashboardUk,
     doctors: doctorsUk,
     availability: availabilityUk,
+    blockedDates: blockedDatesUk,
     appointments: appointmentsUk,
     booking: bookingUk,
   },
@@ -70,6 +76,7 @@ void i18next
       'dashboard',
       'doctors',
       'availability',
+      'blockedDates',
       'appointments',
       'booking',
     ],

@@ -3,6 +3,7 @@
   "list": {
     "title": "Appointment List",
     "empty": "No appointments yet",
+    "searchPlaceholder": "Search by Booking Ref, Patient Name, or Phone...",
     "columns": {
       "id": "ID",
       "bookingRef": "Booking Ref",

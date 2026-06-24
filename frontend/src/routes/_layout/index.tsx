@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
+import i18next from '@/i18n';
 import useAuth from '@/hooks/useAuth';
 
 export const Route = createFileRoute('/_layout/')({
@@ -8,7 +9,7 @@ export const Route = createFileRoute('/_layout/')({
   head: () => ({
     meta: [
       {
-        title: 'Dashboard',
+        title: i18next.t('dashboard:title'),
       },
     ],
   }),
@@ -25,7 +26,7 @@ function Dashboard() {
           {t('welcome')}, {currentUser?.full_name || currentUser?.email} 👋
         </h1>
         <p className="text-muted-foreground">
-          {t('welcome')}, {t('welcomeBack')}
+          {t('welcomeBack')}
         </p>
       </div>
     </div>

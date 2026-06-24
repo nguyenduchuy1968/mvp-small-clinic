@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
@@ -19,6 +18,7 @@ import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as BookingConfirmationRouteImport } from './routes/booking/confirmation'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutDoctorsRouteImport } from './routes/_layout/doctors'
+import { Route as LayoutBlockedDatesRouteImport } from './routes/_layout/blocked-dates'
 import { Route as LayoutAvailabilityRouteImport } from './routes/_layout/availability'
 import { Route as LayoutAppointmentsRouteImport } from './routes/_layout/appointments'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
@@ -30,11 +30,6 @@ import { Route as LayoutAppointmentsIdRouteImport } from './routes/_layout/appoi
 import { Route as LayoutDoctorsIdEditRouteImport } from './routes/_layout/doctors.$id.edit'
 import { Route as LayoutAvailabilityIdEditRouteImport } from './routes/_layout/availability.$id.edit'
 
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -77,6 +72,11 @@ const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
 const LayoutDoctorsRoute = LayoutDoctorsRouteImport.update({
   id: '/doctors',
   path: '/doctors',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutBlockedDatesRoute = LayoutBlockedDatesRouteImport.update({
+  id: '/blocked-dates',
+  path: '/blocked-dates',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutAvailabilityRoute = LayoutAvailabilityRouteImport.update({
@@ -137,10 +137,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
   '/appointments': typeof LayoutAppointmentsRouteWithChildren
   '/availability': typeof LayoutAvailabilityRouteWithChildren
+  '/blocked-dates': typeof LayoutBlockedDatesRoute
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/booking/confirmation': typeof BookingConfirmationRoute
@@ -157,9 +157,9 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
   '/availability': typeof LayoutAvailabilityRouteWithChildren
+  '/blocked-dates': typeof LayoutBlockedDatesRoute
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/booking/confirmation': typeof BookingConfirmationRoute
@@ -179,10 +179,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/appointments': typeof LayoutAppointmentsRouteWithChildren
   '/_layout/availability': typeof LayoutAvailabilityRouteWithChildren
+  '/_layout/blocked-dates': typeof LayoutBlockedDatesRoute
   '/_layout/doctors': typeof LayoutDoctorsRouteWithChildren
   '/_layout/settings': typeof LayoutSettingsRoute
   '/booking/confirmation': typeof BookingConfirmationRoute
@@ -203,10 +203,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/recover-password'
     | '/reset-password'
-    | '/signup'
     | '/admin'
     | '/appointments'
     | '/availability'
+    | '/blocked-dates'
     | '/doctors'
     | '/settings'
     | '/booking/confirmation'
@@ -223,9 +223,9 @@ export interface FileRouteTypes {
     | '/login'
     | '/recover-password'
     | '/reset-password'
-    | '/signup'
     | '/admin'
     | '/availability'
+    | '/blocked-dates'
     | '/doctors'
     | '/settings'
     | '/booking/confirmation'
@@ -244,10 +244,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/recover-password'
     | '/reset-password'
-    | '/signup'
     | '/_layout/admin'
     | '/_layout/appointments'
     | '/_layout/availability'
+    | '/_layout/blocked-dates'
     | '/_layout/doctors'
     | '/_layout/settings'
     | '/booking/confirmation'
@@ -267,18 +267,10 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RecoverPasswordRoute: typeof RecoverPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
-  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -340,6 +332,13 @@ declare module '@tanstack/react-router' {
       path: '/doctors'
       fullPath: '/doctors'
       preLoaderRoute: typeof LayoutDoctorsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/blocked-dates': {
+      id: '/_layout/blocked-dates'
+      path: '/blocked-dates'
+      fullPath: '/blocked-dates'
+      preLoaderRoute: typeof LayoutBlockedDatesRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/availability': {
@@ -471,6 +470,7 @@ interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
   LayoutAppointmentsRoute: typeof LayoutAppointmentsRouteWithChildren
   LayoutAvailabilityRoute: typeof LayoutAvailabilityRouteWithChildren
+  LayoutBlockedDatesRoute: typeof LayoutBlockedDatesRoute
   LayoutDoctorsRoute: typeof LayoutDoctorsRouteWithChildren
   LayoutSettingsRoute: typeof LayoutSettingsRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
@@ -480,6 +480,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
   LayoutAppointmentsRoute: LayoutAppointmentsRouteWithChildren,
   LayoutAvailabilityRoute: LayoutAvailabilityRouteWithChildren,
+  LayoutBlockedDatesRoute: LayoutBlockedDatesRoute,
   LayoutDoctorsRoute: LayoutDoctorsRouteWithChildren,
   LayoutSettingsRoute: LayoutSettingsRoute,
   LayoutIndexRoute: LayoutIndexRoute,
@@ -505,7 +506,6 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RecoverPasswordRoute: RecoverPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,
-  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

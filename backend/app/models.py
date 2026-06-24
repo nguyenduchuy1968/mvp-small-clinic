@@ -136,6 +136,10 @@ class Doctor(DoctorBase, table=True):
         back_populates="doctor",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"},
     )
+    blocked_dates: list["BlockedDate"] = Relationship(
+        back_populates="doctor",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
+    )
 
 
 class Weekday(str, enum.Enum):
@@ -322,8 +326,66 @@ class AppointmentPublic(AppointmentBase):
     doctor_name: str | None = None
 
 
+class AppointmentPublicConfirmation(SQLModel):
+    """Minimal appointment response for the unauthenticated public endpoint.
+
+    Only exposes fields required by the booking confirmation page.
+    Does NOT expose PII fields like patient_phone, patient_name, or notes.
+    """
+    id: uuid.UUID
+    doctor_name: str | None = None
+    appointment_date: date
+    appointment_time: str
+    booking_number: str | None = None
+    patient_email: str | None = None
+    status: AppointmentStatus
+
+
 class AppointmentsPublic(SQLModel):
     data: list[AppointmentPublic]
+    count: int
+
+
+# Blocked Date model
+class BlockedDateBase(SQLModel):
+    blocked_date: date
+    reason: str | None = Field(default=None, max_length=500)
+
+
+class BlockedDateCreate(SQLModel):
+    dates: list[date]
+    reason: str | None = Field(default=None, max_length=500)
+
+
+class BlockedDate(BlockedDateBase, table=True):
+    __tablename__ = "blocked_dates"  # type: ignore[assignment]
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    doctor_id: uuid.UUID = Field(
+        foreign_key="doctor.id", nullable=False, ondelete="CASCADE",
+        index=True,
+    )
+    created_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    doctor: Optional["Doctor"] = Relationship(back_populates="blocked_dates")
+
+    __table_args__ = (
+        sa.UniqueConstraint(
+            "doctor_id", "blocked_date",
+            name="uq_blocked_date_per_doctor",
+        ),
+    )
+
+
+class BlockedDatePublic(BlockedDateBase):
+    id: uuid.UUID
+    doctor_id: uuid.UUID
+    created_at: datetime | None = None
+
+
+class BlockedDatesPublic(SQLModel):
+    data: list[BlockedDatePublic]
     count: int
 
 

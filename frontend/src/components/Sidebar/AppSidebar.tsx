@@ -1,5 +1,6 @@
 import { Link as RouterLink } from '@tanstack/react-router';
 import {
+  Ban,
   CalendarCheck,
   CalendarClock,
   Home,
@@ -44,6 +45,11 @@ function AppSidebar() {
       icon: CalendarClock,
       title: t('nav.availability'),
       path: '/availability',
+    },
+    {
+      icon: Ban,
+      title: t('nav.blockedDates'),
+      path: '/blocked-dates',
     },
   ];
 

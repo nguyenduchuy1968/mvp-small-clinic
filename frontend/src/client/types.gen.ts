@@ -28,6 +28,22 @@ export type AppointmentPublic = {
     doctor_name?: (string | null);
 };
 
+/**
+ * Minimal appointment response for the unauthenticated public endpoint.
+ *
+ * Only exposes fields required by the booking confirmation page.
+ * Does NOT expose PII fields like patient_phone, patient_name, or notes.
+ */
+export type AppointmentPublicConfirmation = {
+    id: string;
+    doctor_name?: (string | null);
+    appointment_date: string;
+    appointment_time: string;
+    booking_number?: (string | null);
+    patient_email?: (string | null);
+    status: AppointmentStatus;
+};
+
 export type AppointmentsPublic = {
     data: Array<AppointmentPublic>;
     count: number;
@@ -55,6 +71,24 @@ export type AvailableSlotsResponse = {
     slots: Array<AvailableSlot>;
     count: number;
     reason?: (string | null);
+};
+
+export type BlockedDateCreate = {
+    dates: Array<(string)>;
+    reason?: (string | null);
+};
+
+export type BlockedDatePublic = {
+    blocked_date: string;
+    reason?: (string | null);
+    id: string;
+    doctor_id: string;
+    created_at?: (string | null);
+};
+
+export type BlockedDatesPublic = {
+    data: Array<BlockedDatePublic>;
+    count: number;
 };
 
 export type Body_login_login_access_token = {
@@ -245,6 +279,12 @@ export type AppointmentsGetAvailableSlotsData = {
 
 export type AppointmentsGetAvailableSlotsResponse = (AvailableSlotsResponse);
 
+export type AppointmentsReadAppointmentPublicData = {
+    appointmentId: string;
+};
+
+export type AppointmentsReadAppointmentPublicResponse = (AppointmentPublicConfirmation);
+
 export type AppointmentsCreateAppointmentData = {
     requestBody: AppointmentCreate;
 };
@@ -323,6 +363,28 @@ export type AvailabilityDeleteDoctorAvailabilityData = {
 };
 
 export type AvailabilityDeleteDoctorAvailabilityResponse = (Message);
+
+export type BlockedDatesReadBlockedDatesData = {
+    doctorId: string;
+    limit?: number;
+    skip?: number;
+};
+
+export type BlockedDatesReadBlockedDatesResponse = (BlockedDatesPublic);
+
+export type BlockedDatesCreateBlockedDatesData = {
+    doctorId: string;
+    requestBody: BlockedDateCreate;
+};
+
+export type BlockedDatesCreateBlockedDatesResponse = (BlockedDatesPublic);
+
+export type BlockedDatesDeleteBlockedDateData = {
+    blockedDateId: string;
+    doctorId: string;
+};
+
+export type BlockedDatesDeleteBlockedDateResponse = (Message);
 
 export type DoctorsReadDoctorsData = {
     limit?: number;

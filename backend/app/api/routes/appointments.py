@@ -15,6 +15,7 @@ from app.models import (
     Appointment,
     AppointmentCreate,
     AppointmentPublic,
+    AppointmentPublicConfirmation,
     AppointmentsPublic,
     AppointmentStatus,
     AppointmentStatusUpdate,
@@ -172,6 +173,41 @@ def get_available_slots(
         doctor_id=doctor_id,
         target_date=date,
     )
+
+
+@router.get(
+    "/public/appointments/{appointment_id}",
+    response_model=AppointmentPublicConfirmation,
+    summary="Get Appointment by ID (Public)",
+    description=(
+        "Retrieve a specific appointment by its ID. "
+        "This endpoint is public and does not require authentication. "
+        "Used by the booking confirmation page so that patients can view "
+        "their appointment details without logging in. "
+        "Only returns basic appointment information (no sensitive data)."
+    ),
+)
+def read_appointment_public(
+    appointment_id: uuid.UUID,
+    session: SessionDep,
+) -> Any:
+    """
+    Get a single appointment by ID (public, no auth required).
+
+    Parameters:
+    - **appointment_id**: UUID of the appointment
+
+    Returns:
+    - Minimal appointment data (no PII beyond patient_email).
+
+    Errors:
+    - **404**: Appointment not found
+    """
+    db_appointment = _get_appointment_or_404(
+        session=session, appointment_id=appointment_id
+    )
+
+    return crud._appointment_to_public_confirmation(db_appointment)
 
 
 @router.post(

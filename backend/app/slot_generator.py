@@ -24,6 +24,7 @@ from app.models import (
     AppointmentStatus,
     AvailableSlot,
     AvailableSlotsResponse,
+    BlockedDate,
     DoctorAvailability,
     Weekday,
 )
@@ -105,6 +106,21 @@ def generate_available_slots(
         "sunday": Weekday.SUNDAY,
     }
     weekday = weekday_map.get(weekday_name)
+
+    # 1.5 Check if the date is blocked for this doctor
+    blocked_statement = select(BlockedDate).where(
+        BlockedDate.doctor_id == doctor_id,
+        BlockedDate.blocked_date == target_date,
+    )
+    blocked = session.exec(blocked_statement).first()
+    if blocked is not None:
+        return AvailableSlotsResponse(
+            doctor_id=doctor_id,
+            date=target_date,
+            slots=[],
+            count=0,
+            reason="doctor_unavailable",
+        )
 
     # 2. Load active availability intervals
     statement = select(DoctorAvailability).where(

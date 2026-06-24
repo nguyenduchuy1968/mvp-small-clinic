@@ -133,13 +133,6 @@ function Login() {
               {t('login.submit')}
             </LoadingButton>
           </div>
-
-          <div className="text-center text-sm">
-            {t('login.noAccount')}{' '}
-            <RouterLink to="/signup" className="underline underline-offset-4">
-              {t('login.signUp')}
-            </RouterLink>
-          </div>
         </form>
       </Form>
     </AuthLayout>

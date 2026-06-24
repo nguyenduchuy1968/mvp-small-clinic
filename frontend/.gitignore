@@ -28,3 +28,7 @@ openapi.json
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+*.bat
+frontend/audit-screenshots/
+frontend/scripts/

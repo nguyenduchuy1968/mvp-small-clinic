@@ -23,6 +23,7 @@ from app.models import (
     AppointmentStatusUpdate,
     AvailableSlot,
     AvailableSlotsResponse,
+    BlockedDateCreate,
     ContactMethod,
     Doctor,
     DoctorAvailability,
@@ -853,3 +854,82 @@ class TestSingleSourceOfTruth:
                 appointment_time="09:05",  # Not slot-aligned
             )
             crud.create_appointment(session=db, appointment_in=appointment_in)
+
+
+# ---------------------------------------------------------------------------
+# Blocked Dates
+# ---------------------------------------------------------------------------
+
+
+class TestSlotGeneratorWithBlockedDates:
+    def test_blocked_date_returns_empty_with_reason(self, db: Session) -> None:
+        """A blocked date should return no slots with reason='doctor_unavailable'."""
+        _, doctor = _create_doctor_user(db)
+        _create_availability(
+            db,
+            doctor.id,
+            weekday=Weekday.MONDAY,
+            start_time="09:00",
+            end_time="12:00",
+            duration_minutes=30,
+        )
+        target_date = _get_future_monday()
+
+        # Block the date
+        blocked_in = BlockedDateCreate(dates=[target_date], reason="Vacation")
+        crud.create_blocked_dates(
+            session=db,
+            doctor_id=doctor.id,
+            blocked_dates_in=blocked_in,
+        )
+
+        # Generate slots — should be empty with reason
+        result = slot_generator.generate_available_slots(
+            session=db,
+            doctor_id=doctor.id,
+            target_date=target_date,
+        )
+
+        assert result.count == 0
+        assert len(result.slots) == 0
+        assert result.reason == "doctor_unavailable"
+
+    def test_blocked_date_other_doctor_unaffected(self, db: Session) -> None:
+        """Blocking a date for one doctor should not affect another doctor's slots."""
+        _, doctor1 = _create_doctor_user(db)
+        _, doctor2 = _create_doctor_user(db)
+        _create_availability(
+            db,
+            doctor1.id,
+            weekday=Weekday.MONDAY,
+            start_time="09:00",
+            end_time="12:00",
+            duration_minutes=30,
+        )
+        _create_availability(
+            db,
+            doctor2.id,
+            weekday=Weekday.MONDAY,
+            start_time="09:00",
+            end_time="12:00",
+            duration_minutes=30,
+        )
+        target_date = _get_future_monday()
+
+        # Block date for doctor1 only
+        blocked_in = BlockedDateCreate(dates=[target_date], reason="Vacation")
+        crud.create_blocked_dates(
+            session=db,
+            doctor_id=doctor1.id,
+            blocked_dates_in=blocked_in,
+        )
+
+        # Doctor 2 should still have slots
+        result = slot_generator.generate_available_slots(
+            session=db,
+            doctor_id=doctor2.id,
+            target_date=target_date,
+        )
+
+        assert result.count > 0
+        assert result.reason is None

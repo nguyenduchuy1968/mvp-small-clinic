@@ -1,3 +1,4 @@
+import re
 import uuid
 from datetime import date, datetime
 from zoneinfo import ZoneInfo
@@ -11,8 +12,13 @@ from app.models import (
     Appointment,
     AppointmentCreate,
     AppointmentPublic,
+    AppointmentPublicConfirmation,
     AppointmentStatus,
     AppointmentStatusUpdate,
+    BlockedDate,
+    BlockedDateCreate,
+    BlockedDatePublic,
+    BlockedDatesPublic,
     ContactMethod,
     Doctor,
     DoctorAvailability,
@@ -661,6 +667,40 @@ def _validate_availability_window(
     )
 
 
+# Vietnam phone number regex pattern
+# Supports:
+#   - +84[3-9]XXXXXXXXX (international format)
+#   - 0[3-9]XXXXXXXXX   (domestic format)
+# Strips spaces, dashes, dots, and parentheses before matching
+PHONE_PATTERN = re.compile(r"^(\+84|0)[3-9]\d{8,9}$")
+
+
+def _normalize_phone(phone: str) -> str:
+    """Remove common phone number separators for validation."""
+    return re.sub(r"[\s\-\.\(\)]", "", phone)
+
+
+def _validate_phone_format(*, patient_phone: str) -> None:
+    """Validate phone number format.
+
+    Supports Vietnam phone numbers:
+      - International: +84[3-9]XXXXXXXXX (11 digits after +84)
+      - Domestic: 0[3-9]XXXXXXXXX (10 digits)
+
+    Raises ValueError if the phone number format is invalid.
+    """
+    if not patient_phone or not patient_phone.strip():
+        raise ValueError("patient_phone is required")
+
+    normalized = _normalize_phone(patient_phone)
+    if not PHONE_PATTERN.match(normalized):
+        raise ValueError(
+            "Invalid phone number format. "
+            "Please enter a valid Vietnam phone number "
+            "(e.g., +84 123 456 789 or 0123 456 789)"
+        )
+
+
 def _validate_contact_info(
     *,
     contact_method: ContactMethod,
@@ -672,6 +712,8 @@ def _validate_contact_info(
     - PHONE / WHATSAPP / VIBER / ZALO: patient_phone is required
     - EMAIL: patient_email is required
     - TELEGRAM: at least one contact field is required
+
+    Also validates phone number format for all methods that require a phone.
 
     Raises ValueError on validation failure.
     """
@@ -687,6 +729,7 @@ def _validate_contact_info(
             raise ValueError(
                 f"patient_phone is required for contact method '{contact_method.value}'"
             )
+        _validate_phone_format(patient_phone=patient_phone)
 
     if contact_method == ContactMethod.EMAIL:
         if not patient_email or not patient_email.strip():
@@ -700,6 +743,8 @@ def _validate_contact_info(
                 "At least one of patient_phone or patient_email is required "
                 "for contact method 'telegram'"
             )
+        if has_phone:
+            _validate_phone_format(patient_phone=patient_phone)
 
 
 def _check_double_booking(
@@ -808,6 +853,185 @@ def _appointment_to_public(appointment: Appointment) -> AppointmentPublic:
     )
 
 
+def _appointment_to_public_confirmation(
+    appointment: Appointment,
+) -> AppointmentPublicConfirmation:
+    """Convert an Appointment DB model to AppointmentPublicConfirmation.
+
+    This is a minimal response model for the unauthenticated public endpoint.
+    Only exposes fields required by the booking confirmation page.
+    Does NOT expose patient_phone, patient_name, notes, or other PII.
+    """
+    doctor_name = None
+    if appointment.doctor is not None:
+        doctor_name = appointment.doctor.full_name
+    return AppointmentPublicConfirmation(
+        id=appointment.id,
+        doctor_name=doctor_name,
+        appointment_date=appointment.appointment_date,
+        appointment_time=appointment.appointment_time,
+        booking_number=appointment.booking_number,
+        patient_email=appointment.patient_email,
+        status=appointment.status,
+    )
+
+
+def _validate_not_blocked_date(
+    *,
+    session: Session,
+    doctor_id: uuid.UUID,
+    appointment_date: date,
+) -> None:
+    """Validate that the given date is not blocked for the doctor.
+
+    Raises ValueError if the date is blocked.
+    """
+    statement = select(BlockedDate).where(
+        BlockedDate.doctor_id == doctor_id,
+        BlockedDate.blocked_date == appointment_date,
+    )
+    blocked = session.exec(statement).first()
+    if blocked is not None:
+        raise ValueError(
+            f"Doctor {doctor_id} has blocked date {appointment_date}: "
+            f"{blocked.reason or 'No reason provided'}"
+        )
+
+
+def create_blocked_dates(
+    *,
+    session: Session,
+    doctor_id: uuid.UUID,
+    blocked_dates_in: BlockedDateCreate,
+) -> BlockedDatesPublic:
+    """Create blocked dates for a doctor.
+
+    Accepts a list of dates and a reason. Creates one row per date.
+    Validates that each date is not in the past (clinic local timezone).
+
+    Args:
+        session: Database session.
+        doctor_id: UUID of the doctor.
+        blocked_dates_in: BlockedDateCreate with dates list and reason.
+
+    Returns:
+        BlockedDatesPublic with the created BlockedDatePublic records.
+
+    Raises:
+        ValueError: If any date is in the past or already blocked.
+    """
+    clinic_tz = ZoneInfo(settings.CLINIC_TIMEZONE)
+    today_local = datetime.now(clinic_tz).date()
+
+    created_records: list[BlockedDatePublic] = []
+
+    for blocked_date in blocked_dates_in.dates:
+        # Validate date is not in the past
+        if blocked_date < today_local:
+            raise ValueError(
+                f"Cannot block past date {blocked_date}. "
+                f"Today is {today_local} (clinic local time)."
+            )
+
+        db_obj = BlockedDate(
+            doctor_id=doctor_id,
+            blocked_date=blocked_date,
+            reason=blocked_dates_in.reason,
+        )
+        session.add(db_obj)
+        try:
+            session.flush()
+        except IntegrityError as exc:
+            session.rollback()
+            if "uq_blocked_date_per_doctor" in str(exc):
+                raise ValueError(
+                    f"Date {blocked_date} is already blocked for doctor {doctor_id}"
+                )
+            raise
+
+        created_records.append(
+            BlockedDatePublic(
+                id=db_obj.id,
+                doctor_id=db_obj.doctor_id,
+                blocked_date=db_obj.blocked_date,
+                reason=db_obj.reason,
+                created_at=db_obj.created_at,
+            )
+        )
+
+    session.commit()
+    return BlockedDatesPublic(data=created_records, count=len(created_records))
+
+
+def get_blocked_dates(
+    *,
+    session: Session,
+    doctor_id: uuid.UUID,
+    skip: int = 0,
+    limit: int = 100,
+) -> tuple[list[BlockedDatePublic], int]:
+    """Get blocked dates for a doctor, ordered by date ascending.
+
+    Args:
+        session: Database session.
+        doctor_id: UUID of the doctor.
+        skip: Number of records to skip (pagination).
+        limit: Maximum number of records to return.
+
+    Returns:
+        Tuple of (list of BlockedDatePublic, total count).
+    """
+    # Count
+    count_statement = select(BlockedDate).where(
+        BlockedDate.doctor_id == doctor_id,
+    )
+    count = len(session.exec(count_statement).all())
+
+    # Data
+    statement = (
+        select(BlockedDate)
+        .where(BlockedDate.doctor_id == doctor_id)
+        .order_by(BlockedDate.blocked_date.asc())
+        .offset(skip)
+        .limit(limit)
+    )
+    records = session.exec(statement).all()
+
+    result = [
+        BlockedDatePublic(
+            id=r.id,
+            doctor_id=r.doctor_id,
+            blocked_date=r.blocked_date,
+            reason=r.reason,
+            created_at=r.created_at,
+        )
+        for r in records
+    ]
+    return result, count
+
+
+def delete_blocked_date(
+    *,
+    session: Session,
+    blocked_date_id: uuid.UUID,
+) -> None:
+    """Delete a blocked date record.
+
+    Args:
+        session: Database session.
+        blocked_date_id: UUID of the blocked date record to delete.
+
+    Raises:
+        ValueError: If the blocked date record is not found.
+    """
+    statement = select(BlockedDate).where(BlockedDate.id == blocked_date_id)
+    db_obj = session.exec(statement).first()
+    if db_obj is None:
+        raise ValueError(f"Blocked date {blocked_date_id} not found")
+    session.delete(db_obj)
+    session.commit()
+
+
 def create_appointment(
     *,
     session: Session,
@@ -839,6 +1063,13 @@ def create_appointment(
     _validate_appointment_date(
         appointment_date=appointment_in.appointment_date,
         appointment_time=appointment_in.appointment_time,
+    )
+
+    # 2.5 Validate date is not blocked for this doctor
+    _validate_not_blocked_date(
+        session=session,
+        doctor_id=appointment_in.doctor_id,
+        appointment_date=appointment_in.appointment_date,
     )
 
     # 3. Validate appointment time falls within availability

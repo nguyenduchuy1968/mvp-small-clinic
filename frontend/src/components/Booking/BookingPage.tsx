@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import type { AppointmentPublic } from '@/client';
 import { LanguageSwitcher } from '@/components/Common/LanguageSwitcher';
-import { toast } from 'sonner';
 
 import { BookingConfirmation } from './BookingConfirmation';
 import { BookingWizard } from './BookingWizard';
@@ -15,6 +15,10 @@ export function BookingPage() {
 
   const handleConfirmed = (appointment: AppointmentPublic) => {
     setConfirmedAppointment(appointment);
+  };
+
+  const handleNewBooking = () => {
+    setConfirmedAppointment(null);
   };
 
   const handleSlotAlreadyBooked = () => {
@@ -29,7 +33,10 @@ export function BookingPage() {
       </header>
       <main className="mx-auto max-w-4xl p-6 md:p-8">
         {confirmedAppointment ? (
-          <BookingConfirmation appointment={confirmedAppointment} />
+          <BookingConfirmation
+            appointment={confirmedAppointment}
+            onNewBooking={handleNewBooking}
+          />
         ) : (
           <BookingWizard
             onConfirmed={handleConfirmed}

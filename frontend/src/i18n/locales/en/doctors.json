@@ -23,7 +23,7 @@
     "success": "Information updated successfully"
   },
   "delete": {
-    "confirmMessage": "Are you sure you want to delete doctor {name}?",
+    "confirmMessage": "Are you sure you want to delete doctor {{name}}?",
     "availabilityWarning": "This doctor has {{count}} schedule(s).",
     "appointmentsWarning": "This doctor has {{count}} future appointment(s).",
     "forceConfirmMessage": "Are you sure you want to permanently delete this doctor? This action cannot be undone."

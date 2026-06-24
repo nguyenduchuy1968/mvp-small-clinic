@@ -3,6 +3,7 @@
     "dashboard": "Bảng điều khiển",
     "doctors": "Bác sĩ",
     "availability": "Lịch làm việc",
+    "blockedDates": "Ngày nghỉ",
     "appointments": "Lịch hẹn",
     "settings": "Cài đặt",
     "admin": "Quản trị",
@@ -31,7 +32,7 @@
     "copy": "Sao chép ID"
   },
   "pagination": {
-    "showing": "Hiển thị {from} đến {to} trong tổng số {total}",
+    "showing": "Hiển thị {{from}} đến {{to}} trong tổng số {{total}}",
     "previous": "Trang trước",
     "next": "Trang sau",
     "rowsPerPage": "Số dòng mỗi trang",
@@ -60,7 +61,7 @@
   },
   "confirmations": {
     "deleteTitle": "Xác nhận xóa",
-    "deleteMessage": "Bạn có chắc chắn muốn xóa {item}?",
+    "deleteMessage": "Bạn có chắc chắn muốn xóa {{item}}?",
     "cancelTitle": "Xác nhận hủy",
     "cancelMessage": "Bạn có chắc chắn muốn hủy lịch hẹn này?"
   },
@@ -113,7 +114,6 @@
     "deleteConfirmationDescription": "Tất cả dữ liệu tài khoản của bạn sẽ bị xóa vĩnh viễn. Nếu bạn chắc chắn, vui lòng nhấp \"Xác nhận\" để tiếp tục. Hành động này không thể hoàn tác.",
     "accountDeleted": "Tài khoản của bạn đã được xóa thành công",
     "addUserDescription": "Điền thông tin bên dưới để thêm người dùng mới vào hệ thống.",
-    "email": "Email",
     "setPassword": "Đặt mật khẩu",
     "confirmPassword": "Xác nhận mật khẩu",
     "isSuperuser": "Là quản trị viên?",

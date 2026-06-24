@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
-import { formatDateForDisplay } from "@/utils/date"
+import { formatDateForDisplay, getClinicTodayString } from "@/utils/date"
 
 interface TimeSlotGridProps {
   slots: AvailableSlot[] | undefined
@@ -14,10 +14,22 @@ interface TimeSlotGridProps {
   isLoading: boolean
   reason?: string | null
   date?: string | null
+  onPreviousDay?: () => void
+  onNextDay?: () => void
 }
 
-function SelectedDatePanel({ date }: { date: string }) {
-  const { i18n } = useTranslation()
+function SelectedDatePanel({
+  date,
+  onPreviousDay,
+  onNextDay,
+  isPreviousDisabled,
+}: {
+  date: string
+  onPreviousDay?: () => void
+  onNextDay?: () => void
+  isPreviousDisabled?: boolean
+}) {
+  const { t, i18n } = useTranslation("booking")
 
   const dateObj = new Date(`${date}T00:00:00`)
   if (Number.isNaN(dateObj.getTime())) return null
@@ -43,6 +55,33 @@ function SelectedDatePanel({ date }: { date: string }) {
         <span className="text-2xl font-bold tracking-tight">
           {formattedDate}
         </span>
+
+        {/* Date navigation buttons */}
+        {(onPreviousDay || onNextDay) && (
+          <div className="mt-3 flex items-center gap-2">
+            {onPreviousDay && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onPreviousDay}
+                disabled={isPreviousDisabled}
+                className="text-xs"
+              >
+                {t("navigation.previousDay")}
+              </Button>
+            )}
+            {onNextDay && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onNextDay}
+                className="text-xs"
+              >
+                {t("navigation.nextDay")}
+              </Button>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   )
@@ -55,8 +94,14 @@ export function TimeSlotGrid({
   isLoading,
   reason,
   date,
+  onPreviousDay,
+  onNextDay,
 }: TimeSlotGridProps) {
   const { t } = useTranslation("booking")
+
+  const isPreviousDisabled = date
+    ? date <= getClinicTodayString()
+    : true
 
   const slotsContent = () => {
     if (isLoading) {
@@ -154,7 +199,12 @@ export function TimeSlotGrid({
       {/* Selected date panel — right side on desktop, top on mobile */}
       {date && (
         <div className="order-first md:order-last">
-          <SelectedDatePanel date={date} />
+          <SelectedDatePanel
+            date={date}
+            onPreviousDay={onPreviousDay}
+            onNextDay={onNextDay}
+            isPreviousDisabled={isPreviousDisabled}
+          />
         </div>
       )}
     </div>

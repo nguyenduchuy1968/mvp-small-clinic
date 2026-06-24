@@ -136,7 +136,7 @@ function ResetPassword() {
               name="confirm_password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("signup.confirmPassword")}</FormLabel>
+                  <FormLabel>{t("reset.confirmPassword")}</FormLabel>
                   <FormControl>
                     <PasswordInput
                       data-testid="confirm-password-input"

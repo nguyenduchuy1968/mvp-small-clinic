@@ -1,30 +1,58 @@
-import { useNavigate } from '@tanstack/react-router';
-import { AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Copy } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
-import type { AppointmentPublic } from '@/client';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { formatDateLong } from '@/utils/date';
 
+/**
+ * Minimal appointment data returned by the public confirmation endpoint.
+ * This is a subset of AppointmentPublic — only fields the confirmation
+ * page actually needs. No PII beyond patient_email is exposed.
+ */
+/**
+ * Minimal appointment data returned by the public confirmation endpoint.
+ * All fields are readonly to accept both the full AppointmentPublic from
+ * the create mutation and the trimmed response from the public endpoint.
+ */
+export interface AppointmentConfirmationData {
+  readonly id: string;
+  readonly doctor_name?: string | null;
+  readonly appointment_date: string;
+  readonly appointment_time: string;
+  readonly booking_number?: string | null;
+  readonly patient_email?: string | null;
+  readonly status?: string;
+}
+
 interface BookingConfirmationProps {
-  appointment: AppointmentPublic;
+  appointment: AppointmentConfirmationData;
+  onNewBooking?: () => void;
 }
 
 function formatTime(time: string): string {
   return time.length > 5 ? time.slice(0, 5) : time;
 }
 
-export function BookingConfirmation({ appointment }: BookingConfirmationProps) {
+export function BookingConfirmation({ appointment, onNewBooking }: BookingConfirmationProps) {
   const { t, i18n } = useTranslation('booking');
-  const navigate = useNavigate();
+  const [, copy] = useCopyToClipboard();
+
+  const handleCopyBookingNumber = async () => {
+    if (!appointment.booking_number) return;
+    const ok = await copy(appointment.booking_number);
+    if (ok) {
+      toast.success(t('confirmation.copySuccess'));
+    } else {
+      toast.error(t('common:states.error', 'An error occurred'));
+    }
+  };
 
   const handleNewBooking = () => {
-    // Use window.location.href to force a full page reload, which resets
-    // the BookingPage state (confirmedAppointment) when the component is
-    // rendered inline at /booking. navigate() to the same route is a no-op.
-    window.location.href = '/booking';
+    onNewBooking?.();
   };
 
   return (
@@ -53,7 +81,7 @@ export function BookingConfirmation({ appointment }: BookingConfirmationProps) {
                   {t('confirmation.doctor')}
                 </dt>
                 <dd className="font-medium text-right max-w-[60%]">
-                  {appointment.doctor_name ?? appointment.doctor_id}
+                  {appointment.doctor_name ?? '—'}
                 </dd>
               </div>
               {/* Date */}
@@ -76,13 +104,24 @@ export function BookingConfirmation({ appointment }: BookingConfirmationProps) {
               </div>
               {/* Divider */}
               <hr className="border-t" />
-              {/* Booking Number — visually dominant */}
+              {/* Booking Number — visually dominant with copy button */}
               <div className="flex justify-between items-center pt-1">
                 <dt className="text-sm font-semibold text-muted-foreground">
                   {t('confirmation.bookingReference')}
                 </dt>
-                <dd className="font-mono text-lg font-bold text-primary tracking-wider">
-                  {appointment.booking_number}
+                <dd className="flex items-center gap-2">
+                  <span className="font-mono text-lg font-bold text-primary tracking-wider">
+                    {appointment.booking_number}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={handleCopyBookingNumber}
+                    title={t('confirmation.copyTooltip')}
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
                 </dd>
               </div>
             </dl>

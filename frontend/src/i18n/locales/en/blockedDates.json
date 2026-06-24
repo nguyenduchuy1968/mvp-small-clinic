@@ -1,0 +1,33 @@
+{
+  "title": "Blocked Dates",
+  "list": {
+    "title": "Blocked Dates",
+    "empty": "No blocked dates yet"
+  },
+  "create": {
+    "title": "Block Dates",
+    "description": "Block specific dates when the doctor is not available.",
+    "success": "Dates blocked successfully"
+  },
+  "delete": {
+    "confirmMessage": "Are you sure you want to unblock this date?",
+    "success": "Date unblocked successfully"
+  },
+  "fields": {
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "reason": "Reason (optional)"
+  },
+  "admin": {
+    "noDoctor": {
+      "title": "Select a doctor to manage blocked dates."
+    },
+    "doctorSelector": {
+      "placeholder": "Choose a doctor..."
+    }
+  },
+  "noDoctorProfile": {
+    "title": "No doctor profile found",
+    "description": "You do not have a doctor profile yet. Please contact an administrator to create one before managing blocked dates."
+  }
+}

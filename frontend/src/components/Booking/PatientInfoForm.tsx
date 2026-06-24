@@ -31,6 +31,23 @@ const CONTACT_METHODS: ContactMethod[] = [
   'telegram',
 ];
 
+/**
+ * Strip common phone number separators (spaces, dashes, dots, parentheses).
+ */
+function normalizePhone(value: string): string {
+  return value.replace(/[\s\-\.\(\)]/g, "");
+}
+
+/**
+ * Vietnam phone number regex (applied AFTER normalization).
+ * Supports:
+ *   - +84[3-9]XXXXXXXXX (international format, 11 digits after +84)
+ *   - 0[3-9]XXXXXXXXX   (domestic format, 10 digits)
+ *
+ * Examples: +84 123 456 789, 0123 456 789, +84912345678, 0912345678
+ */
+const PHONE_REGEX = /^(\+84|0)[3-9]\d{8,9}$/;
+
 function getFormSchema(t: (key: string) => string) {
   return z.object({
     patient_name: z
@@ -38,8 +55,16 @@ function getFormSchema(t: (key: string) => string) {
       .min(1, { message: t('form.nameRequired') }),
     patient_phone: z
       .string()
-      .min(1, { message: t('form.phoneRequired') }),
-    patient_email: z.string().email().optional().or(z.literal('')),
+      .min(1, { message: t('form.phoneRequired') })
+      .transform(normalizePhone)
+      .refine((val) => PHONE_REGEX.test(val), {
+        message: t('form.phoneInvalid'),
+      }),
+    patient_email: z
+      .string()
+      .email({ message: t('form.emailInvalid') })
+      .optional()
+      .or(z.literal('')),
     contact_method: z.string().optional(),
     notes: z.string().optional(),
   });

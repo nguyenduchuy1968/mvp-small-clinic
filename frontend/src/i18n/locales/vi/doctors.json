@@ -23,7 +23,7 @@
     "success": "Cập nhật thông tin thành công"
   },
   "delete": {
-    "confirmMessage": "Bạn có chắc chắn muốn xóa bác sĩ {name}?",
+    "confirmMessage": "Bạn có chắc chắn muốn xóa bác sĩ {{name}}?",
     "availabilityWarning": "Bác sĩ này có {{count}} lịch làm việc.",
     "appointmentsWarning": "Bác sĩ này có {{count}} cuộc hẹn trong tương lai.",
     "forceConfirmMessage": "Bạn có chắc chắn muốn xóa vĩnh viễn bác sĩ này? Hành động này không thể hoàn tác."

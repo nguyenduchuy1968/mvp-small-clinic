@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { AppointmentsGetAvailableSlotsData, AppointmentsGetAvailableSlotsResponse, AppointmentsCreateAppointmentData, AppointmentsCreateAppointmentResponse, AppointmentsReadAppointmentsData, AppointmentsReadAppointmentsResponse, AppointmentsReadAppointmentData, AppointmentsReadAppointmentResponse, AppointmentsDeleteAppointmentData, AppointmentsDeleteAppointmentResponse, AppointmentsUpdateAppointmentStatusData, AppointmentsUpdateAppointmentStatusResponse, AvailabilityReadDoctorAvailabilitiesData, AvailabilityReadDoctorAvailabilitiesResponse, AvailabilityCreateDoctorAvailabilityData, AvailabilityCreateDoctorAvailabilityResponse, AvailabilityUpdateDoctorAvailabilityData, AvailabilityUpdateDoctorAvailabilityResponse, AvailabilityDeleteDoctorAvailabilityData, AvailabilityDeleteDoctorAvailabilityResponse, DoctorsReadDoctorsData, DoctorsReadDoctorsResponse, DoctorsCreateDoctorData, DoctorsCreateDoctorResponse, DoctorsReadDoctorsPublicData, DoctorsReadDoctorsPublicResponse, DoctorsReadCurrentDoctorResponse, DoctorsReadDoctorData, DoctorsReadDoctorResponse, DoctorsUpdateDoctorData, DoctorsUpdateDoctorResponse, DoctorsDeleteDoctorData, DoctorsDeleteDoctorResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { AppointmentsGetAvailableSlotsData, AppointmentsGetAvailableSlotsResponse, AppointmentsReadAppointmentPublicData, AppointmentsReadAppointmentPublicResponse, AppointmentsCreateAppointmentData, AppointmentsCreateAppointmentResponse, AppointmentsReadAppointmentsData, AppointmentsReadAppointmentsResponse, AppointmentsReadAppointmentData, AppointmentsReadAppointmentResponse, AppointmentsDeleteAppointmentData, AppointmentsDeleteAppointmentResponse, AppointmentsUpdateAppointmentStatusData, AppointmentsUpdateAppointmentStatusResponse, AvailabilityReadDoctorAvailabilitiesData, AvailabilityReadDoctorAvailabilitiesResponse, AvailabilityCreateDoctorAvailabilityData, AvailabilityCreateDoctorAvailabilityResponse, AvailabilityUpdateDoctorAvailabilityData, AvailabilityUpdateDoctorAvailabilityResponse, AvailabilityDeleteDoctorAvailabilityData, AvailabilityDeleteDoctorAvailabilityResponse, BlockedDatesReadBlockedDatesData, BlockedDatesReadBlockedDatesResponse, BlockedDatesCreateBlockedDatesData, BlockedDatesCreateBlockedDatesResponse, BlockedDatesDeleteBlockedDateData, BlockedDatesDeleteBlockedDateResponse, DoctorsReadDoctorsData, DoctorsReadDoctorsResponse, DoctorsCreateDoctorData, DoctorsCreateDoctorResponse, DoctorsReadDoctorsPublicData, DoctorsReadDoctorsPublicResponse, DoctorsReadCurrentDoctorResponse, DoctorsReadDoctorData, DoctorsReadDoctorResponse, DoctorsUpdateDoctorData, DoctorsUpdateDoctorResponse, DoctorsDeleteDoctorData, DoctorsDeleteDoctorResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
 
 export class AppointmentsService {
     /**
@@ -24,6 +24,27 @@ export class AppointmentsService {
             },
             query: {
                 date: data.date
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Appointment by ID (Public)
+     * Retrieve a specific appointment by its ID. This endpoint is public and does not require authentication. Used by the booking confirmation page so that patients can view their appointment details without logging in. Only returns basic appointment information (no sensitive data).
+     * @param data The data for the request.
+     * @param data.appointmentId
+     * @returns AppointmentPublicConfirmation Successful Response
+     * @throws ApiError
+     */
+    public static readAppointmentPublic(data: AppointmentsReadAppointmentPublicData): CancelablePromise<AppointmentsReadAppointmentPublicResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/public/appointments/{appointment_id}',
+            path: {
+                appointment_id: data.appointmentId
             },
             errors: {
                 422: 'Validation Error'
@@ -239,6 +260,88 @@ export class AvailabilityService {
             url: '/api/v1/availability/{availability_id}',
             path: {
                 availability_id: data.availabilityId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
+export class BlockedDatesService {
+    /**
+     * Read Blocked Dates
+     * Get blocked dates for a doctor.
+     *
+     * Returns blocked dates ordered by date ascending with pagination.
+     * @param data The data for the request.
+     * @param data.doctorId
+     * @param data.skip
+     * @param data.limit
+     * @returns BlockedDatesPublic Successful Response
+     * @throws ApiError
+     */
+    public static readBlockedDates(data: BlockedDatesReadBlockedDatesData): CancelablePromise<BlockedDatesReadBlockedDatesResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/doctors/{doctor_id}/blocked-dates',
+            path: {
+                doctor_id: data.doctorId
+            },
+            query: {
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Create Blocked Dates
+     * Create blocked dates for a doctor.
+     *
+     * Accepts a list of dates and an optional reason.
+     * Creates one row per date.
+     * Validates that dates are not in the past and not already blocked.
+     * @param data The data for the request.
+     * @param data.doctorId
+     * @param data.requestBody
+     * @returns BlockedDatesPublic Successful Response
+     * @throws ApiError
+     */
+    public static createBlockedDates(data: BlockedDatesCreateBlockedDatesData): CancelablePromise<BlockedDatesCreateBlockedDatesResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/doctors/{doctor_id}/blocked-dates',
+            path: {
+                doctor_id: data.doctorId
+            },
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Delete Blocked Date
+     * Delete a blocked date record.
+     * @param data The data for the request.
+     * @param data.doctorId
+     * @param data.blockedDateId
+     * @returns Message Successful Response
+     * @throws ApiError
+     */
+    public static deleteBlockedDate(data: BlockedDatesDeleteBlockedDateData): CancelablePromise<BlockedDatesDeleteBlockedDateResponse> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/v1/doctors/{doctor_id}/blocked-dates/{blocked_date_id}',
+            path: {
+                doctor_id: data.doctorId,
+                blocked_date_id: data.blockedDateId
             },
             errors: {
                 422: 'Validation Error'

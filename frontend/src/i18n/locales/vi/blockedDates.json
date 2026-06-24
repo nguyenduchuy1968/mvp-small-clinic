@@ -1,0 +1,33 @@
+{
+  "title": "Ngày nghỉ",
+  "list": {
+    "title": "Ngày nghỉ",
+    "empty": "Chưa có ngày nghỉ nào"
+  },
+  "create": {
+    "title": "Thêm ngày nghỉ",
+    "description": "Thêm các ngày nghỉ khi bác sĩ không có mặt.",
+    "success": "Thêm ngày nghỉ thành công"
+  },
+  "delete": {
+    "confirmMessage": "Bạn có chắc chắn muốn xóa ngày nghỉ này?",
+    "success": "Xóa ngày nghỉ thành công"
+  },
+  "fields": {
+    "startDate": "Ngày bắt đầu",
+    "endDate": "Ngày kết thúc",
+    "reason": "Lý do (không bắt buộc)"
+  },
+  "admin": {
+    "noDoctor": {
+      "title": "Chọn bác sĩ để quản lý ngày nghỉ."
+    },
+    "doctorSelector": {
+      "placeholder": "Chọn bác sĩ..."
+    }
+  },
+  "noDoctorProfile": {
+    "title": "Không tìm thấy hồ sơ bác sĩ",
+    "description": "Bạn chưa có hồ sơ bác sĩ. Vui lòng liên hệ quản trị viên để tạo hồ sơ trước khi quản lý ngày nghỉ."
+  }
+}

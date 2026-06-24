@@ -1,12 +1,13 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { Search } from "lucide-react"
-import { Suspense } from "react"
+import { Suspense, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useNavigate } from "@tanstack/react-router"
 
 import type { AppointmentPublic } from "@/client"
 import { AppointmentsService } from "@/client"
 import { DataTable } from "@/components/Common/DataTable"
+import { Input } from "@/components/ui/input"
 import PendingItems from "@/components/Pending/PendingItems"
 import { isClinicToday, isPastAppointment } from "@/utils/date"
 import { buildColumns } from "./columns"
@@ -23,6 +24,19 @@ function AppointmentsTableContent() {
   const { t } = useTranslation("appointments")
   const navigate = useNavigate()
   const { data: appointments } = useSuspenseQuery(getAppointmentsQueryOptions())
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) return appointments.data
+
+    const query = searchQuery.trim().toLowerCase()
+    return appointments.data.filter(
+      (appt) =>
+        appt.booking_number?.toLowerCase().includes(query) ||
+        appt.patient_name?.toLowerCase().includes(query) ||
+        appt.patient_phone?.toLowerCase().includes(query),
+    )
+  }, [appointments.data, searchQuery])
 
   if (appointments.data.length === 0) {
     return (
@@ -55,12 +69,34 @@ function AppointmentsTableContent() {
   }
 
   return (
-    <DataTable
-      columns={buildColumns()}
-      data={appointments.data}
-      onRowClick={handleRowClick}
-      getRowClassName={getRowClassName}
-    />
+    <div className="space-y-4">
+      {/* Search input */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder={t("list.searchPlaceholder")}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      {filteredData.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="mb-4 rounded-full bg-muted p-4">
+            <Search className="size-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-lg font-semibold">{t("list.empty")}</h3>
+        </div>
+      ) : (
+        <DataTable
+          columns={buildColumns()}
+          data={filteredData}
+          onRowClick={handleRowClick}
+          getRowClassName={getRowClassName}
+        />
+      )}
+    </div>
   )
 }
 

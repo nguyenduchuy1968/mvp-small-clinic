@@ -3,6 +3,7 @@
   "list": {
     "title": "Danh sách lịch hẹn",
     "empty": "Chưa có lịch hẹn nào",
+    "searchPlaceholder": "Tìm theo mã tham chiếu, tên bệnh nhân hoặc SĐT...",
     "columns": {
       "id": "ID",
       "bookingRef": "Mã tham chiếu",

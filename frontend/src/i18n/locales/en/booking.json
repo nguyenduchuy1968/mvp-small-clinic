@@ -15,6 +15,8 @@
     "notes": "Notes",
     "nameRequired": "Patient name is required",
     "phoneRequired": "Phone number is required",
+    "phoneInvalid": "Please enter a valid phone number (e.g., +84 123 456 789 or 0123 456 789)",
+    "emailInvalid": "Please enter a valid email address",
     "contactMethods": {
       "phone": "Phone",
       "email": "Email",
@@ -32,8 +34,8 @@
   "confirmation": {
     "title": "Appointment Confirmed",
     "successMessage": "Appointment booked successfully",
-    "message": "Your appointment with {doctorName} has been confirmed for {date} at {time}.",
-    "bookingId": "Booking ID: {id}",
+    "message": "Your appointment with {{doctorName}} has been confirmed for {{date}} at {{time}}.",
+    "bookingId": "Booking ID: {{id}}",
     "bookingReference": "Booking Reference",
     "doctor": "Doctor:",
     "date": "Date:",
@@ -41,7 +43,9 @@
     "attentionTitle": "⚠ Attention",
     "attentionMessage": "A confirmation email has been sent to:",
     "attentionMessageEmail": "Please check your inbox\nand save your booking number.\n\nYou may need this number when contacting the clinic.",
-    "newBooking": "Book Another Appointment"
+    "newBooking": "Book Another Appointment",
+    "copyTooltip": "Copy booking number",
+    "copySuccess": "Booking number copied!"
   },
   "errors": {
     "slotAlreadyBooked": "This slot was just booked. Please select another time.",
@@ -70,9 +74,11 @@
   },
   "noDoctors": "No doctors available",
   "navigation": {
-    "back": "Back",
+    "back": "← Back",
     "next": "Next",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "previousDay": "◀ Previous Day",
+    "nextDay": "Next Day ▶"
   },
   "datePicker": {
     "today": "Today",

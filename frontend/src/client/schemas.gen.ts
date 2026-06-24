@@ -178,6 +178,68 @@ export const AppointmentPublicSchema = {
     title: 'AppointmentPublic'
 } as const;
 
+export const AppointmentPublicConfirmationSchema = {
+    properties: {
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        doctor_name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Doctor Name'
+        },
+        appointment_date: {
+            type: 'string',
+            format: 'date',
+            title: 'Appointment Date'
+        },
+        appointment_time: {
+            type: 'string',
+            title: 'Appointment Time'
+        },
+        booking_number: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Booking Number'
+        },
+        patient_email: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Patient Email'
+        },
+        status: {
+            '$ref': '#/components/schemas/AppointmentStatus'
+        }
+    },
+    type: 'object',
+    required: ['id', 'appointment_date', 'appointment_time', 'status'],
+    title: 'AppointmentPublicConfirmation',
+    description: `Minimal appointment response for the unauthenticated public endpoint.
+
+Only exposes fields required by the booking confirmation page.
+Does NOT expose PII fields like patient_phone, patient_name, or notes.`
+} as const;
+
 export const AppointmentStatusSchema = {
     type: 'string',
     enum: ['pending', 'confirmed', 'cancelled'],
@@ -266,6 +328,100 @@ export const AvailableSlotsResponseSchema = {
     required: ['doctor_id', 'date', 'slots', 'count'],
     title: 'AvailableSlotsResponse',
     description: 'Response containing all available slots for a doctor on a given date.'
+} as const;
+
+export const BlockedDateCreateSchema = {
+    properties: {
+        dates: {
+            items: {
+                type: 'string',
+                format: 'date'
+            },
+            type: 'array',
+            title: 'Dates'
+        },
+        reason: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Reason'
+        }
+    },
+    type: 'object',
+    required: ['dates'],
+    title: 'BlockedDateCreate'
+} as const;
+
+export const BlockedDatePublicSchema = {
+    properties: {
+        blocked_date: {
+            type: 'string',
+            format: 'date',
+            title: 'Blocked Date'
+        },
+        reason: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 500
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Reason'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        doctor_id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Doctor Id'
+        },
+        created_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Created At'
+        }
+    },
+    type: 'object',
+    required: ['blocked_date', 'id', 'doctor_id'],
+    title: 'BlockedDatePublic'
+} as const;
+
+export const BlockedDatesPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/BlockedDatePublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'BlockedDatesPublic'
 } as const;
 
 export const Body_login_login_access_tokenSchema = {

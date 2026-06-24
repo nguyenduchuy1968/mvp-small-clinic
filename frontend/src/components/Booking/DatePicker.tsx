@@ -2,31 +2,27 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { getClinicTodayString } from '@/utils/date';
 
 interface DatePickerProps {
   selectedDate: string | null;
   onSelect: (date: string) => void;
 }
 
-function formatDate(date: Date): string {
+function addDays(dateStr: string, days: number): string {
+  const date = new Date(dateStr + 'T00:00:00');
+  date.setDate(date.getDate() + days);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
 
-function addDays(date: Date, days: number): Date {
-  const result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
-}
-
 export function DatePicker({ selectedDate, onSelect }: DatePickerProps) {
   const { t } = useTranslation('booking');
 
-  const today = new Date();
-  const todayStr = formatDate(today);
-  const tomorrowStr = formatDate(addDays(today, 1));
+  const todayStr = getClinicTodayString();
+  const tomorrowStr = addDays(todayStr, 1);
 
   const quickOptions = [
     { label: t('datePicker.today'), value: todayStr },

@@ -14,10 +14,11 @@ import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as BookingRouteImport } from './routes/booking'
 import { Route as LayoutRouteImport } from './routes/_layout'
-import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as BookingConfirmationRouteImport } from './routes/booking/confirmation'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutDoctorsRouteImport } from './routes/_layout/doctors'
+import { Route as LayoutDashboardRouteImport } from './routes/_layout/dashboard'
 import { Route as LayoutBlockedDatesRouteImport } from './routes/_layout/blocked-dates'
 import { Route as LayoutAvailabilityRouteImport } from './routes/_layout/availability'
 import { Route as LayoutAppointmentsRouteImport } from './routes/_layout/appointments'
@@ -54,10 +55,10 @@ const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LayoutIndexRoute = LayoutIndexRouteImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const BookingConfirmationRoute = BookingConfirmationRouteImport.update({
   id: '/confirmation',
@@ -72,6 +73,11 @@ const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
 const LayoutDoctorsRoute = LayoutDoctorsRouteImport.update({
   id: '/doctors',
   path: '/doctors',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutDashboardRoute = LayoutDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutBlockedDatesRoute = LayoutBlockedDatesRouteImport.update({
@@ -132,7 +138,7 @@ const LayoutAvailabilityIdEditRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof LayoutIndexRoute
+  '/': typeof IndexRoute
   '/booking': typeof BookingRouteWithChildren
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/appointments': typeof LayoutAppointmentsRouteWithChildren
   '/availability': typeof LayoutAvailabilityRouteWithChildren
   '/blocked-dates': typeof LayoutBlockedDatesRoute
+  '/dashboard': typeof LayoutDashboardRoute
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/booking/confirmation': typeof BookingConfirmationRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/doctors/$id/edit': typeof LayoutDoctorsIdEditRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/booking': typeof BookingRouteWithChildren
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
@@ -160,10 +168,10 @@ export interface FileRoutesByTo {
   '/admin': typeof LayoutAdminRoute
   '/availability': typeof LayoutAvailabilityRouteWithChildren
   '/blocked-dates': typeof LayoutBlockedDatesRoute
+  '/dashboard': typeof LayoutDashboardRoute
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/booking/confirmation': typeof BookingConfirmationRoute
-  '/': typeof LayoutIndexRoute
   '/appointments/$id': typeof LayoutAppointmentsIdRoute
   '/availability/new': typeof LayoutAvailabilityNewRoute
   '/doctors/$id': typeof LayoutDoctorsIdRouteWithChildren
@@ -174,6 +182,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_layout': typeof LayoutRouteWithChildren
   '/booking': typeof BookingRouteWithChildren
   '/login': typeof LoginRoute
@@ -183,10 +192,10 @@ export interface FileRoutesById {
   '/_layout/appointments': typeof LayoutAppointmentsRouteWithChildren
   '/_layout/availability': typeof LayoutAvailabilityRouteWithChildren
   '/_layout/blocked-dates': typeof LayoutBlockedDatesRoute
+  '/_layout/dashboard': typeof LayoutDashboardRoute
   '/_layout/doctors': typeof LayoutDoctorsRouteWithChildren
   '/_layout/settings': typeof LayoutSettingsRoute
   '/booking/confirmation': typeof BookingConfirmationRoute
-  '/_layout/': typeof LayoutIndexRoute
   '/_layout/appointments/$id': typeof LayoutAppointmentsIdRoute
   '/_layout/availability/new': typeof LayoutAvailabilityNewRoute
   '/_layout/doctors/$id': typeof LayoutDoctorsIdRouteWithChildren
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/appointments'
     | '/availability'
     | '/blocked-dates'
+    | '/dashboard'
     | '/doctors'
     | '/settings'
     | '/booking/confirmation'
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/doctors/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/booking'
     | '/login'
     | '/recover-password'
@@ -226,10 +237,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/availability'
     | '/blocked-dates'
+    | '/dashboard'
     | '/doctors'
     | '/settings'
     | '/booking/confirmation'
-    | '/'
     | '/appointments/$id'
     | '/availability/new'
     | '/doctors/$id'
@@ -239,6 +250,7 @@ export interface FileRouteTypes {
     | '/doctors/$id/edit'
   id:
     | '__root__'
+    | '/'
     | '/_layout'
     | '/booking'
     | '/login'
@@ -248,10 +260,10 @@ export interface FileRouteTypes {
     | '/_layout/appointments'
     | '/_layout/availability'
     | '/_layout/blocked-dates'
+    | '/_layout/dashboard'
     | '/_layout/doctors'
     | '/_layout/settings'
     | '/booking/confirmation'
-    | '/_layout/'
     | '/_layout/appointments/$id'
     | '/_layout/availability/new'
     | '/_layout/doctors/$id'
@@ -262,6 +274,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRouteWithChildren
   BookingRoute: typeof BookingRouteWithChildren
   LoginRoute: typeof LoginRoute
@@ -306,12 +319,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_layout/': {
-      id: '/_layout/'
+    '/': {
+      id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof LayoutIndexRouteImport
-      parentRoute: typeof LayoutRoute
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/booking/confirmation': {
       id: '/booking/confirmation'
@@ -332,6 +345,13 @@ declare module '@tanstack/react-router' {
       path: '/doctors'
       fullPath: '/doctors'
       preLoaderRoute: typeof LayoutDoctorsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/dashboard': {
+      id: '/_layout/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof LayoutDashboardRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/blocked-dates': {
@@ -471,9 +491,9 @@ interface LayoutRouteChildren {
   LayoutAppointmentsRoute: typeof LayoutAppointmentsRouteWithChildren
   LayoutAvailabilityRoute: typeof LayoutAvailabilityRouteWithChildren
   LayoutBlockedDatesRoute: typeof LayoutBlockedDatesRoute
+  LayoutDashboardRoute: typeof LayoutDashboardRoute
   LayoutDoctorsRoute: typeof LayoutDoctorsRouteWithChildren
   LayoutSettingsRoute: typeof LayoutSettingsRoute
-  LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
@@ -481,9 +501,9 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAppointmentsRoute: LayoutAppointmentsRouteWithChildren,
   LayoutAvailabilityRoute: LayoutAvailabilityRouteWithChildren,
   LayoutBlockedDatesRoute: LayoutBlockedDatesRoute,
+  LayoutDashboardRoute: LayoutDashboardRoute,
   LayoutDoctorsRoute: LayoutDoctorsRouteWithChildren,
   LayoutSettingsRoute: LayoutSettingsRoute,
-  LayoutIndexRoute: LayoutIndexRoute,
 }
 
 const LayoutRouteWithChildren =
@@ -501,6 +521,7 @@ const BookingRouteWithChildren =
   BookingRoute._addFileChildren(BookingRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   LayoutRoute: LayoutRouteWithChildren,
   BookingRoute: BookingRouteWithChildren,
   LoginRoute: LoginRoute,

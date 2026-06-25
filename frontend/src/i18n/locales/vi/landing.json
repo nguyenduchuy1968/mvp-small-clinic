@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "title": "Phòng Khám Đa Khoa Sức Khỏe — Chăm Sóc Sức Khỏe Chất Lượng Cho Gia Đình Bạn",
+    "description": "Phòng Khám Đa Khoa Sức Khỏe cung cấp dịch vụ y tế chuyên nghiệp với đội ngũ bác sĩ giàu kinh nghiệm, lịch khám thuận tiện và dịch vụ chăm sóc đáng tin cậy."
+  },
+  "nav": {
+    "home": "Trang Chủ",
+    "services": "Dịch Vụ",
+    "doctors": "Bác Sĩ",
+    "about": "Giới Thiệu",
+    "contact": "Liên Hệ",
+    "bookAppointment": "Đặt Lịch Khám"
+  },
+  "hero": {
+    "title": "Phòng Khám Đa Khoa Sức Khỏe",
+    "subtitle": "Chăm Sóc Sức Khỏe Chất Lượng Cho Gia Đình Bạn",
+    "description": "Chúng tôi cam kết mang đến dịch vụ y tế chuyên nghiệp, tận tâm với đội ngũ bác sĩ giàu kinh nghiệm và cơ sở vật chất hiện đại. Sức khỏe của bạn là ưu tiên hàng đầu của chúng tôi.",
+    "bookAppointment": "Đặt Lịch Khám",
+    "viewDoctors": "Xem Bác Sĩ"
+  },
+  "trustIndicators": {
+    "patients": "Bệnh Nhân",
+    "years": "Năm",
+    "rating": "Đánh Giá",
+    "waitingTime": "Thời Gian Chờ Trung Bình"
+  },
+  "about": {
+    "title": "Tại Sao Chọn Chúng Tôi",
+    "professionalDoctors": "Bác Sĩ Chuyên Nghiệp",
+    "professionalDoctorsDesc": "Đội ngũ bác sĩ của chúng tôi là những chuyên gia giàu kinh nghiệm, tận tâm mang đến dịch vụ chăm sóc tốt nhất.",
+    "convenientScheduling": "Lịch Khám Thuận Tiện",
+    "convenientSchedulingDesc": "Đặt lịch khám trực tuyến dễ dàng với hệ thống đặt lịch đơn giản. Chọn thời gian phù hợp nhất với bạn, mọi lúc mọi nơi.",
+    "trustedCare": "Dịch Vụ Đáng Tin Cậy",
+    "trustedCareDesc": "Chúng tôi ưu tiên sự an toàn và thoải mái của bệnh nhân. Phòng khám tuân thủ các tiêu chuẩn y tế nghiêm ngặt để đảm bảo chất lượng chăm sóc tốt nhất."
+  },
+  "services": {
+    "title": "Dịch Vụ Của Chúng Tôi",
+    "generalConsultation": "Khám Tổng Quát",
+    "generalConsultationDesc": "Kiểm tra sức khỏe toàn diện và tư vấn y tế cho bệnh nhân ở mọi lứa tuổi.",
+    "internalMedicine": "Nội Khoa",
+    "internalMedicineDesc": "Chẩn đoán và điều trị các bệnh lý người lớn với trọng tâm là chăm sóc phòng ngừa và quản lý sức khỏe lâu dài.",
+    "pediatrics": "Nhi Khoa",
+    "pediatricsDesc": "Chăm sóc y tế chuyên biệt cho trẻ sơ sinh, trẻ em và thanh thiếu niên trong môi trường thân thiện và thoải mái.",
+    "preventiveCare": "Chăm Sóc Phòng Ngừa",
+    "preventiveCareDesc": "Tầm soát sức khỏe, tiêm chủng và các chương trình chăm sóc sức khỏe được thiết kế để phòng ngừa bệnh tật."
+  },
+  "doctors": {
+    "title": "Đội Ngũ Bác Sĩ",
+    "loading": "Đang tải danh sách bác sĩ...",
+    "error": "Không thể tải danh sách bác sĩ. Vui lòng thử lại sau.",
+    "noDoctors": "Hiện chưa có bác sĩ nào.",
+    "viewAll": "Xem Tất Cả Bác Sĩ",
+    "bookAppointment": "Đặt Lịch Khám",
+    "experience": "{{years}} năm kinh nghiệm"
+  },
+  "clinicInfo": {
+    "title": "Thông Tin Phòng Khám",
+    "address": "Địa Chỉ",
+    "phone": "Điện Thoại",
+    "email": "Email",
+    "workingHours": "Giờ Làm Việc",
+    "weekday": "Thứ Hai – Thứ Sáu",
+    "saturday": "Thứ Bảy",
+    "sunday": "Chủ Nhật"
+  },
+  "map": {
+    "title": "Tìm Chúng Tôi",
+    "comingSoon": "Bản Đồ Sắp Được Tích Hợp",
+    "description": "Chúng tôi đang phát triển tính năng bản đồ tương tác để giúp bạn dễ dàng tìm đến phòng khám."
+  },
+  "cta": {
+    "title": "Sẵn Sàng Đặt Lịch Khám?",
+    "description": "Hãy bắt đầu hành trình chăm sóc sức khỏe của bạn. Đặt lịch hẹn với bác sĩ giàu kinh nghiệm của chúng tôi ngay hôm nay.",
+    "bookAppointment": "Đặt Lịch Khám"
+  },
+  "footer": {
+    "description": "Đối tác chăm sóc sức khỏe đáng tin cậy của bạn. Chúng tôi cam kết mang đến dịch vụ y tế chuyên nghiệp, tận tâm cho bạn và gia đình.",
+    "quickLinks": "Liên Kết Nhanh",
+    "services": "Dịch Vụ",
+    "contact": "Liên Hệ",
+    "workingHours": "Giờ Làm Việc",
+    "weekday": "Thứ Hai – Thứ Sáu",
+    "saturday": "Thứ Bảy",
+    "sunday": "Chủ Nhật",
+    "phone": "Điện Thoại",
+    "email": "Email",
+    "address": "Địa Chỉ",
+    "copyright": "© {{year}} Phòng Khám Đa Khoa Sức Khỏe. Bảo lưu mọi quyền.",
+    "privacyPolicy": "Chính Sách Bảo Mật",
+    "terms": "Điều Khoản Dịch Vụ"
+  }
+}

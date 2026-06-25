@@ -34,7 +34,7 @@ function AppSidebar() {
   const { isMobile, setOpenMobile } = useSidebar();
 
   const baseItems: Item[] = [
-    { icon: Home, title: t('nav.dashboard'), path: '/' },
+    { icon: Home, title: t('nav.dashboard'), path: '/dashboard' },
     {
       icon: CalendarCheck,
       title: t('nav.appointments'),
@@ -81,7 +81,10 @@ function AppSidebar() {
         <div className="flex flex-col items-center gap-2 px-4 pb-4 group-data-[collapsible=icon]:hidden">
           <Avatar className="size-12">
             <AvatarFallback className="bg-zinc-600 text-white text-base">
-              {getInitials(currentUser.full_name || (currentUser.is_superuser ? 'Admin' : 'Dr.'))}
+              {getInitials(
+                currentUser.full_name ||
+                  (currentUser.is_superuser ? 'Admin' : 'Dr.')
+              )}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col items-center text-center min-w-0">

@@ -10,6 +10,7 @@ import bookingVi from './locales/vi/booking.json';
 import commonVi from './locales/vi/common.json';
 import dashboardVi from './locales/vi/dashboard.json';
 import doctorsVi from './locales/vi/doctors.json';
+import landingVi from './locales/vi/landing.json';
 
 import appointmentsEn from './locales/en/appointments.json';
 import authEn from './locales/en/auth.json';
@@ -19,6 +20,7 @@ import bookingEn from './locales/en/booking.json';
 import commonEn from './locales/en/common.json';
 import dashboardEn from './locales/en/dashboard.json';
 import doctorsEn from './locales/en/doctors.json';
+import landingEn from './locales/en/landing.json';
 
 import appointmentsUk from './locales/uk/appointments.json';
 import authUk from './locales/uk/auth.json';
@@ -28,6 +30,7 @@ import bookingUk from './locales/uk/booking.json';
 import commonUk from './locales/uk/common.json';
 import dashboardUk from './locales/uk/dashboard.json';
 import doctorsUk from './locales/uk/doctors.json';
+import landingUk from './locales/uk/landing.json';
 
 const resources = {
   vi: {
@@ -39,6 +42,7 @@ const resources = {
     blockedDates: blockedDatesVi,
     appointments: appointmentsVi,
     booking: bookingVi,
+    landing: landingVi,
   },
   en: {
     common: commonEn,
@@ -49,6 +53,7 @@ const resources = {
     blockedDates: blockedDatesEn,
     appointments: appointmentsEn,
     booking: bookingEn,
+    landing: landingEn,
   },
   uk: {
     common: commonUk,
@@ -59,6 +64,7 @@ const resources = {
     blockedDates: blockedDatesUk,
     appointments: appointmentsUk,
     booking: bookingUk,
+    landing: landingUk,
   },
 };
 
@@ -79,6 +85,7 @@ void i18next
       'blockedDates',
       'appointments',
       'booking',
+      'landing',
     ],
     detection: {
       order: ['localStorage'],

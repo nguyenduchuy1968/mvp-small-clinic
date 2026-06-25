@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "title": "Health Polyclinic — Quality Healthcare for Your Family",
+    "description": "Health Polyclinic provides professional medical services with experienced doctors, convenient scheduling, and trusted care for the whole family."
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "doctors": "Doctors",
+    "about": "About",
+    "contact": "Contact",
+    "bookAppointment": "Book Appointment"
+  },
+  "hero": {
+    "title": "Health Polyclinic",
+    "subtitle": "Quality Healthcare for Your Family",
+    "description": "We are committed to providing professional, compassionate medical care with experienced doctors and modern facilities. Your health and well-being are our top priorities.",
+    "bookAppointment": "Book Appointment",
+    "viewDoctors": "View Doctors"
+  },
+  "trustIndicators": {
+    "patients": "Patients",
+    "years": "Years",
+    "rating": "Rating",
+    "waitingTime": "Average Waiting Time"
+  },
+  "about": {
+    "title": "Why Choose Us",
+    "professionalDoctors": "Professional Doctors",
+    "professionalDoctorsDesc": "Our team consists of highly qualified doctors with years of experience in their respective fields, dedicated to providing the best care.",
+    "convenientScheduling": "Convenient Scheduling",
+    "convenientSchedulingDesc": "Book appointments online easily with our simple booking system. Choose a time that works best for you, anytime, anywhere.",
+    "trustedCare": "Trusted Care",
+    "trustedCareDesc": "We prioritize patient safety and comfort. Our clinic follows strict medical standards to ensure you receive the highest quality care."
+  },
+  "services": {
+    "title": "Our Services",
+    "generalConsultation": "General Consultation",
+    "generalConsultationDesc": "Comprehensive health check-ups and medical consultations for patients of all ages.",
+    "internalMedicine": "Internal Medicine",
+    "internalMedicineDesc": "Diagnosis and treatment of adult diseases with a focus on preventive care and long-term health management.",
+    "pediatrics": "Pediatrics",
+    "pediatricsDesc": "Specialized medical care for infants, children, and adolescents in a friendly and comforting environment.",
+    "preventiveCare": "Preventive Care",
+    "preventiveCareDesc": "Health screenings, vaccinations, and wellness programs designed to prevent illness and promote healthy living."
+  },
+  "doctors": {
+    "title": "Our Doctors",
+    "loading": "Loading doctors...",
+    "error": "Unable to load doctors. Please try again later.",
+    "noDoctors": "No doctors available at the moment.",
+    "viewAll": "View All Doctors",
+    "bookAppointment": "Book Appointment",
+    "experience": "{{years}} years experience"
+  },
+  "clinicInfo": {
+    "title": "Clinic Information",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "workingHours": "Working Hours",
+    "weekday": "Monday – Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "map": {
+    "title": "Find Us",
+    "comingSoon": "Map Integration Coming Soon",
+    "description": "We are working on integrating an interactive map to help you find our clinic easily."
+  },
+  "cta": {
+    "title": "Ready to Book an Appointment?",
+    "description": "Take the first step towards better health. Schedule a visit with our experienced doctors today.",
+    "bookAppointment": "Book Appointment"
+  },
+  "footer": {
+    "description": "Your trusted healthcare partner. We are committed to providing professional, compassionate medical care for you and your family.",
+    "quickLinks": "Quick Links",
+    "services": "Services",
+    "contact": "Contact",
+    "workingHours": "Working Hours",
+    "weekday": "Monday – Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "copyright": "© {{year}} Health Polyclinic. All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms of Service"
+  }
+}

@@ -1,8 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from "@tanstack/react-router"
 
-import { DoctorDetails } from '@/components/Doctors/DoctorDetails';
+import { DoctorDetails } from "@/components/Doctors/DoctorDetails"
 
-export const Route = createFileRoute('/_layout/doctors/$id')({
+export const Route = createFileRoute("/_layout/doctors/$id")({
   component: RouteComponent,
   head: ({ params }) => ({
     meta: [
@@ -11,10 +11,10 @@ export const Route = createFileRoute('/_layout/doctors/$id')({
       },
     ],
   }),
-});
+})
 
 function RouteComponent() {
-  const { id } = Route.useParams();
+  const { id } = Route.useParams()
 
-  return <DoctorDetails doctorId={id} onBack={() => window.history.back()} />;
+  return <DoctorDetails doctorId={id} onBack={() => window.history.back()} />
 }

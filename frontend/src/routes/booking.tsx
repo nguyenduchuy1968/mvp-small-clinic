@@ -1,15 +1,15 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from "@tanstack/react-router"
 
-import { BookingPage } from '@/components/Booking/BookingPage';
-import i18next from '@/i18n';
+import { BookingPage } from "@/components/Booking/BookingPage"
+import i18next from "@/i18n"
 
-export const Route = createFileRoute('/booking')({
+export const Route = createFileRoute("/booking")({
   component: BookingPage,
   head: () => ({
     meta: [
       {
-        title: i18next.t('booking:title'),
+        title: i18next.t("booking:title"),
       },
     ],
   }),
-});
+})

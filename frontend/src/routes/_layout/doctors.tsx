@@ -1,18 +1,18 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from "@tanstack/react-router"
 
-import { DoctorList } from '@/components/Doctors/DoctorList';
+import { DoctorList } from "@/components/Doctors/DoctorList"
 
-export const Route = createFileRoute('/_layout/doctors')({
+export const Route = createFileRoute("/_layout/doctors")({
   component: RouteComponent,
   head: () => ({
     meta: [
       {
-        title: 'Doctors',
+        title: "Doctors",
       },
     ],
   }),
-});
+})
 
 function RouteComponent() {
-  return <DoctorList />;
+  return <DoctorList />
 }

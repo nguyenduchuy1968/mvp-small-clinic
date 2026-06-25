@@ -1,12 +1,12 @@
-import { AlertTriangle, CheckCircle2, Copy } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
+import { AlertTriangle, CheckCircle2, Copy } from "lucide-react"
+import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
-import { formatDateLong } from '@/utils/date';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useCopyToClipboard } from "@/hooks/useCopyToClipboard"
+import { formatDateLong } from "@/utils/date"
 
 /**
  * Minimal appointment data returned by the public confirmation endpoint.
@@ -19,41 +19,44 @@ import { formatDateLong } from '@/utils/date';
  * the create mutation and the trimmed response from the public endpoint.
  */
 export interface AppointmentConfirmationData {
-  readonly id: string;
-  readonly doctor_name?: string | null;
-  readonly appointment_date: string;
-  readonly appointment_time: string;
-  readonly booking_number?: string | null;
-  readonly patient_email?: string | null;
-  readonly status?: string;
+  readonly id: string
+  readonly doctor_name?: string | null
+  readonly appointment_date: string
+  readonly appointment_time: string
+  readonly booking_number?: string | null
+  readonly patient_email?: string | null
+  readonly status?: string
 }
 
 interface BookingConfirmationProps {
-  appointment: AppointmentConfirmationData;
-  onNewBooking?: () => void;
+  appointment: AppointmentConfirmationData
+  onNewBooking?: () => void
 }
 
 function formatTime(time: string): string {
-  return time.length > 5 ? time.slice(0, 5) : time;
+  return time.length > 5 ? time.slice(0, 5) : time
 }
 
-export function BookingConfirmation({ appointment, onNewBooking }: BookingConfirmationProps) {
-  const { t, i18n } = useTranslation('booking');
-  const [, copy] = useCopyToClipboard();
+export function BookingConfirmation({
+  appointment,
+  onNewBooking,
+}: BookingConfirmationProps) {
+  const { t, i18n } = useTranslation("booking")
+  const [, copy] = useCopyToClipboard()
 
   const handleCopyBookingNumber = async () => {
-    if (!appointment.booking_number) return;
-    const ok = await copy(appointment.booking_number);
+    if (!appointment.booking_number) return
+    const ok = await copy(appointment.booking_number)
     if (ok) {
-      toast.success(t('confirmation.copySuccess'));
+      toast.success(t("confirmation.copySuccess"))
     } else {
-      toast.error(t('common:states.error', 'An error occurred'));
+      toast.error(t("common:states.error", "An error occurred"))
     }
-  };
+  }
 
   const handleNewBooking = () => {
-    onNewBooking?.();
-  };
+    onNewBooking?.()
+  }
 
   return (
     <div className="mx-auto max-w-lg space-y-6">
@@ -63,13 +66,13 @@ export function BookingConfirmation({ appointment, onNewBooking }: BookingConfir
           <div className="flex flex-col items-center gap-3 text-center">
             <CheckCircle2 className="h-12 w-12 text-green-600 dark:text-green-400" />
             <CardTitle className="text-xl text-green-700 dark:text-green-300">
-              {t('confirmation.title')}
+              {t("confirmation.title")}
             </CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-center text-green-600 dark:text-green-400">
-            {t('confirmation.successMessage')}
+            {t("confirmation.successMessage")}
           </p>
 
           {/* Appointment details */}
@@ -78,16 +81,16 @@ export function BookingConfirmation({ appointment, onNewBooking }: BookingConfir
               {/* Doctor */}
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">
-                  {t('confirmation.doctor')}
+                  {t("confirmation.doctor")}
                 </dt>
                 <dd className="font-medium text-right max-w-[60%]">
-                  {appointment.doctor_name ?? '—'}
+                  {appointment.doctor_name ?? "—"}
                 </dd>
               </div>
               {/* Date */}
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">
-                  {t('confirmation.date')}
+                  {t("confirmation.date")}
                 </dt>
                 <dd className="font-medium">
                   {formatDateLong(appointment.appointment_date, i18n.language)}
@@ -96,7 +99,7 @@ export function BookingConfirmation({ appointment, onNewBooking }: BookingConfir
               {/* Time */}
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">
-                  {t('confirmation.time')}
+                  {t("confirmation.time")}
                 </dt>
                 <dd className="font-medium">
                   {formatTime(appointment.appointment_time)}
@@ -107,7 +110,7 @@ export function BookingConfirmation({ appointment, onNewBooking }: BookingConfir
               {/* Booking Number — visually dominant with copy button */}
               <div className="flex justify-between items-center pt-1">
                 <dt className="text-sm font-semibold text-muted-foreground">
-                  {t('confirmation.bookingReference')}
+                  {t("confirmation.bookingReference")}
                 </dt>
                 <dd className="flex items-center gap-2">
                   <span className="font-mono text-lg font-bold text-primary tracking-wider">
@@ -118,7 +121,7 @@ export function BookingConfirmation({ appointment, onNewBooking }: BookingConfir
                     size="icon"
                     className="h-8 w-8"
                     onClick={handleCopyBookingNumber}
-                    title={t('confirmation.copyTooltip')}
+                    title={t("confirmation.copyTooltip")}
                   >
                     <Copy className="h-4 w-4" />
                   </Button>
@@ -132,14 +135,14 @@ export function BookingConfirmation({ appointment, onNewBooking }: BookingConfir
       {/* Section 2: Attention Message */}
       <Alert variant="warning">
         <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>{t('confirmation.attentionTitle')}</AlertTitle>
+        <AlertTitle>{t("confirmation.attentionTitle")}</AlertTitle>
         <AlertDescription>
-          <p>{t('confirmation.attentionMessage')}</p>
+          <p>{t("confirmation.attentionMessage")}</p>
           <p className="font-medium text-foreground mt-1">
             {appointment.patient_email}
           </p>
           <p className="whitespace-pre-line mt-1">
-            {t('confirmation.attentionMessageEmail')}
+            {t("confirmation.attentionMessageEmail")}
           </p>
         </AlertDescription>
       </Alert>
@@ -152,9 +155,9 @@ export function BookingConfirmation({ appointment, onNewBooking }: BookingConfir
           className="w-full sm:w-auto"
           onClick={handleNewBooking}
         >
-          {t('confirmation.newBooking')}
+          {t("confirmation.newBooking")}
         </Button>
       </div>
     </div>
-  );
+  )
 }

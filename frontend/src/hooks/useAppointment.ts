@@ -4,8 +4,7 @@ import { AppointmentsService } from "@/client"
 
 export function useAppointment(appointmentId: string) {
   return useQuery({
-    queryFn: () =>
-      AppointmentsService.readAppointment({ appointmentId }),
+    queryFn: () => AppointmentsService.readAppointment({ appointmentId }),
     queryKey: ["appointment", appointmentId],
     enabled: !!appointmentId,
   })

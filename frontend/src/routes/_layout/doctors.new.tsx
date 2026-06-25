@@ -1,9 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { ArrowLeft } from "lucide-react"
 import { useTranslation } from "react-i18next"
-
-import { Button } from "@/components/ui/button"
 import CreateDoctor from "@/components/Doctors/CreateDoctor"
+import { Button } from "@/components/ui/button"
 
 export const Route = createFileRoute("/_layout/doctors/new")({
   component: RouteComponent,

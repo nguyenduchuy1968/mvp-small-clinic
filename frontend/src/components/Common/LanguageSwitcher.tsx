@@ -1,5 +1,5 @@
-import { Globe } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { Globe } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import {
   Select,
@@ -7,28 +7,28 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select"
 
 const LANGUAGES = [
-  { code: 'vi', label: 'Tiếng Việt', short: 'VI' },
-  { code: 'en', label: 'English', short: 'EN' },
-  { code: 'uk', label: 'Українська', short: 'UK' },
-];
+  { code: "vi", label: "Tiếng Việt", short: "VI" },
+  { code: "en", label: "English", short: "EN" },
+  { code: "uk", label: "Українська", short: "UK" },
+]
 
 function LanguageSwitcher() {
-  const { i18n, t } = useTranslation('common');
+  const { i18n, t } = useTranslation("common")
 
   const changeLanguage = (lng: string) => {
-    void i18n.changeLanguage(lng);
+    void i18n.changeLanguage(lng)
     // localStorage persistence is handled automatically
     // by i18next-browser-languagedetector
-  };
+  }
 
   return (
     <Select value={i18n.language} onValueChange={changeLanguage}>
       <SelectTrigger className="h-[42px] w-[160px] rounded-xl border border-gray-200 bg-white px-4 text-[15px] font-medium text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-300 hover:shadow-md">
         <Globe className="mr-2 h-4 w-4 shrink-0 text-gray-400" />
-        <SelectValue placeholder={t('nav.language')} />
+        <SelectValue placeholder={t("nav.language")} />
       </SelectTrigger>
       <SelectContent>
         {LANGUAGES.map((lang) => (
@@ -43,7 +43,7 @@ function LanguageSwitcher() {
         ))}
       </SelectContent>
     </Select>
-  );
+  )
 }
 
-export { LanguageSwitcher };
+export { LanguageSwitcher }

@@ -1,29 +1,29 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef } from "react"
 
-import { AboutSection } from '@/components/Landing/AboutSection';
-import { ClinicInfoSection } from '@/components/Landing/ClinicInfoSection';
-import { DoctorsPreviewSection } from '@/components/Landing/DoctorsPreviewSection';
-import { FinalCTASection } from '@/components/Landing/FinalCTASection';
-import { HeroSection } from '@/components/Landing/HeroSection';
-import { LandingFooter } from '@/components/Landing/LandingFooter';
-import { LandingHeader } from '@/components/Landing/LandingHeader';
-import { MapPlaceholderSection } from '@/components/Landing/MapPlaceholderSection';
-import { ServicesSection } from '@/components/Landing/ServicesSection';
-import { TrustIndicatorsSection } from '@/components/Landing/TrustIndicatorsSection';
+import { AboutSection } from "@/components/Landing/AboutSection"
+import { ClinicInfoSection } from "@/components/Landing/ClinicInfoSection"
+import { DoctorsPreviewSection } from "@/components/Landing/DoctorsPreviewSection"
+import { FinalCTASection } from "@/components/Landing/FinalCTASection"
+import { HeroSection } from "@/components/Landing/HeroSection"
+import { LandingFooter } from "@/components/Landing/LandingFooter"
+import { LandingHeader } from "@/components/Landing/LandingHeader"
+import { MapPlaceholderSection } from "@/components/Landing/MapPlaceholderSection"
+import { ServicesSection } from "@/components/Landing/ServicesSection"
+import { TrustIndicatorsSection } from "@/components/Landing/TrustIndicatorsSection"
 
 export function LandingPage() {
-  const doctorsRef = useRef<HTMLDivElement>(null);
+  const doctorsRef = useRef<HTMLDivElement>(null)
 
   const handleViewDoctors = useCallback(() => {
-    doctorsRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
+    doctorsRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [])
 
   const handleNavigate = useCallback((sectionId: string) => {
-    const el = document.getElementById(sectionId);
+    const el = document.getElementById(sectionId)
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      el.scrollIntoView({ behavior: "smooth" })
     }
-  }, []);
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -42,5 +42,5 @@ export function LandingPage() {
       </main>
       <LandingFooter />
     </div>
-  );
+  )
 }

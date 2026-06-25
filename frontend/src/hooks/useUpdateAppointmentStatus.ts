@@ -20,7 +20,6 @@ export function useUpdateAppointmentStatus() {
     AppointmentsUpdateAppointmentStatusData
   >({
     mutationFn: async (data) => {
-      console.log("MUTATION DATA:", data)
       return AppointmentsService.updateAppointmentStatus(data)
     },
     onSuccess: () => {

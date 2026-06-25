@@ -1,26 +1,26 @@
-import { CalendarCheck, HeartHandshake, Stethoscope } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { CalendarCheck, HeartHandshake, Stethoscope } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { radius } from '@/theme/radius';
-import { spacing } from '@/theme/spacing';
+import { radius } from "@/theme/radius"
+import { spacing } from "@/theme/spacing"
 
 const aboutItems = [
   {
-    key: 'professionalDoctors',
+    key: "professionalDoctors",
     icon: Stethoscope,
   },
   {
-    key: 'convenientScheduling',
+    key: "convenientScheduling",
     icon: CalendarCheck,
   },
   {
-    key: 'trustedCare',
+    key: "trustedCare",
     icon: HeartHandshake,
   },
-] as const;
+] as const
 
 export function AboutSection() {
-  const { t } = useTranslation('landing');
+  const { t } = useTranslation("landing")
 
   return (
     <section
@@ -29,13 +29,13 @@ export function AboutSection() {
     >
       <div className={`mx-auto ${spacing.container.narrow}`}>
         <h2 className="text-center text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">
-          {t('about.title')}
+          {t("about.title")}
         </h2>
         <div
           className={`mt-16 grid ${spacing.grid.wide} sm:grid-cols-2 md:grid-cols-3`}
         >
           {aboutItems.map((item) => {
-            const Icon = item.icon;
+            const Icon = item.icon
             return (
               <div
                 key={item.key}
@@ -51,10 +51,10 @@ export function AboutSection() {
                   {t(`about.${item.key}Desc`)}
                 </p>
               </div>
-            );
+            )
           })}
         </div>
       </div>
     </section>
-  );
+  )
 }

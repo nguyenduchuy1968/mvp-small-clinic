@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { ArrowLeft } from "lucide-react"
 import { useTranslation } from "react-i18next"
-
-import { useDoctor } from "@/hooks/useDoctor"
+import EditDoctor from "@/components/Doctors/EditDoctor"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import EditDoctor from "@/components/Doctors/EditDoctor"
+import { useDoctor } from "@/hooks/useDoctor"
 
 export const Route = createFileRoute("/_layout/doctors/$id/edit")({
   component: RouteComponent,
@@ -58,10 +57,7 @@ function RouteComponent() {
           {t("actions.back")}
         </Link>
       </Button>
-      <EditDoctor
-        doctor={doctor}
-        onSuccess={() => {}}
-      />
+      <EditDoctor doctor={doctor} onSuccess={() => {}} />
     </div>
   )
 }

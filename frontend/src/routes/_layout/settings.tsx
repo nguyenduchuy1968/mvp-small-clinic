@@ -8,9 +8,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import useAuth from "@/hooks/useAuth"
 
 const tabsConfig = [
-  { value: "my-profile", titleKey: "settings.myProfile", component: UserInformation },
-  { value: "password", titleKey: "settings.password", component: ChangePassword },
-  { value: "danger-zone", titleKey: "settings.dangerZone", component: DeleteAccount },
+  {
+    value: "my-profile",
+    titleKey: "settings.myProfile",
+    component: UserInformation,
+  },
+  {
+    value: "password",
+    titleKey: "settings.password",
+    component: ChangePassword,
+  },
+  {
+    value: "danger-zone",
+    titleKey: "settings.dangerZone",
+    component: DeleteAccount,
+  },
 ]
 
 export const Route = createFileRoute("/_layout/settings")({

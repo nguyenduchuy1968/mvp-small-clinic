@@ -1,39 +1,39 @@
-import { DoctorsService } from '@/client';
-import { BlockedDatesList } from '@/components/BlockedDates/BlockedDatesList';
+import { useQuery } from "@tanstack/react-query"
+import { createFileRoute } from "@tanstack/react-router"
+import { useState } from "react"
+import { useTranslation } from "react-i18next"
+import { DoctorsService } from "@/client"
+import { BlockedDatesList } from "@/components/BlockedDates/BlockedDatesList"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import useAuth from '@/hooks/useAuth';
-import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+} from "@/components/ui/select"
+import useAuth from "@/hooks/useAuth"
 
 function BlockedDatesPage() {
-  const { t } = useTranslation('blockedDates');
-  const { user } = useAuth();
+  const { t } = useTranslation("blockedDates")
+  const { user } = useAuth()
 
-  const isAdmin = user?.is_superuser === true;
+  const isAdmin = user?.is_superuser === true
 
   // Fetch all doctors
   const { data: doctorsData } = useQuery({
     queryFn: () => DoctorsService.readDoctors({ skip: 0, limit: 100 }),
-    queryKey: ['doctors'],
+    queryKey: ["doctors"],
     enabled: !!user?.id,
-  });
+  })
 
   // Admin: selected doctor ID (stateful)
-  const [selectedDoctorId, setSelectedDoctorId] = useState<string>('');
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string>("")
 
   // Doctor user: automatically resolve doctor_id from user_id
   const currentDoctor = doctorsData?.data?.find(
-    (doctor) => doctor.user_id === user?.id
-  );
-  const doctorId = isAdmin ? selectedDoctorId : (currentDoctor?.id ?? '');
+    (doctor) => doctor.user_id === user?.id,
+  )
+  const doctorId = isAdmin ? selectedDoctorId : (currentDoctor?.id ?? "")
 
   // Admin without a selected doctor — show the selector
   if (isAdmin && !doctorId) {
@@ -56,8 +56,8 @@ function BlockedDatesPage() {
         </div>
         <h2 className="text-xl font-semibold mb-4">
           {t(
-            'admin.noDoctor.title',
-            'Select a doctor to manage blocked dates.'
+            "admin.noDoctor.title",
+            "Select a doctor to manage blocked dates.",
           )}
         </h2>
         <div className="w-full max-w-xs">
@@ -65,8 +65,8 @@ function BlockedDatesPage() {
             <SelectTrigger>
               <SelectValue
                 placeholder={t(
-                  'admin.doctorSelector.placeholder',
-                  'Choose a doctor...'
+                  "admin.doctorSelector.placeholder",
+                  "Choose a doctor...",
                 )}
               />
             </SelectTrigger>
@@ -74,14 +74,14 @@ function BlockedDatesPage() {
               {doctorsData?.data?.map((doctor) => (
                 <SelectItem key={doctor.id} value={doctor.id}>
                   {doctor.full_name}
-                  {doctor.specialty ? ` (${doctor.specialty})` : ''}
+                  {doctor.specialty ? ` (${doctor.specialty})` : ""}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
       </div>
-    );
+    )
   }
 
   // Regular doctor users without a profile see a different message
@@ -104,36 +104,36 @@ function BlockedDatesPage() {
           </svg>
         </div>
         <h2 className="text-xl font-semibold mb-2">
-          {t('noDoctorProfile.title', 'No doctor profile found')}
+          {t("noDoctorProfile.title", "No doctor profile found")}
         </h2>
         <p className="text-muted-foreground max-w-md">
           {t(
-            'noDoctorProfile.description',
-            'You do not have a doctor profile yet. Please contact an administrator to create one before managing blocked dates.'
+            "noDoctorProfile.description",
+            "You do not have a doctor profile yet. Please contact an administrator to create one before managing blocked dates.",
           )}
         </p>
       </div>
-    );
+    )
   }
 
   return (
     <div className="flex flex-col gap-8">
       <BlockedDatesList doctorId={doctorId} />
     </div>
-  );
+  )
 }
 
-export const Route = createFileRoute('/_layout/blocked-dates')({
+export const Route = createFileRoute("/_layout/blocked-dates")({
   component: RouteComponent,
   head: () => ({
     meta: [
       {
-        title: 'Blocked Dates',
+        title: "Blocked Dates",
       },
     ],
   }),
-});
+})
 
 function RouteComponent() {
-  return <BlockedDatesPage />;
+  return <BlockedDatesPage />
 }

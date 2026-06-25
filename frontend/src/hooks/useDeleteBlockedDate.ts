@@ -1,26 +1,25 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTranslation } from 'react-i18next';
-
-import { BlockedDatesService } from '@/client';
-import type { ApiError } from '@/client';
-import useCustomToast from '@/hooks/useCustomToast';
-import { handleError } from '@/utils';
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useTranslation } from "react-i18next"
+import type { ApiError } from "@/client"
+import { BlockedDatesService } from "@/client"
+import useCustomToast from "@/hooks/useCustomToast"
+import { handleError } from "@/utils"
 
 export function useDeleteBlockedDate() {
-  const queryClient = useQueryClient();
-  const { t } = useTranslation('blockedDates');
-  const { showSuccessToast, showErrorToast } = useCustomToast();
+  const queryClient = useQueryClient()
+  const { t } = useTranslation("blockedDates")
+  const { showSuccessToast, showErrorToast } = useCustomToast()
 
   return useMutation({
     mutationFn: BlockedDatesService.deleteBlockedDate,
     onSuccess: () => {
-      showSuccessToast(t('delete.success'));
+      showSuccessToast(t("delete.success"))
     },
     onError: (err: Error) => {
-      handleError.call(showErrorToast, err as unknown as ApiError);
+      handleError.call(showErrorToast, err as unknown as ApiError)
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['blocked-dates'] });
+      queryClient.invalidateQueries({ queryKey: ["blocked-dates"] })
     },
-  });
+  })
 }

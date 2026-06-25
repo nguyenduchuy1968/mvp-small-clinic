@@ -4,23 +4,23 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table"
 import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-} from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+} from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -28,14 +28,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table"
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  onRowClick?: (row: TData) => void;
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
+  onRowClick?: (row: TData) => void
   /** Optional callback to compute a className for each row. */
-  getRowClassName?: (row: TData) => string | undefined;
+  getRowClassName?: (row: TData) => string | undefined
 }
 
 export function DataTable<TData, TValue>({
@@ -44,13 +44,13 @@ export function DataTable<TData, TValue>({
   onRowClick,
   getRowClassName,
 }: DataTableProps<TData, TValue>) {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation("common")
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-  });
+  })
 
   return (
     <div className="flex flex-col gap-4">
@@ -61,17 +61,17 @@ export function DataTable<TData, TValue>({
               {headerGroup.headers.map((header) => {
                 const meta = header.column.columnDef.meta as
                   | { className?: string }
-                  | undefined;
+                  | undefined
                 return (
                   <TableHead key={header.id} className={meta?.className}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
-                );
+                )
               })}
             </TableRow>
           ))}
@@ -84,25 +84,25 @@ export function DataTable<TData, TValue>({
                 onClick={() => onRowClick?.(row.original)}
                 className={
                   [
-                    onRowClick ? 'cursor-pointer' : undefined,
+                    onRowClick ? "cursor-pointer" : undefined,
                     getRowClassName?.(row.original),
                   ]
                     .filter(Boolean)
-                    .join(' ') || undefined
+                    .join(" ") || undefined
                 }
               >
                 {row.getVisibleCells().map((cell) => {
                   const meta = cell.column.columnDef.meta as
                     | { className?: string }
-                    | undefined;
+                    | undefined
                   return (
                     <TableCell key={cell.id} className={meta?.className}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
-                  );
+                  )
                 })}
               </TableRow>
             ))
@@ -112,7 +112,7 @@ export function DataTable<TData, TValue>({
                 colSpan={columns.length}
                 className="h-32 text-center text-muted-foreground"
               >
-                {t('states.empty')}
+                {t("states.empty")}
               </TableCell>
             </TableRow>
           )}
@@ -123,7 +123,7 @@ export function DataTable<TData, TValue>({
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 border-t bg-muted/20">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="text-sm text-muted-foreground">
-              {t('pagination.showing', {
+              {t("pagination.showing", {
                 from:
                   table.getState().pagination.pageIndex *
                     table.getState().pagination.pageSize +
@@ -131,19 +131,19 @@ export function DataTable<TData, TValue>({
                 to: Math.min(
                   (table.getState().pagination.pageIndex + 1) *
                     table.getState().pagination.pageSize,
-                  data.length
+                  data.length,
                 ),
                 total: data.length,
               })}
             </div>
             <div className="flex items-center gap-x-2">
               <p className="text-sm text-muted-foreground">
-                {t('pagination.rowsPerPage')}
+                {t("pagination.rowsPerPage")}
               </p>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
-                  table.setPageSize(Number(value));
+                  table.setPageSize(Number(value))
                 }}
               >
                 <SelectTrigger className="h-8 w-17.5">
@@ -164,11 +164,11 @@ export function DataTable<TData, TValue>({
 
           <div className="flex items-center gap-x-6">
             <div className="flex items-center gap-x-1 text-sm text-muted-foreground">
-              <span>{t('pagination.page')}</span>
+              <span>{t("pagination.page")}</span>
               <span className="font-medium text-foreground">
                 {table.getState().pagination.pageIndex + 1}
               </span>
-              <span>{t('pagination.of')}</span>
+              <span>{t("pagination.of")}</span>
               <span className="font-medium text-foreground">
                 {table.getPageCount()}
               </span>
@@ -182,7 +182,7 @@ export function DataTable<TData, TValue>({
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
               >
-                <span className="sr-only">{t('pagination.goToFirstPage')}</span>
+                <span className="sr-only">{t("pagination.goToFirstPage")}</span>
                 <ChevronsLeft className="h-4 w-4" />
               </Button>
               <Button
@@ -193,7 +193,7 @@ export function DataTable<TData, TValue>({
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">
-                  {t('pagination.goToPreviousPage')}
+                  {t("pagination.goToPreviousPage")}
                 </span>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -204,7 +204,7 @@ export function DataTable<TData, TValue>({
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
               >
-                <span className="sr-only">{t('pagination.goToNextPage')}</span>
+                <span className="sr-only">{t("pagination.goToNextPage")}</span>
                 <ChevronRight className="h-4 w-4" />
               </Button>
               <Button
@@ -214,7 +214,7 @@ export function DataTable<TData, TValue>({
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
               >
-                <span className="sr-only">{t('pagination.goToLastPage')}</span>
+                <span className="sr-only">{t("pagination.goToLastPage")}</span>
                 <ChevronsRight className="h-4 w-4" />
               </Button>
             </div>
@@ -222,5 +222,5 @@ export function DataTable<TData, TValue>({
         </div>
       )}
     </div>
-  );
+  )
 }

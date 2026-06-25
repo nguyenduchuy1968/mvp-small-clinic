@@ -1,11 +1,11 @@
-import { useNavigate } from '@tanstack/react-router';
-import { Calendar, Users } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { useNavigate } from "@tanstack/react-router"
+import { Calendar, Users } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button"
 
 interface HeroSectionProps {
-  onViewDoctors: () => void;
+  onViewDoctors: () => void
 }
 
 function MedicalIllustration() {
@@ -188,12 +188,12 @@ function MedicalIllustration() {
         </g>
       </svg>
     </div>
-  );
+  )
 }
 
 export function HeroSection({ onViewDoctors }: HeroSectionProps) {
-  const { t } = useTranslation('landing');
-  const navigate = useNavigate();
+  const { t } = useTranslation("landing")
+  const navigate = useNavigate()
 
   return (
     <section
@@ -212,22 +212,22 @@ export function HeroSection({ onViewDoctors }: HeroSectionProps) {
           {/* Left: Text Content */}
           <div className="flex-1 text-center lg:text-left">
             <h1 className="text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl md:text-7xl leading-tight">
-              {t('hero.title')}
+              {t("hero.title")}
             </h1>
             <p className="mt-4 text-xl text-teal-700 sm:text-2xl font-light">
-              {t('hero.subtitle')}
+              {t("hero.subtitle")}
             </p>
             <p className="mx-auto mt-6 max-w-xl text-[19px] text-gray-500 leading-relaxed lg:mx-0">
-              {t('hero.description')}
+              {t("hero.description")}
             </p>
             <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row lg:justify-start">
               <Button
                 size="lg"
                 className="h-14 min-w-[200px] rounded-xl bg-teal-600 text-white text-[19px] font-semibold shadow-lg transition-all duration-200 hover:bg-teal-700 hover:shadow-xl active:scale-[0.97]"
-                onClick={() => navigate({ to: '/booking' })}
+                onClick={() => navigate({ to: "/booking" })}
               >
                 <Calendar className="mr-2 h-5 w-5" />
-                {t('hero.bookAppointment')}
+                {t("hero.bookAppointment")}
               </Button>
               <Button
                 variant="outline"
@@ -236,7 +236,7 @@ export function HeroSection({ onViewDoctors }: HeroSectionProps) {
                 onClick={onViewDoctors}
               >
                 <Users className="mr-2 h-5 w-5" />
-                {t('hero.viewDoctors')}
+                {t("hero.viewDoctors")}
               </Button>
             </div>
           </div>
@@ -248,5 +248,5 @@ export function HeroSection({ onViewDoctors }: HeroSectionProps) {
         </div>
       </div>
     </section>
-  );
+  )
 }

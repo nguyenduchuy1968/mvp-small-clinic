@@ -1,10 +1,10 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query"
 
-import { AppointmentsService, type AppointmentCreate } from '@/client';
+import { type AppointmentCreate, AppointmentsService } from "@/client"
 
 export function useCreateAppointment() {
   return useMutation({
     mutationFn: (data: AppointmentCreate) =>
       AppointmentsService.createAppointment({ requestBody: data }),
-  });
+  })
 }

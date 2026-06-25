@@ -1,4 +1,4 @@
-import { Link as RouterLink } from '@tanstack/react-router';
+import { Link as RouterLink } from "@tanstack/react-router"
 import {
   Ban,
   CalendarCheck,
@@ -8,13 +8,13 @@ import {
   Settings,
   Stethoscope,
   Users,
-} from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+} from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { SidebarAppearance } from '@/components/Common/Appearance';
-import { Logo } from '@/components/Common/Logo';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
+import { SidebarAppearance } from "@/components/Common/Appearance"
+import { Logo } from "@/components/Common/Logo"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Separator } from "@/components/ui/separator"
 import {
   Sidebar,
   SidebarContent,
@@ -23,52 +23,52 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar';
-import useAuth from '@/hooks/useAuth';
-import { getInitials } from '@/utils';
-import { type Item, Main } from './Main';
+} from "@/components/ui/sidebar"
+import useAuth from "@/hooks/useAuth"
+import { getInitials } from "@/utils"
+import { type Item, Main } from "./Main"
 
 function AppSidebar() {
-  const { t } = useTranslation('common');
-  const { user: currentUser, logout } = useAuth();
-  const { isMobile, setOpenMobile } = useSidebar();
+  const { t } = useTranslation("common")
+  const { user: currentUser, logout } = useAuth()
+  const { isMobile, setOpenMobile } = useSidebar()
 
   const baseItems: Item[] = [
-    { icon: Home, title: t('nav.dashboard'), path: '/dashboard' },
+    { icon: Home, title: t("nav.dashboard"), path: "/dashboard" },
     {
       icon: CalendarCheck,
-      title: t('nav.appointments'),
-      path: '/appointments',
+      title: t("nav.appointments"),
+      path: "/appointments",
     },
-    { icon: Stethoscope, title: t('nav.doctors'), path: '/doctors' },
+    { icon: Stethoscope, title: t("nav.doctors"), path: "/doctors" },
     {
       icon: CalendarClock,
-      title: t('nav.availability'),
-      path: '/availability',
+      title: t("nav.availability"),
+      path: "/availability",
     },
     {
       icon: Ban,
-      title: t('nav.blockedDates'),
-      path: '/blocked-dates',
+      title: t("nav.blockedDates"),
+      path: "/blocked-dates",
     },
-  ];
+  ]
 
   const items = currentUser?.is_superuser
-    ? [...baseItems, { icon: Users, title: t('nav.admin'), path: '/admin' }]
-    : baseItems;
+    ? [...baseItems, { icon: Users, title: t("nav.admin"), path: "/admin" }]
+    : baseItems
 
   const handleMenuClick = () => {
     if (isMobile) {
-      setOpenMobile(false);
+      setOpenMobile(false)
     }
-  };
+  }
 
   const handleLogout = () => {
     if (isMobile) {
-      setOpenMobile(false);
+      setOpenMobile(false)
     }
-    logout();
-  };
+    logout()
+  }
 
   return (
     <Sidebar collapsible="icon">
@@ -83,7 +83,7 @@ function AppSidebar() {
             <AvatarFallback className="bg-zinc-600 text-white text-base">
               {getInitials(
                 currentUser.full_name ||
-                  (currentUser.is_superuser ? 'Admin' : 'Dr.')
+                  (currentUser.is_superuser ? "Admin" : "Dr."),
               )}
             </AvatarFallback>
           </Avatar>
@@ -106,23 +106,23 @@ function AppSidebar() {
         <SidebarMenu>
           <SidebarAppearance />
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip={t('nav.settings')} asChild>
+            <SidebarMenuButton tooltip={t("nav.settings")} asChild>
               <RouterLink to="/settings" onClick={handleMenuClick}>
                 <Settings />
-                <span>{t('nav.settings')}</span>
+                <span>{t("nav.settings")}</span>
               </RouterLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip={t('nav.logout')} onClick={handleLogout}>
+            <SidebarMenuButton tooltip={t("nav.logout")} onClick={handleLogout}>
               <LogOut />
-              <span>{t('nav.logout')}</span>
+              <span>{t("nav.logout")}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
     </Sidebar>
-  );
+  )
 }
 
-export default AppSidebar;
+export default AppSidebar

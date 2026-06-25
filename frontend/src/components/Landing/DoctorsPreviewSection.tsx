@@ -1,26 +1,26 @@
-import { useNavigate } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
-import { Calendar, Stethoscope, Briefcase, User } from 'lucide-react';
+import { useNavigate } from "@tanstack/react-router"
+import { Briefcase, Calendar, Stethoscope, User } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useDoctorsPublic } from '@/hooks/useDoctorsPublic';
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useDoctorsPublic } from "@/hooks/useDoctorsPublic"
 
 export function DoctorsPreviewSection() {
-  const { t } = useTranslation('landing');
-  const navigate = useNavigate();
-  const { data, isLoading, isError } = useDoctorsPublic();
+  const { t } = useTranslation("landing")
+  const navigate = useNavigate()
+  const { data, isLoading, isError } = useDoctorsPublic()
 
   const activeDoctors = (data?.data ?? [])
     .filter((doctor) => doctor.is_active)
-    .slice(0, 3);
+    .slice(0, 3)
 
   return (
     <section className="bg-[#F3F4F6] px-4 py-24 md:py-32" id="doctors-section">
       <div className="mx-auto max-w-5xl">
         <h2 className="text-center text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">
-          {t('doctors.title')}
+          {t("doctors.title")}
         </h2>
 
         <div className="mt-16">
@@ -45,12 +45,12 @@ export function DoctorsPreviewSection() {
           )}
 
           {isError && (
-            <p className="text-center text-destructive">{t('doctors.error')}</p>
+            <p className="text-center text-destructive">{t("doctors.error")}</p>
           )}
 
           {!isLoading && !isError && activeDoctors.length === 0 && (
             <p className="text-center text-gray-500">
-              {t('doctors.noDoctors')}
+              {t("doctors.noDoctors")}
             </p>
           )}
 
@@ -87,7 +87,7 @@ export function DoctorsPreviewSection() {
                       <div className="mt-1.5 flex items-center gap-1.5 text-gray-500">
                         <Briefcase className="h-4 w-4" />
                         <span className="text-[15px]">
-                          {t('doctors.experience', {
+                          {t("doctors.experience", {
                             years: doctor.experience_years,
                           })}
                         </span>
@@ -105,10 +105,10 @@ export function DoctorsPreviewSection() {
                     <Button
                       size="lg"
                       className="mt-6 w-full rounded-xl bg-teal-600 text-white text-[17px] font-semibold shadow-sm transition-all duration-200 hover:bg-teal-700 active:scale-[0.97]"
-                      onClick={() => navigate({ to: '/booking' })}
+                      onClick={() => navigate({ to: "/booking" })}
                     >
                       <Calendar className="mr-2 h-5 w-5" />
-                      {t('doctors.bookAppointment')}
+                      {t("doctors.bookAppointment")}
                     </Button>
                   </div>
                 </Card>
@@ -123,14 +123,14 @@ export function DoctorsPreviewSection() {
               variant="outline"
               size="lg"
               className="h-12 min-w-[200px] rounded-xl border-2 border-teal-200 bg-white text-teal-700 text-[19px] font-semibold shadow-sm transition-all duration-200 hover:bg-teal-50 hover:border-teal-300 active:scale-[0.97]"
-              onClick={() => navigate({ to: '/booking' })}
+              onClick={() => navigate({ to: "/booking" })}
             >
               <Calendar className="mr-2 h-5 w-5" />
-              {t('doctors.viewAll')}
+              {t("doctors.viewAll")}
             </Button>
           </div>
         )}
       </div>
     </section>
-  );
+  )
 }

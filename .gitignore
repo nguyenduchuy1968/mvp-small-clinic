@@ -40,3 +40,18 @@ Thumbs.db
 plans/
 docs/tmp/
 backup/
+
+# Local development files
+*_context.md
+*_context.txt
+
+# Local helper scripts
+commit_*.bat
+
+# Audit and screenshots
+frontend/audit-screenshots/
+frontend/blocked-dates-login.png
+docs/audit/
+
+# Local temporary scripts
+frontend/scripts/

@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query"
 
-import { AvailabilityService } from '@/client';
+import { AvailabilityService } from "@/client"
 
 export function useAvailabilities(doctorId: string) {
   return useQuery({
@@ -11,7 +11,7 @@ export function useAvailabilities(doctorId: string) {
         limit: 100,
         activeOnly: false,
       }),
-    queryKey: ['availabilities', doctorId],
+    queryKey: ["availabilities", doctorId],
     enabled: !!doctorId,
-  });
+  })
 }

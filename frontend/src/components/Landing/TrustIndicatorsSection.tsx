@@ -1,51 +1,52 @@
-import { CalendarCheck, Clock, Star, Users } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import type { LucideIcon } from 'lucide-react';
-
-import { spacing } from '@/theme/spacing';
-import { radius } from '@/theme/radius';
+import type { LucideIcon } from "lucide-react"
+import { CalendarCheck, Clock, Star, Users } from "lucide-react"
+import { useTranslation } from "react-i18next"
+import { radius } from "@/theme/radius"
+import { spacing } from "@/theme/spacing"
 
 interface Indicator {
-  key: string;
-  value: string;
-  icon: LucideIcon;
-  suffix?: string;
+  key: string
+  value: string
+  icon: LucideIcon
+  suffix?: string
 }
 
 const indicators: Indicator[] = [
   {
-    key: 'patients',
-    value: '5000+',
+    key: "patients",
+    value: "5000+",
     icon: Users,
   },
   {
-    key: 'years',
-    value: '12+',
+    key: "years",
+    value: "12+",
     icon: CalendarCheck,
   },
   {
-    key: 'rating',
-    value: '4.9',
+    key: "rating",
+    value: "4.9",
     icon: Star,
-    suffix: '\u2605',
+    suffix: "\u2605",
   },
   {
-    key: 'waitingTime',
-    value: '15',
+    key: "waitingTime",
+    value: "15",
     icon: Clock,
-    suffix: 'min',
+    suffix: "min",
   },
-];
+]
 
 export function TrustIndicatorsSection() {
-  const { t } = useTranslation('landing');
+  const { t } = useTranslation("landing")
 
   return (
     <section className={`bg-white px-4 ${spacing.section.compact}`}>
       <div className={`mx-auto ${spacing.container.narrow}`}>
-        <div className={`grid grid-cols-2 ${spacing.grid.compact} md:grid-cols-4`}>
+        <div
+          className={`grid grid-cols-2 ${spacing.grid.compact} md:grid-cols-4`}
+        >
           {indicators.map((indicator) => {
-            const Icon = indicator.icon;
+            const Icon = indicator.icon
             return (
               <div
                 key={indicator.key}
@@ -66,10 +67,10 @@ export function TrustIndicatorsSection() {
                   {t(`trustIndicators.${indicator.key}`)}
                 </p>
               </div>
-            );
+            )
           })}
         </div>
       </div>
     </section>
-  );
+  )
 }

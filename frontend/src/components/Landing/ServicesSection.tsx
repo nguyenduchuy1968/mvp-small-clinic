@@ -1,19 +1,19 @@
-import { useTranslation } from 'react-i18next';
-import { Stethoscope, HeartPulse, Baby, ShieldCheck } from 'lucide-react';
+import { Baby, HeartPulse, ShieldCheck, Stethoscope } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { services } from '@/config/services';
-import { spacing } from '@/theme/spacing';
-import { radius } from '@/theme/radius';
+import { services } from "@/config/services"
+import { radius } from "@/theme/radius"
+import { spacing } from "@/theme/spacing"
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   generalConsultation: Stethoscope,
   internalMedicine: HeartPulse,
   pediatrics: Baby,
   preventiveCare: ShieldCheck,
-};
+}
 
 export function ServicesSection() {
-  const { t } = useTranslation('landing');
+  const { t } = useTranslation("landing")
 
   return (
     <section
@@ -22,13 +22,13 @@ export function ServicesSection() {
     >
       <div className={`mx-auto ${spacing.container.narrow}`}>
         <h2 className="text-center text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">
-          {t('services.title')}
+          {t("services.title")}
         </h2>
         <div
           className={`mt-16 grid ${spacing.grid.default} sm:grid-cols-2 lg:grid-cols-4`}
         >
           {services.map((service) => {
-            const Icon = iconMap[service.key];
+            const Icon = iconMap[service.key]
             return (
               <div
                 key={service.key}
@@ -46,10 +46,10 @@ export function ServicesSection() {
                   {t(`services.${service.key}Desc`)}
                 </p>
               </div>
-            );
+            )
           })}
         </div>
       </div>
     </section>
-  );
+  )
 }

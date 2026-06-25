@@ -99,9 +99,7 @@ export function TimeSlotGrid({
 }: TimeSlotGridProps) {
   const { t } = useTranslation("booking")
 
-  const isPreviousDisabled = date
-    ? date <= getClinicTodayString()
-    : true
+  const isPreviousDisabled = date ? date <= getClinicTodayString() : true
 
   const slotsContent = () => {
     if (isLoading) {

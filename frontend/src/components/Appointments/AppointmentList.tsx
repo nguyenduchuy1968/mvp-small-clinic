@@ -1,14 +1,14 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
 import { Search } from "lucide-react"
 import { Suspense, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { useNavigate } from "@tanstack/react-router"
 
 import type { AppointmentPublic } from "@/client"
 import { AppointmentsService } from "@/client"
 import { DataTable } from "@/components/Common/DataTable"
-import { Input } from "@/components/ui/input"
 import PendingItems from "@/components/Pending/PendingItems"
+import { Input } from "@/components/ui/input"
 import { isClinicToday, isPastAppointment } from "@/utils/date"
 import { buildColumns } from "./columns"
 
@@ -59,10 +59,7 @@ function AppointmentsTableContent() {
       return "text-muted-foreground opacity-60"
     }
     // Today's non-cancelled appointments get a subtle highlight
-    if (
-      row.status !== "cancelled" &&
-      isClinicToday(row.appointment_date)
-    ) {
+    if (row.status !== "cancelled" && isClinicToday(row.appointment_date)) {
       return "bg-primary/15"
     }
     return undefined

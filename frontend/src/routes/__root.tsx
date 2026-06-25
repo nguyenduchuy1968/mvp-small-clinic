@@ -1,6 +1,6 @@
-import ErrorComponent from '@/components/Common/ErrorComponent';
-import NotFound from '@/components/Common/NotFound';
-import { createRootRoute, HeadContent, Outlet } from '@tanstack/react-router';
+import { createRootRoute, HeadContent, Outlet } from "@tanstack/react-router"
+import ErrorComponent from "@/components/Common/ErrorComponent"
+import NotFound from "@/components/Common/NotFound"
 
 export const Route = createRootRoute({
   component: () => (
@@ -11,4 +11,4 @@ export const Route = createRootRoute({
   ),
   notFoundComponent: () => <NotFound />,
   errorComponent: () => <ErrorComponent />,
-});
+})

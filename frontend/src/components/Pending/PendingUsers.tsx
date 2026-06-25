@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next"
+
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
@@ -10,7 +11,7 @@ import {
 } from "@/components/ui/table"
 
 const PendingUsers = () => {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation("common")
   return (
     <Table>
       <TableHeader>

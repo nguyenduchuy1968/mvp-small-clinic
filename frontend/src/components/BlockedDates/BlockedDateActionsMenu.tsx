@@ -1,10 +1,10 @@
-import { EllipsisVertical, Trash2 } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
+import { EllipsisVertical, Trash2 } from "lucide-react"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 
-import type { BlockedDatePublic } from '@/client';
-import { Button } from '@/components/ui/button';
+import type { BlockedDatePublic } from "@/client"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -13,28 +13,28 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { LoadingButton } from '@/components/ui/loading-button';
-import { useDeleteBlockedDate } from '@/hooks/useDeleteBlockedDate';
+} from "@/components/ui/dropdown-menu"
+import { LoadingButton } from "@/components/ui/loading-button"
+import { useDeleteBlockedDate } from "@/hooks/useDeleteBlockedDate"
 
 interface BlockedDateActionsMenuProps {
-  blockedDate: BlockedDatePublic;
+  blockedDate: BlockedDatePublic
 }
 
 export function BlockedDateActionsMenu({
   blockedDate,
 }: BlockedDateActionsMenuProps) {
-  const { t } = useTranslation(['blockedDates', 'common']);
-  const [open, setOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const deleteBlockedDate = useDeleteBlockedDate();
-  const { handleSubmit } = useForm();
+  const { t } = useTranslation(["blockedDates", "common"])
+  const [open, setOpen] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const deleteBlockedDate = useDeleteBlockedDate()
+  const { handleSubmit } = useForm()
 
   const onSubmit = async () => {
     deleteBlockedDate.mutate(
@@ -44,12 +44,12 @@ export function BlockedDateActionsMenu({
       },
       {
         onSuccess: () => {
-          setIsDeleteOpen(false);
-          setOpen(false);
+          setIsDeleteOpen(false)
+          setOpen(false)
         },
-      }
-    );
-  };
+      },
+    )
+  }
 
   return (
     <>
@@ -66,7 +66,7 @@ export function BlockedDateActionsMenu({
             onClick={() => setIsDeleteOpen(true)}
           >
             <Trash2 />
-            {t('common:actions.delete')}
+            {t("common:actions.delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -74,9 +74,9 @@ export function BlockedDateActionsMenu({
         <DialogContent className="sm:max-w-md">
           <form onSubmit={handleSubmit(onSubmit)}>
             <DialogHeader>
-              <DialogTitle>{t('common:confirmations.deleteTitle')}</DialogTitle>
+              <DialogTitle>{t("common:confirmations.deleteTitle")}</DialogTitle>
               <DialogDescription>
-                {t('blockedDates:delete.confirmMessage')}
+                {t("blockedDates:delete.confirmMessage")}
               </DialogDescription>
             </DialogHeader>
 
@@ -86,7 +86,7 @@ export function BlockedDateActionsMenu({
                   variant="outline"
                   disabled={deleteBlockedDate.isPending}
                 >
-                  {t('common:actions.cancel')}
+                  {t("common:actions.cancel")}
                 </Button>
               </DialogClose>
               <LoadingButton
@@ -94,12 +94,12 @@ export function BlockedDateActionsMenu({
                 type="submit"
                 loading={deleteBlockedDate.isPending}
               >
-                {t('common:actions.delete')}
+                {t("common:actions.delete")}
               </LoadingButton>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
     </>
-  );
+  )
 }

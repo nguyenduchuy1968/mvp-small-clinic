@@ -38,16 +38,16 @@ export const getInitials = (name: string): string => {
  */
 export function formatTimeHHmm(
   time: string | null | undefined,
-  fallback = ""
+  fallback = "",
 ): string {
-  if (!time) return fallback;
+  if (!time) return fallback
 
   // Match HH:mm or H:mm (with optional AM/PM suffix)
-  const match = time.match(/^(\d{1,2}):(\d{2})(?:\s*[APap][Mm])?$/);
-  if (!match) return time;
+  const match = time.match(/^(\d{1,2}):(\d{2})(?:\s*[APap][Mm])?$/)
+  if (!match) return time
 
-  const hours = Number.parseInt(match[1], 10);
-  const minutes = match[2];
+  const hours = Number.parseInt(match[1], 10)
+  const minutes = match[2]
 
-  return `${String(hours).padStart(2, "0")}:${minutes}`;
+  return `${String(hours).padStart(2, "0")}:${minutes}`
 }

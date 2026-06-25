@@ -1,50 +1,50 @@
-import { useNavigate } from '@tanstack/react-router';
-import { Calendar, Menu, X } from 'lucide-react';
-import { useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useNavigate } from "@tanstack/react-router"
+import { Calendar, Menu, X } from "lucide-react"
+import { useCallback, useState } from "react"
+import { useTranslation } from "react-i18next"
 
-import { LanguageSwitcher } from '@/components/Common/LanguageSwitcher';
-import { Button } from '@/components/ui/button';
-import { clinicConfig } from '@/config/clinic';
+import { LanguageSwitcher } from "@/components/Common/LanguageSwitcher"
+import { Button } from "@/components/ui/button"
+import { clinicConfig } from "@/config/clinic"
 
 interface LandingHeaderProps {
-  onNavigate: (sectionId: string) => void;
+  onNavigate: (sectionId: string) => void
 }
 
 const NAV_ITEMS = [
-  { key: 'home', sectionId: 'hero-section' },
-  { key: 'services', sectionId: 'services-section' },
-  { key: 'doctors', sectionId: 'doctors-section' },
-  { key: 'about', sectionId: 'about-section' },
-  { key: 'contact', sectionId: 'contact-section' },
-] as const;
+  { key: "home", sectionId: "hero-section" },
+  { key: "services", sectionId: "services-section" },
+  { key: "doctors", sectionId: "doctors-section" },
+  { key: "about", sectionId: "about-section" },
+  { key: "contact", sectionId: "contact-section" },
+] as const
 
 export function LandingHeader({ onNavigate }: LandingHeaderProps) {
-  const { t, i18n } = useTranslation('landing');
-  const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { t, i18n } = useTranslation("landing")
+  const navigate = useNavigate()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
-  const isVietnamese = i18n.language?.startsWith('vi');
-  const clinicName = isVietnamese ? clinicConfig.name : clinicConfig.nameEn;
+  const isVietnamese = i18n.language?.startsWith("vi")
+  const clinicName = isVietnamese ? clinicConfig.name : clinicConfig.nameEn
 
   const handleNavClick = useCallback(
     (sectionId: string) => {
-      setMobileOpen(false);
-      if (sectionId === 'home') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      setMobileOpen(false)
+      if (sectionId === "home") {
+        window.scrollTo({ top: 0, behavior: "smooth" })
       } else {
-        onNavigate(sectionId);
+        onNavigate(sectionId)
       }
     },
-    [onNavigate]
-  );
+    [onNavigate],
+  )
 
   return (
     <header className="sticky top-0 z-50 h-[104px] border-b border-[#E6E9ED] bg-white/95 backdrop-blur-sm">
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo — reduced ~20% for lighter feel */}
         <button
-          onClick={() => handleNavClick('home')}
+          onClick={() => handleNavClick("home")}
           className="flex items-center gap-2 transition-opacity hover:opacity-80"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-600 text-white text-base font-bold shadow-sm">
@@ -55,7 +55,7 @@ export function LandingHeader({ onNavigate }: LandingHeaderProps) {
               {clinicName}
             </span>
             <span className="mt-0.5 text-[12px] font-medium text-gray-400 leading-none">
-              {t('hero.subtitle')}
+              {t("hero.subtitle")}
             </span>
           </div>
         </button>
@@ -81,10 +81,10 @@ export function LandingHeader({ onNavigate }: LandingHeaderProps) {
           {/* Book Appointment Button */}
           <Button
             className="h-[52px] rounded-xl bg-orange-500 px-6 text-white text-[17px] font-semibold shadow-sm transition-all duration-200 hover:bg-orange-600 hover:shadow-md active:scale-[0.97]"
-            onClick={() => navigate({ to: '/booking' })}
+            onClick={() => navigate({ to: "/booking" })}
           >
             <Calendar className="mr-2 h-5 w-5" />
-            {t('nav.bookAppointment')}
+            {t("nav.bookAppointment")}
           </Button>
         </div>
 
@@ -92,10 +92,10 @@ export function LandingHeader({ onNavigate }: LandingHeaderProps) {
         <div className="flex md:hidden items-center gap-2">
           <Button
             className="h-10 rounded-lg bg-orange-500 px-4 text-white text-[14px] font-semibold shadow-sm transition-all duration-200 hover:bg-orange-600 active:scale-[0.97]"
-            onClick={() => navigate({ to: '/booking' })}
+            onClick={() => navigate({ to: "/booking" })}
           >
             <Calendar className="mr-1.5 h-4 w-4" />
-            {t('nav.bookAppointment')}
+            {t("nav.bookAppointment")}
           </Button>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -131,5 +131,5 @@ export function LandingHeader({ onNavigate }: LandingHeaderProps) {
         </div>
       )}
     </header>
-  );
+  )
 }

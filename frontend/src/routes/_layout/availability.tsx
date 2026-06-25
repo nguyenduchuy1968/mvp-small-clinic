@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
+
 import { DoctorsService } from "@/client"
 import { AvailabilityList } from "@/components/Availability/AvailabilityList"
 import { WeeklySchedule } from "@/components/Availability/WeeklySchedule"
@@ -13,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import useAuth from "@/hooks/useAuth"
+import i18next from "@/i18n"
 
 function AvailabilityPage() {
   const { t } = useTranslation("availability")
@@ -121,8 +123,6 @@ function AvailabilityPage() {
     </div>
   )
 }
-
-import i18next from "@/i18n"
 
 export const Route = createFileRoute("/_layout/availability")({
   component: RouteComponent,

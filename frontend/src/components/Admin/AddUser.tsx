@@ -1,14 +1,14 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus } from 'lucide-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Plus } from "lucide-react"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
+import { z } from "zod"
 
-import { type UserCreate, UsersService } from '@/client';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { type UserCreate, UsersService } from "@/client"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Dialog,
   DialogClose,
@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog"
 import {
   Form,
   FormControl,
@@ -26,85 +26,83 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { LoadingButton } from '@/components/ui/loading-button';
-import useCustomToast from '@/hooks/useCustomToast';
-import { handleError } from '@/utils';
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { LoadingButton } from "@/components/ui/loading-button"
+import useCustomToast from "@/hooks/useCustomToast"
+import { handleError } from "@/utils"
 
 const AddUser = () => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation("common")
   const formSchema = z
     .object({
-      email: z.email({ message: t('validation.invalidEmail') }),
+      email: z.email({ message: t("validation.invalidEmail") }),
       full_name: z.string().optional(),
       password: z
         .string()
-        .min(1, { message: t('validation.passwordRequired') })
-        .min(8, { message: t('validation.passwordMinLength') }),
+        .min(1, { message: t("validation.passwordRequired") })
+        .min(8, { message: t("validation.passwordMinLength") }),
       confirm_password: z
         .string()
-        .min(1, { message: t('validation.confirmPasswordRequired') }),
+        .min(1, { message: t("validation.confirmPasswordRequired") }),
       is_superuser: z.boolean(),
       is_active: z.boolean(),
     })
     .refine((data) => data.password === data.confirm_password, {
-      message: t('validation.passwordsDontMatch'),
-      path: ['confirm_password'],
-    });
+      message: t("validation.passwordsDontMatch"),
+      path: ["confirm_password"],
+    })
 
-  type FormData = z.infer<typeof formSchema>;
+  type FormData = z.infer<typeof formSchema>
 
-  const [isOpen, setIsOpen] = useState(false);
-  const queryClient = useQueryClient();
-  const { showSuccessToast, showErrorToast } = useCustomToast();
+  const [isOpen, setIsOpen] = useState(false)
+  const queryClient = useQueryClient()
+  const { showSuccessToast, showErrorToast } = useCustomToast()
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    mode: 'onBlur',
-    criteriaMode: 'all',
+    mode: "onBlur",
+    criteriaMode: "all",
     defaultValues: {
-      email: '',
-      full_name: '',
-      password: '',
-      confirm_password: '',
+      email: "",
+      full_name: "",
+      password: "",
+      confirm_password: "",
       is_superuser: false,
       is_active: false,
     },
-  });
+  })
 
   const mutation = useMutation({
     mutationFn: (data: UserCreate) =>
       UsersService.createUser({ requestBody: data }),
     onSuccess: () => {
-      showSuccessToast(t('toasts.createSuccess'));
-      form.reset();
-      setIsOpen(false);
+      showSuccessToast(t("toasts.createSuccess"))
+      form.reset()
+      setIsOpen(false)
     },
     onError: handleError.bind(showErrorToast),
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ["users"] })
     },
-  });
+  })
 
   const onSubmit = (data: FormData) => {
-    mutation.mutate(data);
-  };
+    mutation.mutate(data)
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className="my-4">
           <Plus className="mr-2" />
-          {t('actions.create')}
+          {t("actions.create")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t('actions.create')}</DialogTitle>
-          <DialogDescription>
-            {t('users.addUserDescription')}
-          </DialogDescription>
+          <DialogTitle>{t("actions.create")}</DialogTitle>
+          <DialogDescription>{t("users.addUserDescription")}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -115,12 +113,12 @@ const AddUser = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('users.email')}{' '}
+                      {t("users.email")}{" "}
                       <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder={t('users.email')}
+                        placeholder={t("users.email")}
                         type="email"
                         {...field}
                         required
@@ -136,10 +134,10 @@ const AddUser = () => {
                 name="full_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('users.fullName')}</FormLabel>
+                    <FormLabel>{t("users.fullName")}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder={t('users.fullName')}
+                        placeholder={t("users.fullName")}
                         type="text"
                         {...field}
                       />
@@ -155,12 +153,12 @@ const AddUser = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('users.setPassword')}{' '}
+                      {t("users.setPassword")}{" "}
                       <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder={t('users.setPassword')}
+                        placeholder={t("users.setPassword")}
                         type="password"
                         {...field}
                         required
@@ -177,12 +175,12 @@ const AddUser = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {t('users.confirmPassword')}{' '}
+                      {t("users.confirmPassword")}{" "}
                       <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder={t('users.confirmPassword')}
+                        placeholder={t("users.confirmPassword")}
                         type="password"
                         {...field}
                         required
@@ -205,7 +203,7 @@ const AddUser = () => {
                       />
                     </FormControl>
                     <FormLabel className="font-normal">
-                      {t('users.isSuperuser')}
+                      {t("users.isSuperuser")}
                     </FormLabel>
                   </FormItem>
                 )}
@@ -223,7 +221,7 @@ const AddUser = () => {
                       />
                     </FormControl>
                     <FormLabel className="font-normal">
-                      {t('users.isActive')}
+                      {t("users.isActive")}
                     </FormLabel>
                   </FormItem>
                 )}
@@ -233,18 +231,18 @@ const AddUser = () => {
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline" disabled={mutation.isPending}>
-                  {t('actions.cancel')}
+                  {t("actions.cancel")}
                 </Button>
               </DialogClose>
               <LoadingButton type="submit" loading={mutation.isPending}>
-                {t('actions.save')}
+                {t("actions.save")}
               </LoadingButton>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default AddUser;
+export default AddUser

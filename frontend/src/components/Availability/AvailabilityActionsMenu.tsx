@@ -1,24 +1,24 @@
-import { EllipsisVertical } from 'lucide-react';
-import { useState } from 'react';
+import { EllipsisVertical } from "lucide-react"
+import { useState } from "react"
 
-import type { DoctorAvailabilityPublic } from '@/client';
-import { Button } from '@/components/ui/button';
+import type { DoctorAvailabilityPublic } from "@/client"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import DeleteAvailability from './DeleteAvailability';
-import EditAvailability from './EditAvailability';
+} from "@/components/ui/dropdown-menu"
+import DeleteAvailability from "./DeleteAvailability"
+import EditAvailability from "./EditAvailability"
 
 interface AvailabilityActionsMenuProps {
-  availability: DoctorAvailabilityPublic;
+  availability: DoctorAvailabilityPublic
 }
 
 export const AvailabilityActionsMenu = ({
   availability,
 }: AvailabilityActionsMenuProps) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -38,5 +38,5 @@ export const AvailabilityActionsMenu = ({
         />
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-};
+  )
+}

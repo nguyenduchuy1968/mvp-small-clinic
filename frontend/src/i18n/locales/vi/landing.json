@@ -54,7 +54,12 @@
     "noDoctors": "Hiện chưa có bác sĩ nào.",
     "viewAll": "Xem Tất Cả Bác Sĩ",
     "bookAppointment": "Đặt Lịch Khám",
-    "experience": "{{years}} năm kinh nghiệm"
+    "experience": "{{years}} năm kinh nghiệm",
+    "all": "Tất Cả",
+    "searchPlaceholder": "Tìm kiếm bác sĩ...",
+    "noResults": "Không tìm thấy bác sĩ",
+    "noResultsDesc": "Hãy thử điều chỉnh tiêu chí tìm kiếm hoặc bộ lọc của bạn.",
+    "clearFilters": "Xóa Bộ Lọc"
   },
   "clinicInfo": {
     "title": "Thông Tin Phòng Khám",

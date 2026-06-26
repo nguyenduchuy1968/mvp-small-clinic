@@ -54,7 +54,12 @@
     "noDoctors": "Наразі немає доступних лікарів.",
     "viewAll": "Всі Лікарі",
     "bookAppointment": "Записатися",
-    "experience": "{{years}} років досвіду"
+    "experience": "{{years}} років досвіду",
+    "all": "Всі",
+    "searchPlaceholder": "Пошук лікарів...",
+    "noResults": "Лікарів не знайдено",
+    "noResultsDesc": "Спробуйте змінити критерії пошуку або фільтри.",
+    "clearFilters": "Очистити Фільтри"
   },
   "clinicInfo": {
     "title": "Інформація про Клініку",

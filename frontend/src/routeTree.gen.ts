@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as BookingRouteImport } from './routes/booking'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as IndexRouteImport } from './routes/index'
@@ -44,6 +45,11 @@ const RecoverPasswordRoute = RecoverPasswordRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DoctorsRoute = DoctorsRouteImport.update({
+  id: '/doctors',
+  path: '/doctors',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookingRoute = BookingRouteImport.update({
@@ -140,6 +146,7 @@ const LayoutAvailabilityIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/booking': typeof BookingRouteWithChildren
+  '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -148,7 +155,6 @@ export interface FileRoutesByFullPath {
   '/availability': typeof LayoutAvailabilityRouteWithChildren
   '/blocked-dates': typeof LayoutBlockedDatesRoute
   '/dashboard': typeof LayoutDashboardRoute
-  '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/booking/confirmation': typeof BookingConfirmationRoute
   '/appointments/$id': typeof LayoutAppointmentsIdRoute
@@ -162,6 +168,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/booking': typeof BookingRouteWithChildren
+  '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -169,7 +176,6 @@ export interface FileRoutesByTo {
   '/availability': typeof LayoutAvailabilityRouteWithChildren
   '/blocked-dates': typeof LayoutBlockedDatesRoute
   '/dashboard': typeof LayoutDashboardRoute
-  '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/settings': typeof LayoutSettingsRoute
   '/booking/confirmation': typeof BookingConfirmationRoute
   '/appointments/$id': typeof LayoutAppointmentsIdRoute
@@ -185,6 +191,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_layout': typeof LayoutRouteWithChildren
   '/booking': typeof BookingRouteWithChildren
+  '/doctors': typeof DoctorsRoute
   '/login': typeof LoginRoute
   '/recover-password': typeof RecoverPasswordRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -209,6 +216,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/booking'
+    | '/doctors'
     | '/login'
     | '/recover-password'
     | '/reset-password'
@@ -217,7 +225,6 @@ export interface FileRouteTypes {
     | '/availability'
     | '/blocked-dates'
     | '/dashboard'
-    | '/doctors'
     | '/settings'
     | '/booking/confirmation'
     | '/appointments/$id'
@@ -231,6 +238,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/booking'
+    | '/doctors'
     | '/login'
     | '/recover-password'
     | '/reset-password'
@@ -238,7 +246,6 @@ export interface FileRouteTypes {
     | '/availability'
     | '/blocked-dates'
     | '/dashboard'
-    | '/doctors'
     | '/settings'
     | '/booking/confirmation'
     | '/appointments/$id'
@@ -253,6 +260,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_layout'
     | '/booking'
+    | '/doctors'
     | '/login'
     | '/recover-password'
     | '/reset-password'
@@ -277,6 +285,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRouteWithChildren
   BookingRoute: typeof BookingRouteWithChildren
+  DoctorsRoute: typeof DoctorsRoute
   LoginRoute: typeof LoginRoute
   RecoverPasswordRoute: typeof RecoverPasswordRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -303,6 +312,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/doctors': {
+      id: '/doctors'
+      path: '/doctors'
+      fullPath: '/doctors'
+      preLoaderRoute: typeof DoctorsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/booking': {
@@ -524,6 +540,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LayoutRoute: LayoutRouteWithChildren,
   BookingRoute: BookingRouteWithChildren,
+  DoctorsRoute: DoctorsRoute,
   LoginRoute: LoginRoute,
   RecoverPasswordRoute: RecoverPasswordRoute,
   ResetPasswordRoute: ResetPasswordRoute,

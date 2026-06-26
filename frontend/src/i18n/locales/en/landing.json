@@ -54,7 +54,12 @@
     "noDoctors": "No doctors available at the moment.",
     "viewAll": "View All Doctors",
     "bookAppointment": "Book Appointment",
-    "experience": "{{years}} years experience"
+    "experience": "{{years}} years experience",
+    "all": "All",
+    "searchPlaceholder": "Search doctors...",
+    "noResults": "No doctors found",
+    "noResultsDesc": "Try adjusting your search or filter criteria.",
+    "clearFilters": "Clear Filters"
   },
   "clinicInfo": {
     "title": "Clinic Information",

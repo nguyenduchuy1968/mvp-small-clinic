@@ -1,6 +1,7 @@
 import { Clock, Mail, MapPin, Phone } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
+import { SectionHeader } from "@/components/ui/SectionHeader"
 import { clinicConfig } from "@/config/clinic"
 import { radius } from "@/theme/radius"
 import { spacing } from "@/theme/spacing"
@@ -35,9 +36,7 @@ export function ClinicInfoSection() {
       className={`bg-white px-4 ${spacing.section.default}`}
     >
       <div className={`mx-auto ${spacing.container.narrow}`}>
-        <h2 className="text-center text-4xl font-bold tracking-tight text-gray-900 md:text-5xl">
-          {t("clinicInfo.title")}
-        </h2>
+        <SectionHeader title={t("clinicInfo.title")} />
         <div className={`mt-16 grid gap-10 md:grid-cols-2`}>
           <div className="space-y-6">
             {infoItems.map((item) => {

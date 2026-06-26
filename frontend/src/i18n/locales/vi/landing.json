@@ -16,7 +16,10 @@
     "subtitle": "Chăm Sóc Sức Khỏe Chất Lượng Cho Gia Đình Bạn",
     "description": "Chúng tôi cam kết mang đến dịch vụ y tế chuyên nghiệp, tận tâm với đội ngũ bác sĩ giàu kinh nghiệm và cơ sở vật chất hiện đại. Sức khỏe của bạn là ưu tiên hàng đầu của chúng tôi.",
     "bookAppointment": "Đặt Lịch Khám",
-    "viewDoctors": "Xem Bác Sĩ"
+    "viewDoctors": "Xem Bác Sĩ",
+    "experiencedDoctors": "Bác Sĩ Giàu Kinh Nghiệm",
+    "onlineBooking": "Đặt Lịch Trực Tuyến",
+    "sameDayAppointments": "Khám Trong Ngày"
   },
   "trustIndicators": {
     "patients": "Bệnh Nhân",

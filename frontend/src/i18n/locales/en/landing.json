@@ -16,7 +16,10 @@
     "subtitle": "Quality Healthcare for Your Family",
     "description": "We are committed to providing professional, compassionate medical care with experienced doctors and modern facilities. Your health and well-being are our top priorities.",
     "bookAppointment": "Book Appointment",
-    "viewDoctors": "View Doctors"
+    "viewDoctors": "View Doctors",
+    "experiencedDoctors": "Experienced Doctors",
+    "onlineBooking": "Online Booking",
+    "sameDayAppointments": "Same Day Appointments"
   },
   "trustIndicators": {
     "patients": "Patients",

@@ -69,7 +69,7 @@ function AppointmentsTableContent() {
           <button
             type="button"
             onClick={() => navigate({ to: '/booking' })}
-            className="rounded-xl bg-teal-600 px-5 py-2.5 text-[14px] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-teal-700 active:scale-[0.97]"
+            className="rounded-xl bg-teal-600 px-6 py-2.5 text-[15px] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-teal-700 active:scale-[0.97]"
           >
             Book an appointment
           </button>
@@ -81,22 +81,22 @@ function AppointmentsTableContent() {
   // ── Card View (mobile-friendly) ────────────────────────────────
   if (viewMode === 'cards') {
     return (
-      <div className="space-y-4">
+      <div className="space-y-5">
         {/* Search + View toggle */}
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-gray-400" />
             <Input
               placeholder={t('list.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="h-11 pl-10 text-[15px] rounded-xl border-gray-200"
             />
           </div>
           <button
             type="button"
             onClick={() => setViewMode('table')}
-            className="shrink-0 rounded-xl border border-gray-300 bg-white px-4 py-2 text-[13px] font-semibold text-gray-600 shadow-sm transition-all duration-200 hover:bg-gray-50 active:scale-[0.97]"
+            className="shrink-0 rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-[14px] font-semibold text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-50 active:scale-[0.97]"
           >
             Table view
           </button>
@@ -135,22 +135,22 @@ function AppointmentsTableContent() {
 
   // ── Table View (desktop) ───────────────────────────────────────
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Search + View toggle */}
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 size-5 -translate-y-1/2 text-gray-400" />
           <Input
             placeholder={t('list.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="h-11 pl-10 text-[15px] rounded-xl border-gray-200"
           />
         </div>
         <button
           type="button"
           onClick={() => setViewMode('cards')}
-          className="shrink-0 rounded-xl border border-gray-300 bg-white px-4 py-2 text-[13px] font-semibold text-gray-600 shadow-sm transition-all duration-200 hover:bg-gray-50 active:scale-[0.97] sm:hidden"
+          className="shrink-0 rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-[14px] font-semibold text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-50 active:scale-[0.97] sm:hidden"
         >
           Card view
         </button>

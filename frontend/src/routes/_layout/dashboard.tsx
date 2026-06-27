@@ -30,7 +30,7 @@ function RouteComponent() {
   const totalDoctors = doctorsData?.data?.length ?? 0;
 
   return (
-    <div className="space-y-8 pb-8">
+    <div className="space-y-8 rounded-2xl bg-slate-50 p-6 sm:p-8">
       {/* ── Page Header ─────────────────────────────────────────── */}
       <PageHeader
         title={t('title')}

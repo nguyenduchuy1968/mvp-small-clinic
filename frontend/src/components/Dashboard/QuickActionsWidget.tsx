@@ -51,12 +51,12 @@ export function QuickActionsWidget({ className }: QuickActionsWidgetProps) {
   ];
 
   return (
-    <section className={cn('space-y-4', className)}>
-      <h2 className="text-[19px] font-bold text-gray-900">
+    <section className={cn('space-y-5', className)}>
+      <h2 className="text-xl font-bold text-gray-900">
         {t('quickActions.title')}
       </h2>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
         {actions.map((action) => {
           const Icon = action.icon;
           return (
@@ -64,15 +64,15 @@ export function QuickActionsWidget({ className }: QuickActionsWidgetProps) {
               key={action.label}
               type="button"
               onClick={action.onClick}
-              className="group flex flex-col items-center rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-md sm:p-6"
+              className="group flex flex-col items-center rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-md sm:p-7"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-teal-600 transition-colors group-hover:bg-teal-100">
-                <Icon className="h-6 w-6" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-teal-50 text-teal-600 transition-colors group-hover:bg-teal-100">
+                <Icon className="h-7 w-7" />
               </div>
-              <h3 className="mt-3 text-[15px] font-bold text-gray-900">
+              <h3 className="mt-4 text-[17px] font-bold text-gray-900">
                 {action.label}
               </h3>
-              <p className="mt-1 text-[13px] text-gray-500 leading-relaxed">
+              <p className="mt-1.5 text-[14px] text-gray-500 leading-relaxed">
                 {action.description}
               </p>
             </button>

@@ -1,5 +1,5 @@
-import { Link as RouterLink, useRouterState } from "@tanstack/react-router"
-import type { LucideIcon } from "lucide-react"
+import { Link as RouterLink, useRouterState } from '@tanstack/react-router';
+import type { LucideIcon } from 'lucide-react';
 
 import {
   SidebarGroup,
@@ -8,35 +8,35 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 
 export type Item = {
-  icon: LucideIcon
-  title: string
-  path: string
-}
+  icon: LucideIcon;
+  title: string;
+  path: string;
+};
 
 interface MainProps {
-  items: Item[]
+  items: Item[];
 }
 
 export function Main({ items }: MainProps) {
-  const { isMobile, setOpenMobile } = useSidebar()
-  const router = useRouterState()
-  const currentPath = router.location.pathname
+  const { isMobile, setOpenMobile } = useSidebar();
+  const router = useRouterState();
+  const currentPath = router.location.pathname;
 
   const handleMenuClick = () => {
     if (isMobile) {
-      setOpenMobile(false)
+      setOpenMobile(false);
     }
-  }
+  };
 
   return (
     <SidebarGroup>
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => {
-            const isActive = currentPath === item.path
+            const isActive = currentPath === item.path;
 
             return (
               <SidebarMenuItem key={item.title}>
@@ -51,10 +51,10 @@ export function Main({ items }: MainProps) {
                   </RouterLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            )
+            );
           })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
-  )
+  );
 }

@@ -72,7 +72,7 @@ export function buildColumns(): ColumnDef<AppointmentPublic>[] {
         return <>{t("list.columns.bookingRef")}</>
       },
       cell: ({ row }) => (
-        <span className="font-mono text-xs font-bold text-primary">
+        <span className="font-mono text-[13px] font-bold text-primary">
           {row.original.booking_number ?? "—"}
         </span>
       ),

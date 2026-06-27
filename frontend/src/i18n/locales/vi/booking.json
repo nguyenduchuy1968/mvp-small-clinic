@@ -17,6 +17,13 @@
     "phoneRequired": "Vui lòng nhập số điện thoại",
     "phoneInvalid": "Vui lòng nhập số điện thoại hợp lệ (ví dụ: +84 123 456 789 hoặc 0123 456 789)",
     "emailInvalid": "Vui lòng nhập email hợp lệ",
+    "sectionPersonalInfo": "Thông tin cá nhân",
+    "sectionContactPref": "Phương thức liên hệ",
+    "sectionNotes": "Ghi chú thêm",
+    "patientNamePlaceholder": "Nhập họ và tên của bạn",
+    "patientPhonePlaceholder": "+84 123 456 789",
+    "patientEmailPlaceholder": "email@example.com",
+    "notesPlaceholder": "Mọi yêu cầu hoặc thông tin đặc biệt...",
     "contactMethods": {
       "phone": "Điện thoại",
       "email": "Email",
@@ -37,6 +44,7 @@
     "message": "Lịch hẹn của bạn với bác sĩ {{doctorName}} đã được xác nhận vào ngày {{date}} lúc {{time}}.",
     "bookingId": "Mã đặt lịch: {{id}}",
     "bookingReference": "Mã tham chiếu",
+    "appointmentSummary": "Tóm tắt lịch hẹn",
     "doctor": "Bác sĩ:",
     "date": "Ngày:",
     "time": "Giờ:",
@@ -45,7 +53,8 @@
     "attentionMessageEmail": "Xin vui lòng kiểm tra hộp thư\nvà lưu mã đặt lịch.\n\nBạn có thể cần mã này khi liên hệ với phòng khám.",
     "newBooking": "Đặt lịch hẹn khác",
     "copyTooltip": "Sao chép mã đặt lịch",
-    "copySuccess": "Đã sao chép mã đặt lịch!"
+    "copySuccess": "Đã sao chép mã đặt lịch!",
+    "print": "In xác nhận"
   },
   "errors": {
     "slotAlreadyBooked": "Khung giờ này vừa được đặt. Vui lòng chọn thời gian khác.",
@@ -55,6 +64,7 @@
   },
   "noSlots": {
     "default": "Không có khung giờ trống cho ngày này",
+    "defaultHint": "Vui lòng thử chọn ngày khác hoặc bác sĩ khác.",
     "weekend": {
       "title": "Bác sĩ không làm việc vào cuối tuần.",
       "hint": "Vui lòng chọn ngày trong tuần."
@@ -73,6 +83,18 @@
     }
   },
   "noDoctors": "Không có bác sĩ nào",
+  "noDoctorsHint": "Vui lòng kiểm tra lại sau hoặc liên hệ phòng khám.",
+  "doctorCard": {
+    "loading": "Đang tìm bác sĩ...",
+    "selected": "Đã chọn"
+  },
+  "timeSlot": {
+    "loading": "Đang kiểm tra giờ trống...",
+    "available": "Còn {{count}} khung giờ",
+    "selected": "Đã chọn",
+    "select": "Chọn",
+    "duration": "30 phút"
+  },
   "navigation": {
     "back": "← Quay lại",
     "next": "Tiếp theo",
@@ -82,6 +104,13 @@
   },
   "datePicker": {
     "today": "Hôm nay",
-    "tomorrow": "Ngày mai"
+    "tomorrow": "Ngày mai",
+    "selectDate": "Chọn ngày",
+    "selected": "Đã chọn",
+    "unavailable": "Không khả dụng"
+  },
+  "clinicInfo": {
+    "weekday": "Thứ Hai – Thứ Sáu",
+    "saturday": "Thứ Bảy"
   }
 }

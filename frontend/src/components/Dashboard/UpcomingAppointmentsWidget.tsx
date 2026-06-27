@@ -49,8 +49,8 @@ export function UpcomingAppointmentsWidget({
   // ── Loading State ──────────────────────────────────────────────
   if (isLoading) {
     return (
-      <section className={cn('space-y-4', className)}>
-        <Skeleton className="h-7 w-48" />
+      <section className={cn('space-y-5', className)}>
+        <Skeleton className="h-8 w-48" />
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div
@@ -75,8 +75,8 @@ export function UpcomingAppointmentsWidget({
   // ── Empty State ────────────────────────────────────────────────
   if (!appointments || appointments.length === 0) {
     return (
-      <section className={cn('space-y-4', className)}>
-        <h2 className="text-[19px] font-bold text-gray-900">
+      <section className={cn('space-y-5', className)}>
+        <h2 className="text-xl font-bold text-gray-900">
           {t('recentAppointments.title')}
         </h2>
         <EmptyState
@@ -101,16 +101,16 @@ export function UpcomingAppointmentsWidget({
   const displayed = appointments.slice(0, 3);
 
   return (
-    <section className={cn('space-y-4', className)}>
+    <section className={cn('space-y-5', className)}>
       <div className="flex items-center justify-between">
-        <h2 className="text-[19px] font-bold text-gray-900">
+        <h2 className="text-xl font-bold text-gray-900">
           {t('recentAppointments.title')}
         </h2>
         {appointments.length > 3 && (
           <button
             type="button"
             onClick={() => navigate({ to: '/appointments' })}
-            className="flex items-center gap-1 text-[14px] font-semibold text-teal-600 transition-colors hover:text-teal-700"
+            className="flex items-center gap-1 text-[15px] font-semibold text-teal-600 transition-colors hover:text-teal-700"
           >
             View all
             <ChevronRight className="h-4 w-4" />

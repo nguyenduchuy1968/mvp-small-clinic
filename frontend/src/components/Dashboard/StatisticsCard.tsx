@@ -1,4 +1,9 @@
-import { CalendarCheck, CalendarClock, CalendarX, Stethoscope } from 'lucide-react';
+import {
+  CalendarCheck,
+  CalendarClock,
+  CalendarX,
+  Stethoscope,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import type { AppointmentPublic } from '@/client';
@@ -19,11 +24,11 @@ interface StatisticsCardProps {
 /**
  * Dashboard statistics grid showing key metrics.
  *
- * Displays four stat cards:
- * - Total doctors
- * - Total appointments
- * - Pending appointments
- * - Today's appointments
+ * Displays four stat cards with semantic color variants:
+ * - Total doctors → secondary (blue)
+ * - Total appointments → primary (teal)
+ * - Pending appointments → warning (orange)
+ * - Today's appointments → success (green)
  *
  * Reuses the existing `StatCard` component from the UI library.
  *
@@ -60,11 +65,11 @@ export function StatisticsCard({
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="flex flex-col items-center justify-center rounded-2xl border border-blue-100 bg-blue-50/60 px-4 py-8 text-center shadow-sm animate-pulse"
+            className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-gray-50/60 px-4 py-8 text-center shadow-sm animate-pulse"
           >
-            <div className="h-12 w-12 rounded-full bg-blue-200" />
-            <div className="mt-3 h-8 w-16 rounded bg-blue-200" />
-            <div className="mt-1 h-4 w-20 rounded bg-blue-200" />
+            <div className="h-12 w-12 rounded-full bg-gray-200" />
+            <div className="mt-3 h-8 w-16 rounded bg-gray-200" />
+            <div className="mt-1 h-4 w-20 rounded bg-gray-200" />
           </div>
         ))}
       </div>
@@ -77,21 +82,25 @@ export function StatisticsCard({
         icon={Stethoscope}
         value={String(totalDoctors)}
         label={t('stats.totalDoctors')}
+        variant="secondary"
       />
       <StatCard
         icon={CalendarCheck}
         value={String(totalAppointments)}
         label={t('stats.totalAppointments')}
+        variant="primary"
       />
       <StatCard
         icon={CalendarClock}
         value={String(pendingAppointments)}
         label={t('stats.pendingAppointments')}
+        variant="warning"
       />
       <StatCard
         icon={CalendarX}
         value={String(todayAppointments)}
         label={t('stats.todayAppointments')}
+        variant="success"
       />
     </div>
   );

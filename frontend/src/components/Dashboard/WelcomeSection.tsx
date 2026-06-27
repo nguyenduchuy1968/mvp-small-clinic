@@ -18,6 +18,8 @@ interface WelcomeSectionProps {
  * - "nice to see you again" subtitle
  * - Current date in long format
  *
+ * Rendered inside a soft medical-gradient card with rounded-3xl.
+ *
  * ---
  * **Usage:**
  * ```tsx
@@ -27,23 +29,33 @@ interface WelcomeSectionProps {
 export function WelcomeSection({ user, className }: WelcomeSectionProps) {
   const { t, i18n } = useTranslation('dashboard');
 
-  const today = new Date().toLocaleDateString(i18n.language === 'vi' ? 'vi-VN' : i18n.language === 'uk' ? 'uk-UA' : 'en-GB', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const today = new Date().toLocaleDateString(
+    i18n.language === 'vi'
+      ? 'vi-VN'
+      : i18n.language === 'uk'
+        ? 'uk-UA'
+        : 'en-GB',
+    {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }
+  );
 
   return (
-    <div className={cn('space-y-1', className)}>
-      <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+    <div
+      className={cn(
+        'rounded-3xl border border-cyan-100 bg-gradient-to-br from-cyan-50 via-teal-50 to-white px-8 py-12 sm:px-12 sm:py-16',
+        className
+      )}
+    >
+      <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-5xl">
         {t('welcome')}
         {user?.full_name ? `, ${user.full_name}` : ''}
       </h1>
-      <p className="text-[15px] text-gray-500 sm:text-[17px]">
-        {t('welcomeBack')}
-      </p>
-      <p className="text-[13px] text-gray-400 sm:text-[14px]">{today}</p>
+      <p className="mt-3 text-xl text-gray-500">{t('welcomeBack')}</p>
+      <p className="mt-2 text-lg text-gray-400">{today}</p>
     </div>
   );
 }

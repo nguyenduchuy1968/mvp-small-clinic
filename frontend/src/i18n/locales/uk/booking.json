@@ -17,6 +17,13 @@
     "phoneRequired": "Номер телефону обов'язковий",
     "phoneInvalid": "Будь ласка, введіть дійсний номер телефону (наприклад, +84 123 456 789 або 0123 456 789)",
     "emailInvalid": "Будь ласка, введіть дійсну електронну адресу",
+    "sectionPersonalInfo": "Особиста інформація",
+    "sectionContactPref": "Спосіб зв'язку",
+    "sectionNotes": "Додаткові нотатки",
+    "patientNamePlaceholder": "Введіть ваше повне ім'я",
+    "patientPhonePlaceholder": "+84 123 456 789",
+    "patientEmailPlaceholder": "email@example.com",
+    "notesPlaceholder": "Будь-які особливі побажання або інформація...",
     "contactMethods": {
       "phone": "Телефон",
       "email": "Електронна пошта",
@@ -37,6 +44,7 @@
     "message": "Ваш запис до лікаря {{doctorName}} підтверджено на {{date}} о {{time}}.",
     "bookingId": "ID запису: {{id}}",
     "bookingReference": "Номер бронювання",
+    "appointmentSummary": "Підсумок запису",
     "doctor": "Лікар:",
     "date": "Дата:",
     "time": "Час:",
@@ -45,7 +53,8 @@
     "attentionMessageEmail": "Будь ласка, перевірте свою поштову скриньку\nта збережіть номер бронювання.\n\nВін може знадобитися при зверненні до клініки.",
     "newBooking": "Записатися ще",
     "copyTooltip": "Скопіювати номер бронювання",
-    "copySuccess": "Номер бронювання скопійовано!"
+    "copySuccess": "Номер бронювання скопійовано!",
+    "print": "Роздрукувати підтвердження"
   },
   "errors": {
     "slotAlreadyBooked": "Цей час щойно забронювали. Будь ласка, оберіть інший час.",
@@ -55,6 +64,7 @@
   },
   "noSlots": {
     "default": "Немає вільних часових проміжків на цю дату",
+    "defaultHint": "Спробуйте вибрати іншу дату або лікаря.",
     "weekend": {
       "title": "Лікар не працює у вихідні.",
       "hint": "Будь ласка, виберіть робочий день."
@@ -73,6 +83,18 @@
     }
   },
   "noDoctors": "Немає доступних лікарів",
+  "noDoctorsHint": "Будь ласка, перевірте пізніше або зв'яжіться з клінікою.",
+  "doctorCard": {
+    "loading": "Пошук доступних лікарів...",
+    "selected": "Вибрано"
+  },
+  "timeSlot": {
+    "loading": "Перевірка доступного часу...",
+    "available": "{{count}} доступно",
+    "selected": "Вибрано",
+    "select": "Вибрати",
+    "duration": "30 хв"
+  },
   "navigation": {
     "back": "← Назад",
     "next": "Далі",
@@ -82,6 +104,13 @@
   },
   "datePicker": {
     "today": "Сьогодні",
-    "tomorrow": "Завтра"
+    "tomorrow": "Завтра",
+    "selectDate": "Виберіть дату",
+    "selected": "Вибрано",
+    "unavailable": "Недоступно"
+  },
+  "clinicInfo": {
+    "weekday": "Пн – Пт",
+    "saturday": "Сб"
   }
 }

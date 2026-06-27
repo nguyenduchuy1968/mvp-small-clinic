@@ -45,13 +45,13 @@ export function EmptyState({
       )}
     >
       {Icon && (
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-          <Icon className="h-8 w-8 text-gray-400" />
+        <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100">
+          <Icon className="h-10 w-10 text-gray-400" />
         </div>
       )}
-      <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+      <h3 className="text-2xl font-semibold text-gray-900">{title}</h3>
       {description && (
-        <p className="mt-2 max-w-md text-[15px] text-gray-500 leading-relaxed">
+        <p className="mt-2 max-w-md text-[16px] text-gray-500 leading-relaxed">
           {description}
         </p>
       )}

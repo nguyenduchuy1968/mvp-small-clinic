@@ -17,6 +17,13 @@
     "phoneRequired": "Phone number is required",
     "phoneInvalid": "Please enter a valid phone number (e.g., +84 123 456 789 or 0123 456 789)",
     "emailInvalid": "Please enter a valid email address",
+    "sectionPersonalInfo": "Personal Information",
+    "sectionContactPref": "Contact Preferences",
+    "sectionNotes": "Additional Notes",
+    "patientNamePlaceholder": "Enter your full name",
+    "patientPhonePlaceholder": "+84 123 456 789",
+    "patientEmailPlaceholder": "email@example.com",
+    "notesPlaceholder": "Any special requests or information...",
     "contactMethods": {
       "phone": "Phone",
       "email": "Email",
@@ -37,6 +44,7 @@
     "message": "Your appointment with {{doctorName}} has been confirmed for {{date}} at {{time}}.",
     "bookingId": "Booking ID: {{id}}",
     "bookingReference": "Booking Reference",
+    "appointmentSummary": "Appointment Summary",
     "doctor": "Doctor:",
     "date": "Date:",
     "time": "Time:",
@@ -45,7 +53,8 @@
     "attentionMessageEmail": "Please check your inbox\nand save your booking number.\n\nYou may need this number when contacting the clinic.",
     "newBooking": "Book Another Appointment",
     "copyTooltip": "Copy booking number",
-    "copySuccess": "Booking number copied!"
+    "copySuccess": "Booking number copied!",
+    "print": "Print Confirmation"
   },
   "errors": {
     "slotAlreadyBooked": "This slot was just booked. Please select another time.",
@@ -55,6 +64,7 @@
   },
   "noSlots": {
     "default": "No available slots for this date",
+    "defaultHint": "Please try selecting a different date or doctor.",
     "weekend": {
       "title": "Doctor does not work on weekends.",
       "hint": "Please choose a weekday."
@@ -73,6 +83,18 @@
     }
   },
   "noDoctors": "No doctors available",
+  "noDoctorsHint": "Please check back later or contact the clinic for availability.",
+  "doctorCard": {
+    "loading": "Finding available doctors...",
+    "selected": "Selected"
+  },
+  "timeSlot": {
+    "loading": "Checking available times...",
+    "available": "{{count}} available",
+    "selected": "Selected",
+    "select": "Select",
+    "duration": "30 min"
+  },
   "navigation": {
     "back": "← Back",
     "next": "Next",
@@ -82,6 +104,13 @@
   },
   "datePicker": {
     "today": "Today",
-    "tomorrow": "Tomorrow"
+    "tomorrow": "Tomorrow",
+    "selectDate": "Select a date",
+    "selected": "Selected",
+    "unavailable": "Unavailable"
+  },
+  "clinicInfo": {
+    "weekday": "Mon – Fri",
+    "saturday": "Sat"
   }
 }

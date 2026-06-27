@@ -9,13 +9,19 @@ import { formatDateLong } from '@/utils/date';
 
 export type AppointmentStatus = 'pending' | 'confirmed' | 'cancelled';
 
-const statusVariantMap: Record<
-  AppointmentStatus,
-  'default' | 'secondary' | 'destructive' | 'outline'
-> = {
-  confirmed: 'default',
-  pending: 'secondary',
-  cancelled: 'destructive',
+/**
+ * Semantic status badge colors:
+ * - confirmed → green (success)
+ * - pending → orange (warning/attention)
+ * - cancelled → red (destructive)
+ */
+const statusColorMap: Record<AppointmentStatus, string> = {
+  confirmed:
+    'bg-green-100 text-gray-900 border-green-300 dark:bg-green-900/40 dark:text-gray-100 dark:border-green-700',
+  pending:
+    'bg-orange-100 text-gray-900 border-orange-300 dark:bg-orange-900/40 dark:text-gray-100 dark:border-orange-700',
+  cancelled:
+    'bg-red-100 text-gray-900 border-red-300 dark:bg-red-900/40 dark:text-gray-100 dark:border-red-700',
 };
 
 const statusLabelMap: Record<AppointmentStatus, string> = {
@@ -93,7 +99,7 @@ export function AppointmentCard({
   className,
 }: AppointmentCardProps) {
   const statusKey = status ?? 'pending';
-  const badgeVariant = statusVariantMap[statusKey] ?? 'secondary';
+  const badgeColor = statusColorMap[statusKey] ?? statusColorMap.pending;
   const statusLabel = statusLabelMap[statusKey];
 
   return (
@@ -103,47 +109,50 @@ export function AppointmentCard({
         className
       )}
     >
-      <div className="flex flex-col p-5 sm:flex-row sm:items-start sm:gap-4 sm:p-6">
+      <div className="flex flex-col p-6 sm:flex-row sm:items-start sm:gap-6 sm:p-7">
         {/* Doctor Avatar */}
         <div className="mb-4 flex items-center gap-3 sm:mb-0 sm:flex-col sm:items-center">
           <Avatar
             src={doctorPhoto}
             alt={doctorName ?? 'Doctor'}
-            size="lg"
-            className="shrink-0"
+            size="xl"
+            className="shrink-0 h-16 w-16 sm:h-20 sm:w-20"
           />
         </div>
 
         {/* Main Content */}
-        <div className="flex flex-1 flex-col gap-3">
+        <div className="flex flex-1 flex-col gap-4">
           {/* Header: Name + Status Badge */}
-          <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h3 className="text-[17px] font-bold text-gray-900">
+              <h3 className="text-[18px] font-bold text-gray-900">
                 {doctorName ?? 'Doctor'}
               </h3>
               {specialty && (
-                <p className="mt-0.5 text-[14px] text-teal-600 font-medium">
+                <p className="mt-0.5 text-[15px] text-teal-600 font-medium">
                   {specialty}
                 </p>
               )}
             </div>
-            <Badge variant={badgeVariant} className="shrink-0">
+            <Badge
+              variant="outline"
+              className={cn('shrink-0 font-semibold px-3 py-1 text-[13px] leading-none min-h-8 inline-flex items-center', badgeColor)}
+            >
               {statusLabel}
             </Badge>
           </div>
 
           {/* Date & Time */}
-          <div className="flex flex-wrap gap-x-6 gap-y-1.5">
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
             <div className="flex items-center gap-2 text-gray-500">
               <Calendar className="h-4 w-4 shrink-0" />
-              <span className="text-[14px]">
+              <span className="text-[15px]">
                 {formatDateLong(date, locale)}
               </span>
             </div>
             <div className="flex items-center gap-2 text-gray-500">
               <Clock className="h-4 w-4 shrink-0" />
-              <span className="text-[14px]">{time}</span>
+              <span className="text-[15px]">{time}</span>
             </div>
           </div>
 
@@ -151,7 +160,7 @@ export function AppointmentCard({
           {location && (
             <div className="flex items-center gap-2 text-gray-400">
               <MapPin className="h-4 w-4 shrink-0" />
-              <span className="text-[13px]">{location}</span>
+              <span className="text-[14px]">{location}</span>
             </div>
           )}
 
@@ -160,12 +169,12 @@ export function AppointmentCard({
 
           {/* Action Buttons */}
           {(primaryActionLabel || secondaryActionLabel) && (
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="mt-2 flex flex-wrap gap-3">
               {primaryActionLabel && (
                 <button
                   type="button"
                   onClick={onPrimaryAction}
-                  className="rounded-xl bg-teal-600 px-5 py-2 text-[14px] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-teal-700 active:scale-[0.97]"
+                  className="rounded-xl bg-teal-600 px-6 py-2.5 text-[15px] font-semibold text-white shadow-sm transition-all duration-200 hover:bg-teal-700 active:scale-[0.97]"
                 >
                   {primaryActionLabel}
                 </button>
@@ -174,7 +183,7 @@ export function AppointmentCard({
                 <button
                   type="button"
                   onClick={onSecondaryAction}
-                  className="rounded-xl border border-gray-300 bg-white px-5 py-2 text-[14px] font-semibold text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-50 active:scale-[0.97]"
+                  className="rounded-xl border border-gray-300 bg-white px-6 py-2.5 text-[15px] font-semibold text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-50 active:scale-[0.97]"
                 >
                   {secondaryActionLabel}
                 </button>

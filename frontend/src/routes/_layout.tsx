@@ -30,7 +30,7 @@ function Layout() {
           <SidebarTrigger />
           <LanguageSwitcher />
         </header>
-        <main className="flex-1 p-6 md:p-8">
+        <main className="flex-1 bg-slate-50 p-6 md:p-8">
           <div className="mx-auto max-w-7xl">
             <Outlet />
           </div>

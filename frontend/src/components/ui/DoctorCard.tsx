@@ -71,7 +71,7 @@ export function DoctorCard({
   return (
     <Card
       className={cn(
-        'rounded-2xl border border-gray-200 bg-[#F9FAFB] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-teal-200',
+        'rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-teal-200',
         className
       )}
     >

@@ -8,6 +8,7 @@ import {
   Loader2,
   XCircle,
 } from 'lucide-react';
+import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { AvailableSlot } from '@/client';
@@ -57,7 +58,7 @@ function SelectedDatePanel({
   const formattedDate = formatDateForDisplay(date, i18n.language);
 
   return (
-    <Card className="shrink-0 rounded-2xl border border-gray-200 shadow-sm bg-gradient-to-b from-white to-gray-50/50">
+    <Card className="shrink-0 rounded-2xl border border-gray-200 shadow-sm bg-linear-to-b from-white to-gray-50/50">
       <CardContent className="flex flex-col items-center justify-center gap-2 p-6 text-center">
         <span className="text-[15px] font-medium capitalize text-gray-500">
           {dayOfWeek}
@@ -163,6 +164,152 @@ function StateInfoCard({
   );
 }
 
+/**
+ * Grid of time slot buttons with full keyboard navigation (listbox pattern).
+ *
+ * - Arrow keys move focus between slots (wraps at grid edges)
+ * - Enter/Space selects the focused slot
+ * - Home/End jump to first/last slot
+ */
+function SlotsGrid({
+  slots,
+  selectedTime,
+  onSelect,
+  t,
+}: {
+  slots: AvailableSlot[];
+  selectedTime: string | null;
+  onSelect: (time: string) => void;
+  t: (key: string, options?: Record<string, unknown>) => string;
+}) {
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const container = gridRef.current;
+      if (!container) return;
+
+      const buttons: NodeListOf<HTMLButtonElement> = container.querySelectorAll(
+        'button[role="option"]'
+      );
+      if (buttons.length === 0) return;
+
+      const currentIndex = Array.from(buttons).findIndex(
+        (btn: HTMLButtonElement) => btn.getAttribute('aria-selected') === 'true'
+      );
+      const activeIndex = currentIndex >= 0 ? currentIndex : 0;
+
+      let nextIndex = activeIndex;
+
+      switch (e.key) {
+        case 'ArrowRight':
+          e.preventDefault();
+          nextIndex = activeIndex < buttons.length - 1 ? activeIndex + 1 : 0;
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          nextIndex = activeIndex > 0 ? activeIndex - 1 : buttons.length - 1;
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          // Move down by grid columns (assume 2 cols on mobile, 3 on sm, 4 on md)
+          nextIndex = Math.min(activeIndex + 2, buttons.length - 1);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          nextIndex = Math.max(activeIndex - 2, 0);
+          break;
+        case 'Home':
+          e.preventDefault();
+          nextIndex = 0;
+          break;
+        case 'End':
+          e.preventDefault();
+          nextIndex = buttons.length - 1;
+          break;
+        default:
+          return;
+      }
+
+      buttons[nextIndex]?.focus();
+    },
+    []
+  );
+
+  return (
+    <div
+      ref={gridRef}
+      role="listbox"
+      aria-label={t('timeSlot.available', { count: slots.length })}
+      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"
+      onKeyDown={handleKeyDown}
+    >
+      {slots.map((slot) => {
+        const time = slot.time;
+        // Display time in HH:MM format (backend returns "HH:MM:SS" or "HH:MM")
+        const displayTime = time.length > 5 ? time.slice(0, 5) : time;
+        const isSelected = selectedTime === time;
+
+        return (
+          <button
+            key={time}
+            type="button"
+            role="option"
+            aria-selected={isSelected}
+            onClick={() => onSelect(time)}
+            className={cn(
+              'group relative flex flex-col items-center justify-center gap-1.5 rounded-2xl border-2 px-3 py-5 transition-all duration-200 cursor-pointer',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2',
+              isSelected
+                ? 'border-teal-500 bg-teal-50 shadow-md shadow-teal-500/10'
+                : 'border-gray-200 bg-white hover:border-teal-300 hover:shadow-lg hover:-translate-y-0.5'
+            )}
+            aria-label={`${displayTime} - ${isSelected ? t('timeSlot.selected') : t('timeSlot.select')}`}
+          >
+            {/* Time icon */}
+            <Clock
+              className={cn(
+                'h-5 w-5 transition-colors duration-200',
+                isSelected
+                  ? 'text-teal-600'
+                  : 'text-gray-400 group-hover:text-teal-500'
+              )}
+            />
+
+            {/* Time display */}
+            <span
+              className={cn(
+                'text-[18px] sm:text-[20px] font-bold leading-none transition-colors duration-200',
+                isSelected ? 'text-teal-700' : 'text-gray-900'
+              )}
+            >
+              {displayTime}
+            </span>
+
+            {/* Duration hint */}
+            <span
+              className={cn(
+                'text-[11px] font-medium transition-colors duration-200',
+                isSelected ? 'text-teal-500' : 'text-gray-400'
+              )}
+            >
+              {t('timeSlot.duration')}
+            </span>
+
+            {/* Selected indicator */}
+            {isSelected && (
+              <span className="mt-1 flex items-center gap-1 rounded-full bg-teal-600 px-2.5 py-0.5 text-[10px] font-semibold text-white shadow-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                {t('timeSlot.selected')}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export function TimeSlotGrid({
   slots,
   selectedTime,
@@ -183,7 +330,7 @@ export function TimeSlotGrid({
         <div
           className="space-y-4"
           role="status"
-          aria-label="Loading available slots"
+          aria-label={t('timeSlot.loadingAria')}
         >
           {/* Loading header */}
           <div className="flex items-center gap-2 text-[15px] text-gray-500 mb-4">
@@ -278,69 +425,12 @@ export function TimeSlotGrid({
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {slots.map((slot) => {
-            const time = slot.time;
-            // Display time in HH:MM format (backend returns "HH:MM:SS" or "HH:MM")
-            const displayTime = time.length > 5 ? time.slice(0, 5) : time;
-            const isSelected = selectedTime === time;
-
-            return (
-              <button
-                key={time}
-                type="button"
-                onClick={() => onSelect(time)}
-                className={cn(
-                  'group relative flex flex-col items-center justify-center gap-1.5 rounded-2xl border-2 px-3 py-5 transition-all duration-200 cursor-pointer',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2',
-                  isSelected
-                    ? 'border-teal-500 bg-teal-50 shadow-md shadow-teal-500/10'
-                    : 'border-gray-200 bg-white hover:border-teal-300 hover:shadow-lg hover:-translate-y-0.5'
-                )}
-                aria-pressed={isSelected}
-                aria-label={`${displayTime} - ${isSelected ? t('timeSlot.selected') : t('timeSlot.select')}`}
-              >
-                {/* Time icon */}
-                <Clock
-                  className={cn(
-                    'h-5 w-5 transition-colors duration-200',
-                    isSelected
-                      ? 'text-teal-600'
-                      : 'text-gray-400 group-hover:text-teal-500'
-                  )}
-                />
-
-                {/* Time display */}
-                <span
-                  className={cn(
-                    'text-[18px] sm:text-[20px] font-bold leading-none transition-colors duration-200',
-                    isSelected ? 'text-teal-700' : 'text-gray-900'
-                  )}
-                >
-                  {displayTime}
-                </span>
-
-                {/* Duration hint */}
-                <span
-                  className={cn(
-                    'text-[11px] font-medium transition-colors duration-200',
-                    isSelected ? 'text-teal-500' : 'text-gray-400'
-                  )}
-                >
-                  {t('timeSlot.duration')}
-                </span>
-
-                {/* Selected indicator */}
-                {isSelected && (
-                  <span className="mt-1 flex items-center gap-1 rounded-full bg-teal-600 px-2.5 py-0.5 text-[10px] font-semibold text-white shadow-sm">
-                    <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-                    {t('timeSlot.selected')}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+        <SlotsGrid
+          slots={slots}
+          selectedTime={selectedTime}
+          onSelect={onSelect}
+          t={t}
+        />
       </div>
     );
   };
@@ -352,7 +442,7 @@ export function TimeSlotGrid({
 
       {/* Selected date panel — right side on desktop, top on mobile */}
       {date && (
-        <div className="order-first md:order-last md:min-w-[200px]">
+        <div className="order-first md:order-last md:min-w-50">
           <SelectedDatePanel
             date={date}
             onPreviousDay={onPreviousDay}

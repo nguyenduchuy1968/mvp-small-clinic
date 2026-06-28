@@ -140,7 +140,7 @@ class TestValidateContactInfo:
         """TELEGRAM with patient_phone should pass."""
         _validate_contact_info(
             contact_method=ContactMethod.TELEGRAM,
-            patient_phone="+1234567890",
+            patient_phone="+84912345678",
             patient_email="",
         )
 
@@ -156,7 +156,7 @@ class TestValidateContactInfo:
         """TELEGRAM with both contacts should pass."""
         _validate_contact_info(
             contact_method=ContactMethod.TELEGRAM,
-            patient_phone="+1234567890",
+            patient_phone="+84912345678",
             patient_email="test@example.com",
         )
 
@@ -164,7 +164,7 @@ class TestValidateContactInfo:
         """PHONE with valid phone should pass."""
         _validate_contact_info(
             contact_method=ContactMethod.PHONE,
-            patient_phone="+1234567890",
+            patient_phone="+84912345678",
             patient_email=None,
         )
 

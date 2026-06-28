@@ -86,10 +86,13 @@
   "noDoctorsHint": "Please check back later or contact the clinic for availability.",
   "doctorCard": {
     "loading": "Finding available doctors...",
-    "selected": "Selected"
+    "loadingAria": "Loading doctors",
+    "selected": "Selected",
+    "selectLabel": "Select Doctor"
   },
   "timeSlot": {
     "loading": "Checking available times...",
+    "loadingAria": "Loading available slots",
     "available": "{{count}} available",
     "selected": "Selected",
     "select": "Select",

@@ -4,7 +4,7 @@ import pytest
 from app.core.config import settings
 from app.core.db import init_db
 from app.main import app
-from app.models import Appointment, Doctor, DoctorAvailability, User
+from app.models import Appointment, Doctor, DoctorAvailability, Patient, User
 from fastapi.testclient import TestClient
 from sqlmodel import Session, delete
 from tests.utils.database import (
@@ -58,10 +58,11 @@ def db() -> Generator[Session, None, None]:
     with Session(test_engine) as session:
         init_db(session)
         yield session
-        # Delete in FK order: appointments -> availability -> doctors -> users
+        # Delete in FK order: appointments -> availability -> doctors -> patients -> users
         session.execute(delete(Appointment))
         session.execute(delete(DoctorAvailability))
         session.execute(delete(Doctor))
+        session.execute(delete(Patient))
         session.execute(delete(User))
         session.commit()
 

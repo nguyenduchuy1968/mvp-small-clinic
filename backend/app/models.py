@@ -3,8 +3,8 @@ import uuid
 from datetime import date, datetime, timezone
 from typing import Optional
 
-from pydantic import EmailStr
 import sqlalchemy as sa
+from pydantic import EmailStr
 from sqlalchemy import DateTime
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -72,6 +72,9 @@ class User(UserBase, table=True):
         sa_type=DateTime(timezone=True),  # type: ignore
     )
     doctor: Optional["Doctor"] = Relationship(
+        back_populates="user", sa_relationship_kwargs={"uselist": False}
+    )
+    patient: Optional["Patient"] = Relationship(
         back_populates="user", sa_relationship_kwargs={"uselist": False}
     )
 
@@ -181,7 +184,9 @@ class DoctorAvailability(DoctorAvailabilityBase, table=True):
     __tablename__ = "doctor_availability"  # type: ignore[assignment]
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     doctor_id: uuid.UUID = Field(
-        foreign_key="doctor.id", nullable=False, ondelete="CASCADE",
+        foreign_key="doctor.id",
+        nullable=False,
+        ondelete="CASCADE",
         index=True,
     )
     created_at: datetime | None = Field(
@@ -198,7 +203,10 @@ class DoctorAvailability(DoctorAvailabilityBase, table=True):
     __table_args__ = (
         # Prevent duplicate intervals for the same doctor on the same weekday
         sa.UniqueConstraint(
-            "doctor_id", "weekday", "start_time", "end_time",
+            "doctor_id",
+            "weekday",
+            "start_time",
+            "end_time",
             name="uq_doctor_availability_interval",
         ),
     )
@@ -231,13 +239,14 @@ class DoctorsPublic(SQLModel):
 
 class DoctorCreateWithUser(SQLModel):
     """Schema for creating a doctor with automatic user creation.
-    
+
     This is the business-oriented input schema that combines
     user credentials with doctor profile information.
-    
+
     The canonical field is `specialty`. The legacy field `specialization`
     is also accepted for backward compatibility.
     """
+
     email: EmailStr
     password: str = Field(min_length=8, max_length=128)
     full_name: str = Field(max_length=255)
@@ -250,9 +259,116 @@ class DoctorCreateWithUser(SQLModel):
     is_active: bool = True
 
 
+# =============================================================================
+# Patient model
+# =============================================================================
+# The Patient is the central identity of the booking system.
+# A Patient may exist without a User account (guest booking, reception-created).
+# When a patient registers, Patient.user_id is linked to the User account.
+# Appointments belong to the Patient record, never directly to the User.
+
+
+class PatientBase(SQLModel):
+    """Shared Patient fields."""
+
+    full_name: str = Field(max_length=255)
+    phone: str | None = Field(default=None, max_length=20, index=True)
+    email: str | None = Field(default=None, max_length=255, index=True)
+
+
+class PatientCreate(PatientBase):
+    """Schema for creating a new Patient."""
+
+    pass
+
+
+class PatientUpdate(SQLModel):
+    """Schema for updating an existing Patient. All fields optional."""
+
+    full_name: str | None = Field(default=None, max_length=255)
+    phone: str | None = Field(default=None, max_length=20)
+    email: str | None = Field(default=None, max_length=255)
+
+
+class Patient(PatientBase, table=True):
+    __tablename__ = "patient"  # type: ignore[assignment]
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID | None = Field(
+        default=None,
+        foreign_key="user.id",
+        nullable=True,
+        unique=True,
+        ondelete="SET NULL",
+    )
+    created_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    updated_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+        sa_column_kwargs={"onupdate": get_datetime_utc},
+    )
+
+    # Relationships
+    user: Optional["User"] = Relationship(back_populates="patient")
+    appointments: list["Appointment"] = Relationship(
+        back_populates="patient",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"},
+    )
+
+    __table_args__ = (
+        # Prevent duplicate patients by phone or email
+        sa.UniqueConstraint("phone", name="uq_patient_phone"),
+        sa.UniqueConstraint("email", name="uq_patient_email"),
+    )
+
+
+class PatientPublic(PatientBase):
+    """Public view of a Patient. Includes id and timestamps, excludes user_id linkage."""
+
+    id: uuid.UUID
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
+class PatientAccountActivate(SQLModel):
+    """Schema for activating a Patient account (linking to a new User)."""
+
+    phone: str = Field(max_length=20)
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=128)
+    confirm_password: str = Field(min_length=8, max_length=128)
+
+
+class PatientAccountActivateResponse(SQLModel):
+    """Response after successful patient account activation."""
+
+    access_token: str
+    token_type: str = "bearer"
+    patient: PatientPublic
+
+
+class PatientsPublic(SQLModel):
+    data: list[PatientPublic]
+    count: int
+
+
+# =============================================================================
 # Appointment model
+# =============================================================================
+
+
 class AppointmentBase(SQLModel):
     doctor_id: uuid.UUID = Field(foreign_key="doctor.id", nullable=False, index=True)
+    patient_id: uuid.UUID | None = Field(
+        default=None,
+        foreign_key="patient.id",
+        nullable=True,
+        index=True,
+        ondelete="SET NULL",
+    )
     patient_name: str = Field(max_length=255)
     patient_phone: str = Field(max_length=20)
     patient_email: str | None = Field(default=None, max_length=255)
@@ -304,6 +420,7 @@ class Appointment(AppointmentBase, table=True):
         sa_column_kwargs={"onupdate": get_datetime_utc},
     )
     doctor: Optional["Doctor"] = Relationship(back_populates="appointments")
+    patient: Optional["Patient"] = Relationship(back_populates="appointments")
 
     __table_args__ = (
         # Prevent double booking for active appointments only.
@@ -312,7 +429,9 @@ class Appointment(AppointmentBase, table=True):
         # This is critical for the cancel-and-rebook flow.
         sa.Index(
             "uq_appointment_slot_active",
-            "doctor_id", "appointment_date", "appointment_time",
+            "doctor_id",
+            "appointment_date",
+            "appointment_time",
             unique=True,
             postgresql_where=sa.text("status IN ('pending', 'confirmed')"),
         ),
@@ -332,6 +451,7 @@ class AppointmentPublicConfirmation(SQLModel):
     Only exposes fields required by the booking confirmation page.
     Does NOT expose PII fields like patient_phone, patient_name, or notes.
     """
+
     id: uuid.UUID
     doctor_name: str | None = None
     appointment_date: date
@@ -361,7 +481,9 @@ class BlockedDate(BlockedDateBase, table=True):
     __tablename__ = "blocked_dates"  # type: ignore[assignment]
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     doctor_id: uuid.UUID = Field(
-        foreign_key="doctor.id", nullable=False, ondelete="CASCADE",
+        foreign_key="doctor.id",
+        nullable=False,
+        ondelete="CASCADE",
         index=True,
     )
     created_at: datetime | None = Field(
@@ -372,7 +494,8 @@ class BlockedDate(BlockedDateBase, table=True):
 
     __table_args__ = (
         sa.UniqueConstraint(
-            "doctor_id", "blocked_date",
+            "doctor_id",
+            "blocked_date",
             name="uq_blocked_date_per_doctor",
         ),
     )

@@ -348,7 +348,7 @@ class TestBookedSlotsRemoved:
         appointment_in = AppointmentCreate(
             doctor_id=doctor.id,
             patient_name="Test Patient",
-            patient_phone="+380501234567",
+            patient_phone="+84912345678",
             contact_method=ContactMethod.PHONE,
             appointment_date=target_date,
             appointment_time="10:00",
@@ -389,7 +389,7 @@ class TestBookedSlotsRemoved:
         appointment_in = AppointmentCreate(
             doctor_id=doctor.id,
             patient_name="Test Patient",
-            patient_phone="+380501234567",
+            patient_phone="+84912345678",
             contact_method=ContactMethod.PHONE,
             appointment_date=target_date,
             appointment_time="10:00",
@@ -423,7 +423,7 @@ class TestBookedSlotsRemoved:
         appointment_in = AppointmentCreate(
             doctor_id=doctor.id,
             patient_name="Test Patient",
-            patient_phone="+380501234567",
+            patient_phone="+84912345678",
             contact_method=ContactMethod.PHONE,
             appointment_date=target_date,
             appointment_time="10:00",
@@ -468,7 +468,7 @@ class TestBookedSlotsRemoved:
             appointment_in = AppointmentCreate(
                 doctor_id=doctor.id,
                 patient_name="Test Patient",
-                patient_phone="+380501234567",
+                patient_phone="+84912345678",
                 contact_method=ContactMethod.PHONE,
                 appointment_date=target_date,
                 appointment_time=time_str,
@@ -819,7 +819,7 @@ class TestSingleSourceOfTruth:
             appointment_in = AppointmentCreate(
                 doctor_id=doctor.id,
                 patient_name="Integration Test",
-                patient_phone="+380501234567",
+                patient_phone="+84912345678",
                 contact_method=ContactMethod.PHONE,
                 appointment_date=target_date,
                 appointment_time=slot.time,
@@ -848,7 +848,7 @@ class TestSingleSourceOfTruth:
             appointment_in = AppointmentCreate(
                 doctor_id=doctor.id,
                 patient_name="Test Patient",
-                patient_phone="+380501234567",
+                patient_phone="+84912345678",
                 contact_method=ContactMethod.PHONE,
                 appointment_date=target_date,
                 appointment_time="09:05",  # Not slot-aligned

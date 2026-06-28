@@ -14,6 +14,7 @@ from app.core.config import settings
 from app.core.security import get_password_hash, verify_password
 from app.models import (
     Message,
+    Patient,
     UpdatePassword,
     User,
     UserCreate,
@@ -64,6 +65,79 @@ def create_user(*, session: SessionDep, user_in: UserCreate) -> Any:
         )
 
     user = crud.create_user(session=session, user_create=user_in)
+
+    # Attempt to link to an existing Patient record by email
+    if user_in.email:
+        existing_patient = crud.find_patient_by_email(
+            session=session, email=user_in.email
+        )
+        if existing_patient:
+            crud.link_patient_to_user(
+                session=session, patient=existing_patient, user=user
+            )
+
+    if settings.emails_enabled and user_in.email:
+        email_data = generate_new_account_email(
+            email_to=user_in.email, username=user_in.email, password=user_in.password
+        )
+        send_email(
+            email_to=user_in.email,
+            subject=email_data.subject,
+            html_content=email_data.html_content,
+        )
+    return user
+
+
+@router.post("/register", response_model=UserPublic)
+def register_user(
+    *, session: SessionDep, user_in: UserCreate
+) -> Any:
+    """
+    Register a new user account (self-service).
+
+    Before creating the User, searches for an existing Patient by email.
+    If found, links the Patient to the new User account.
+    If not found, creates both the User and a new Patient record.
+
+    This ensures:
+    - Guest patients who already have appointments get linked to their new account
+    - No duplicate Patient records are created
+    - All existing appointments remain accessible after registration
+    """
+    # Check for existing user
+    existing_user = crud.get_user_by_email(session=session, email=user_in.email)
+    if existing_user:
+        raise HTTPException(
+            status_code=400,
+            detail="The user with this email already exists in the system.",
+        )
+
+    # Search for existing Patient by email
+    existing_patient = crud.find_patient_by_email(
+        session=session, email=user_in.email
+    )
+
+    # Create the User
+    user = crud.create_user(session=session, user_create=user_in)
+
+    if existing_patient:
+        # Link existing Patient to the new User
+        crud.link_patient_to_user(
+            session=session, patient=existing_patient, user=user
+        )
+    else:
+        # Also search by phone if no email match (user_in doesn't have phone,
+        # but we create a Patient record for the new user)
+        # Create a new Patient linked to this user
+        patient = Patient(
+            full_name=user_in.full_name or user_in.email,
+            email=user_in.email,
+            user_id=user.id,
+        )
+        session.add(patient)
+        session.commit()
+        session.refresh(patient)
+
     if settings.emails_enabled and user_in.email:
         email_data = generate_new_account_email(
             email_to=user_in.email, username=user_in.email, password=user_in.password

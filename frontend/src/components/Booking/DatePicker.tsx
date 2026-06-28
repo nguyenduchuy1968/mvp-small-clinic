@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/lib/utils';
@@ -79,13 +79,80 @@ export function DatePicker({ selectedDate, onSelect }: DatePickerProps) {
     });
   }, [todayStr, i18n.language]);
 
+  // ── Keyboard Navigation for radiogroup ──────────────────────────────
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const getEnabledDateValues = useCallback((): string[] => {
+    return dateOptions
+      .filter((opt) => !opt.isPast)
+      .map((opt) => opt.value);
+  }, [dateOptions]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const enabledValues = getEnabledDateValues();
+      if (enabledValues.length === 0) return;
+
+      const currentIndex = selectedDate
+        ? enabledValues.indexOf(selectedDate)
+        : -1;
+
+      let nextIndex = currentIndex;
+
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+          e.preventDefault();
+          nextIndex =
+            currentIndex < enabledValues.length - 1
+              ? currentIndex + 1
+              : 0; // wrap to first
+          break;
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          e.preventDefault();
+          nextIndex =
+            currentIndex > 0
+              ? currentIndex - 1
+              : enabledValues.length - 1; // wrap to last
+          break;
+        case 'Home':
+          e.preventDefault();
+          nextIndex = 0;
+          break;
+        case 'End':
+          e.preventDefault();
+          nextIndex = enabledValues.length - 1;
+          break;
+        default:
+          return; // let other keys propagate
+      }
+
+      const nextValue = enabledValues[nextIndex];
+      if (nextValue && nextValue !== selectedDate) {
+        onSelect(nextValue);
+      }
+
+      // Focus the newly selected button
+      if (containerRef.current) {
+        const buttons = containerRef.current.querySelectorAll<HTMLButtonElement>(
+          'button[role="radio"]:not([disabled])'
+        );
+        buttons[nextIndex]?.focus();
+      }
+    },
+    [selectedDate, onSelect, getEnabledDateValues]
+  );
+
   return (
     <div className="space-y-0">
       {/* Visual date cards grid */}
       <div
+        ref={containerRef}
         className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3"
         role="radiogroup"
         aria-label={t('datePicker.selectDate')}
+        onKeyDown={handleKeyDown}
       >
         {dateOptions.map((option) => {
           const isSelected = selectedDate === option.value;

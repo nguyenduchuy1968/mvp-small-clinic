@@ -86,10 +86,13 @@
   "noDoctorsHint": "Vui lòng kiểm tra lại sau hoặc liên hệ phòng khám.",
   "doctorCard": {
     "loading": "Đang tìm bác sĩ...",
-    "selected": "Đã chọn"
+    "loadingAria": "Đang tải danh sách bác sĩ",
+    "selected": "Đã chọn",
+    "selectLabel": "Chọn bác sĩ"
   },
   "timeSlot": {
     "loading": "Đang kiểm tra giờ trống...",
+    "loadingAria": "Đang tải khung giờ trống",
     "available": "Còn {{count}} khung giờ",
     "selected": "Đã chọn",
     "select": "Chọn",

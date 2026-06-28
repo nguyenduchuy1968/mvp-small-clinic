@@ -4,7 +4,7 @@ from datetime import date, datetime
 from zoneinfo import ZoneInfo
 from typing import Any
 
-from sqlalchemy import text
+from sqlalchemy import or_, text
 
 from app.core.config import settings
 from app.core.security import get_password_hash, verify_password
@@ -27,6 +27,10 @@ from app.models import (
     DoctorCreate,
     DoctorCreateWithUser,
     DoctorUpdate,
+    Patient,
+    PatientCreate,
+    PatientPublic,
+    PatientUpdate,
     User,
     UserCreate,
     UserRole,
@@ -196,6 +200,159 @@ def update_doctor(
 def delete_doctor(*, session: Session, db_doctor: Doctor) -> None:
     session.delete(db_doctor)
     session.commit()
+
+
+# =============================================================================
+# Patient CRUD
+# =============================================================================
+
+
+def _normalize_phone_for_lookup(phone: str) -> str:
+    """Normalize phone number for lookup by stripping separators."""
+    return re.sub(r"[\s\-\.\(\)]", "", phone)
+
+
+def find_patient_by_phone(
+    *, session: Session, phone: str
+) -> Patient | None:
+    """Find a patient by phone number.
+
+    Searches using the raw phone and a normalized version to handle
+    formatting differences (e.g., +84 123 456 789 vs +84123456789).
+    """
+    normalized = _normalize_phone_for_lookup(phone)
+    statement = select(Patient).where(
+        or_(
+            Patient.phone == phone,
+            Patient.phone == normalized,
+        )
+    )
+    return session.exec(statement).first()
+
+
+def find_patient_by_email(
+    *, session: Session, email: str
+) -> Patient | None:
+    """Find a patient by email address."""
+    statement = select(Patient).where(Patient.email == email)
+    return session.exec(statement).first()
+
+
+def find_patient_by_phone_or_email(
+    *, session: Session, phone: str | None, email: str | None
+) -> Patient | None:
+    """Find a patient by phone OR email.
+
+    Priority: phone > email.
+    Returns the first matching patient.
+    """
+    if phone:
+        patient = find_patient_by_phone(session=session, phone=phone)
+        if patient:
+            return patient
+    if email:
+        patient = find_patient_by_email(session=session, email=email)
+        if patient:
+            return patient
+    return None
+
+
+def resolve_patient(
+    *,
+    session: Session,
+    full_name: str,
+    phone: str | None,
+    email: str | None,
+) -> Patient:
+    """Resolve a Patient record: find existing or create new.
+
+    This is the core duplicate prevention function.
+
+    Lookup priority:
+    1. Phone (exact or normalized match)
+    2. Email (exact match)
+
+    If a matching patient is found, it is returned (reused).
+    If no match is found, a new Patient is created.
+
+    Never creates duplicate patients.
+    """
+    existing = find_patient_by_phone_or_email(
+        session=session, phone=phone, email=email
+    )
+    if existing:
+        return existing
+
+    # Create new patient
+    patient_in = PatientCreate(
+        full_name=full_name,
+        phone=phone,
+        email=email,
+    )
+    return create_patient(session=session, patient_in=patient_in)
+
+
+def create_patient(
+    *, session: Session, patient_in: PatientCreate
+) -> Patient:
+    """Create a new patient record."""
+    db_obj = Patient.model_validate(patient_in)
+    session.add(db_obj)
+    session.commit()
+    session.refresh(db_obj)
+    return db_obj
+
+
+def update_patient(
+    *, session: Session, db_patient: Patient, patient_in: PatientUpdate
+) -> Patient:
+    """Update an existing patient record."""
+    patient_data = patient_in.model_dump(exclude_unset=True)
+    db_patient.sqlmodel_update(patient_data)
+    session.add(db_patient)
+    session.commit()
+    session.refresh(db_patient)
+    return db_patient
+
+
+def get_patient(*, session: Session, patient_id: uuid.UUID) -> Patient | None:
+    """Get a patient by ID."""
+    return session.get(Patient, patient_id)
+
+
+def get_patient_by_user_id(
+    *, session: Session, user_id: uuid.UUID
+) -> Patient | None:
+    """Get a patient by their linked user ID."""
+    statement = select(Patient).where(Patient.user_id == user_id)
+    return session.exec(statement).first()
+
+
+def link_patient_to_user(
+    *, session: Session, patient: Patient, user: User
+) -> Patient:
+    """Link an existing Patient to a User account.
+
+    This is called when a guest patient registers an account.
+    The patient's user_id is set to the new user's id.
+    """
+    patient.user_id = user.id
+    session.add(patient)
+    session.commit()
+    session.refresh(patient)
+    return patient
+
+
+def _patient_to_public(patient: Patient) -> PatientPublic:
+    """Convert a Patient DB model to PatientPublic."""
+    return PatientPublic(
+        id=patient.id,
+        full_name=patient.full_name,
+        phone=patient.phone,
+        email=patient.email,
+        created_at=patient.created_at,
+        updated_at=patient.updated_at,
+    )
 
 
 # =============================================================================
@@ -1046,6 +1203,12 @@ def create_appointment(
     4. Contact info is valid for the selected contact method
     5. No double booking (same doctor, date, time with PENDING or CONFIRMED status)
 
+    Patient resolution:
+    - Searches existing patients by phone (priority) then email.
+    - If found, reuses the existing Patient record (no duplicates).
+    - If not found, creates a new Patient record.
+    - The appointment is linked to the resolved Patient via patient_id.
+
     The appointment status is determined by the AUTO_CONFIRM_APPOINTMENTS setting:
     - True  → CONFIRMED (MVP default)
     - False → PENDING  (for clinics requiring manual approval)
@@ -1095,17 +1258,26 @@ def create_appointment(
         appointment_time=appointment_in.appointment_time,
     )
 
-    # 6. Determine appointment status based on auto-confirm setting
+    # 6. Resolve Patient (find existing or create new)
+    patient = resolve_patient(
+        session=session,
+        full_name=appointment_in.patient_name,
+        phone=appointment_in.patient_phone,
+        email=appointment_in.patient_email,
+    )
+
+    # 7. Determine appointment status based on auto-confirm setting
     if settings.AUTO_CONFIRM_APPOINTMENTS:
         appointment_status = AppointmentStatus.CONFIRMED
     else:
         appointment_status = AppointmentStatus.PENDING
 
-    # 7. Create the appointment with the determined status
+    # 8. Create the appointment with the determined status and patient_id
     appointment_data = appointment_in.model_dump()
     appointment_data["status"] = appointment_status
+    appointment_data["patient_id"] = patient.id
 
-    # 8. Generate booking number before commit (uses PostgreSQL sequence)
+    # 9. Generate booking number before commit (uses PostgreSQL sequence)
     appointment_data["booking_number"] = _generate_booking_number(session)
 
     db_obj = Appointment.model_validate(appointment_data)

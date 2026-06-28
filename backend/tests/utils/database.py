@@ -56,8 +56,10 @@ def create_database_if_not_exists() -> None:
 def run_migrations() -> None:
     """Create all tables in the test database using SQLModel metadata.
 
-    Uses SQLModel.metadata.create_all() which reads the model definitions
-    directly — no Alembic patching needed.
+    Drops all existing tables first, then recreates them from the current
+    SQLModel model definitions. This ensures the test schema always matches
+    the model definitions — including columns that were added after the
+    test database was first created.
 
     Also creates PostgreSQL sequences that are managed by Alembic migrations
     (e.g. booking_number_seq) since SQLModel metadata does not handle sequences.
@@ -66,7 +68,11 @@ def run_migrations() -> None:
     """
     from sqlmodel import SQLModel, text
 
+    # Drop all existing tables first, then recreate from current model definitions.
+    # This is necessary because SQLModel.metadata.create_all() is idempotent:
+    # it creates missing tables but NEVER adds missing columns to existing tables.
     engine = create_test_engine()
+    SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)
 
     # Create PostgreSQL sequences that Alembic migrations would normally create
@@ -81,7 +87,7 @@ def run_migrations() -> None:
             logger.info("Created booking_number_seq sequence")
 
     engine.dispose()
-    logger.info("Created all tables in test database via SQLModel metadata")
+    logger.info("Recreated all tables in test database via SQLModel metadata")
 
 
 def verify_test_database(engine) -> str:

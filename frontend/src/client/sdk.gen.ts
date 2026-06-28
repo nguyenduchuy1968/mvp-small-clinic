@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { AppointmentsGetAvailableSlotsData, AppointmentsGetAvailableSlotsResponse, AppointmentsReadAppointmentPublicData, AppointmentsReadAppointmentPublicResponse, AppointmentsCreateAppointmentData, AppointmentsCreateAppointmentResponse, AppointmentsReadAppointmentsData, AppointmentsReadAppointmentsResponse, AppointmentsReadAppointmentData, AppointmentsReadAppointmentResponse, AppointmentsDeleteAppointmentData, AppointmentsDeleteAppointmentResponse, AppointmentsUpdateAppointmentStatusData, AppointmentsUpdateAppointmentStatusResponse, AvailabilityReadDoctorAvailabilitiesData, AvailabilityReadDoctorAvailabilitiesResponse, AvailabilityCreateDoctorAvailabilityData, AvailabilityCreateDoctorAvailabilityResponse, AvailabilityUpdateDoctorAvailabilityData, AvailabilityUpdateDoctorAvailabilityResponse, AvailabilityDeleteDoctorAvailabilityData, AvailabilityDeleteDoctorAvailabilityResponse, BlockedDatesReadBlockedDatesData, BlockedDatesReadBlockedDatesResponse, BlockedDatesCreateBlockedDatesData, BlockedDatesCreateBlockedDatesResponse, BlockedDatesDeleteBlockedDateData, BlockedDatesDeleteBlockedDateResponse, DoctorsReadDoctorsData, DoctorsReadDoctorsResponse, DoctorsCreateDoctorData, DoctorsCreateDoctorResponse, DoctorsReadDoctorsPublicData, DoctorsReadDoctorsPublicResponse, DoctorsReadCurrentDoctorResponse, DoctorsReadDoctorData, DoctorsReadDoctorResponse, DoctorsUpdateDoctorData, DoctorsUpdateDoctorResponse, DoctorsDeleteDoctorData, DoctorsDeleteDoctorResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { AppointmentsGetAvailableSlotsData, AppointmentsGetAvailableSlotsResponse, AppointmentsReadAppointmentPublicData, AppointmentsReadAppointmentPublicResponse, AppointmentsCreateAppointmentData, AppointmentsCreateAppointmentResponse, AppointmentsReadAppointmentsData, AppointmentsReadAppointmentsResponse, AppointmentsReadMyPatientResponse, AppointmentsReadPatientAppointmentsData, AppointmentsReadPatientAppointmentsResponse, AppointmentsReadAppointmentData, AppointmentsReadAppointmentResponse, AppointmentsDeleteAppointmentData, AppointmentsDeleteAppointmentResponse, AppointmentsUpdateAppointmentStatusData, AppointmentsUpdateAppointmentStatusResponse, AvailabilityReadDoctorAvailabilitiesData, AvailabilityReadDoctorAvailabilitiesResponse, AvailabilityCreateDoctorAvailabilityData, AvailabilityCreateDoctorAvailabilityResponse, AvailabilityUpdateDoctorAvailabilityData, AvailabilityUpdateDoctorAvailabilityResponse, AvailabilityDeleteDoctorAvailabilityData, AvailabilityDeleteDoctorAvailabilityResponse, BlockedDatesReadBlockedDatesData, BlockedDatesReadBlockedDatesResponse, BlockedDatesCreateBlockedDatesData, BlockedDatesCreateBlockedDatesResponse, BlockedDatesDeleteBlockedDateData, BlockedDatesDeleteBlockedDateResponse, DoctorsReadDoctorsData, DoctorsReadDoctorsResponse, DoctorsCreateDoctorData, DoctorsCreateDoctorResponse, DoctorsReadDoctorsPublicData, DoctorsReadDoctorsPublicResponse, DoctorsReadCurrentDoctorResponse, DoctorsReadDoctorData, DoctorsReadDoctorResponse, DoctorsUpdateDoctorData, DoctorsUpdateDoctorResponse, DoctorsDeleteDoctorData, DoctorsDeleteDoctorResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PatientAccountsActivatePatientAccountData, PatientAccountsActivatePatientAccountResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
 
 export class AppointmentsService {
     /**
@@ -54,7 +54,7 @@ export class AppointmentsService {
     
     /**
      * Create Appointment
-     * Create a new appointment booking. Validates that the doctor exists and is active, the appointment date is not in the past, the time falls within an active availability interval and aligns with the slot duration, contact info is valid for the selected contact method, and there is no double booking. This endpoint is public and does not require authentication.
+     * Create a new appointment booking. Validates that the doctor exists and is active, the appointment date is not in the past, the time falls within an active availability interval and aligns with the slot duration, contact info is valid for the selected contact method, and there is no double booking. Automatically resolves or creates a Patient record. This endpoint is public and does not require authentication.
      * @param data The data for the request.
      * @param data.requestBody
      * @returns AppointmentPublic Successful Response
@@ -92,6 +92,46 @@ export class AppointmentsService {
                 doctor_id: data.doctorId,
                 appointment_date: data.appointmentDate,
                 status: data.status,
+                skip: data.skip,
+                limit: data.limit
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get My Patient Profile
+     * Get the Patient record linked to the currently authenticated user. Returns null if the user has no linked Patient record. This is used after login to resolve User -> Patient.
+     * @returns unknown Successful Response
+     * @throws ApiError
+     */
+    public static readMyPatient(): CancelablePromise<AppointmentsReadMyPatientResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/patients/me'
+        });
+    }
+    
+    /**
+     * Get Patient Appointments
+     * Retrieve all appointments for a specific patient. Requires authentication. Admins can access any patient's appointments. Doctors can access their own patients' appointments. Patients can only access their own appointments via their linked user.
+     * @param data The data for the request.
+     * @param data.patientId
+     * @param data.skip Number of records to skip
+     * @param data.limit Maximum records to return
+     * @returns AppointmentsPublic Successful Response
+     * @throws ApiError
+     */
+    public static readPatientAppointments(data: AppointmentsReadPatientAppointmentsData): CancelablePromise<AppointmentsReadPatientAppointmentsResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/patients/{patient_id}/appointments',
+            path: {
+                patient_id: data.patientId
+            },
+            query: {
                 skip: data.skip,
                 limit: data.limit
             },
@@ -614,6 +654,39 @@ export class LoginService {
     }
 }
 
+export class PatientAccountsService {
+    /**
+     * Activate Patient Account
+     * Activate an online account for an existing Patient record.
+     *
+     * Workflow:
+     * 1. Validate passwords match.
+     * 2. Find Patient by phone.
+     * 3. Verify email matches the Patient record.
+     * 4. Verify Patient.user_id IS NULL (not already activated).
+     * 5. Create User with hashed password.
+     * 6. Link Patient.user_id = User.id.
+     * 7. Return JWT tokens and Patient summary.
+     *
+     * Never creates a duplicate Patient record.
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns PatientAccountActivateResponse Successful Response
+     * @throws ApiError
+     */
+    public static activatePatientAccount(data: PatientAccountsActivatePatientAccountData): CancelablePromise<PatientAccountsActivatePatientAccountResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/patient-accounts/activate',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+}
+
 export class PrivateService {
     /**
      * Create User
@@ -672,6 +745,35 @@ export class UsersService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/v1/users/',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Register User
+     * Register a new user account (self-service).
+     *
+     * Before creating the User, searches for an existing Patient by email.
+     * If found, links the Patient to the new User account.
+     * If not found, creates both the User and a new Patient record.
+     *
+     * This ensures:
+     * - Guest patients who already have appointments get linked to their new account
+     * - No duplicate Patient records are created
+     * - All existing appointments remain accessible after registration
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns UserPublic Successful Response
+     * @throws ApiError
+     */
+    public static registerUser(data: UsersRegisterUserData): CancelablePromise<UsersRegisterUserResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/users/register',
             body: data.requestBody,
             mediaType: 'application/json',
             errors: {

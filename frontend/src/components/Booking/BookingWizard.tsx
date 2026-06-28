@@ -225,7 +225,7 @@ export function BookingWizard({
               <div
                 className="space-y-4"
                 role="status"
-                aria-label="Loading doctors"
+                aria-label={t('doctorCard.loadingAria')}
               >
                 <div className="flex items-center gap-2.5 text-[15px] text-gray-700 mb-4">
                   <span className="flex h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse shadow-sm shadow-green-500/50" />

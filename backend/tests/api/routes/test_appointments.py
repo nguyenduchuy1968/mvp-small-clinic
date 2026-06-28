@@ -42,7 +42,7 @@ def _create_doctor_via_api(
         "full_name": "Test Doctor",
         "specialty": "Cardiology",
         "experience_years": 10,
-        "phone": "+380501234567",
+        "phone": "+84912345678",
         "consultation_duration": 30,
         "is_active": True,
     }
@@ -67,7 +67,7 @@ def _create_doctor_user_token(
         "full_name": "Dr. Own",
         "specialty": "Cardiology",
         "experience_years": 5,
-        "phone": "+380501234568",
+        "phone": "+84912345679",
         "consultation_duration": 30,
         "is_active": True,
     }
@@ -139,7 +139,7 @@ def _create_appointment_payload(
     return {
         "doctor_id": doctor_id,
         "patient_name": "John Doe",
-        "patient_phone": "+380501234569",
+        "patient_phone": "+84912345670",
         "patient_email": "john@example.com",
         "contact_method": contact_method,
         "appointment_date": _TOMORROW_STR,

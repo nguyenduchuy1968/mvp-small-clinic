@@ -68,6 +68,18 @@ export const AppointmentPublicSchema = {
             format: 'uuid',
             title: 'Doctor Id'
         },
+        patient_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Patient Id'
+        },
         patient_name: {
             type: 'string',
             maxLength: 255,
@@ -430,7 +442,7 @@ export const Body_login_login_access_tokenSchema = {
             anyOf: [
                 {
                     type: 'string',
-                    pattern: 'password'
+                    pattern: '^password$'
                 },
                 {
                     type: 'null'
@@ -444,6 +456,7 @@ export const Body_login_login_access_tokenSchema = {
         },
         password: {
             type: 'string',
+            format: 'password',
             title: 'Password'
         },
         scope: {
@@ -471,6 +484,7 @@ export const Body_login_login_access_tokenSchema = {
                     type: 'null'
                 }
             ],
+            format: 'password',
             title: 'Client Secret'
         }
     },
@@ -1106,6 +1120,203 @@ export const NewPasswordSchema = {
     title: 'NewPassword'
 } as const;
 
+export const PatientSchema = {
+    properties: {
+        full_name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Full Name'
+        },
+        phone: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 20
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Phone'
+        },
+        email: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Email'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        user_id: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'User Id'
+        },
+        created_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Created At'
+        },
+        updated_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['full_name'],
+    title: 'Patient'
+} as const;
+
+export const PatientAccountActivateSchema = {
+    properties: {
+        phone: {
+            type: 'string',
+            maxLength: 20,
+            title: 'Phone'
+        },
+        email: {
+            type: 'string',
+            format: 'email',
+            title: 'Email'
+        },
+        password: {
+            type: 'string',
+            maxLength: 128,
+            minLength: 8,
+            title: 'Password'
+        },
+        confirm_password: {
+            type: 'string',
+            maxLength: 128,
+            minLength: 8,
+            title: 'Confirm Password'
+        }
+    },
+    type: 'object',
+    required: ['phone', 'email', 'password', 'confirm_password'],
+    title: 'PatientAccountActivate',
+    description: 'Schema for activating a Patient account (linking to a new User).'
+} as const;
+
+export const PatientAccountActivateResponseSchema = {
+    properties: {
+        access_token: {
+            type: 'string',
+            title: 'Access Token'
+        },
+        token_type: {
+            type: 'string',
+            title: 'Token Type',
+            default: 'bearer'
+        },
+        patient: {
+            '$ref': '#/components/schemas/PatientPublic'
+        }
+    },
+    type: 'object',
+    required: ['access_token', 'patient'],
+    title: 'PatientAccountActivateResponse',
+    description: 'Response after successful patient account activation.'
+} as const;
+
+export const PatientPublicSchema = {
+    properties: {
+        full_name: {
+            type: 'string',
+            maxLength: 255,
+            title: 'Full Name'
+        },
+        phone: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 20
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Phone'
+        },
+        email: {
+            anyOf: [
+                {
+                    type: 'string',
+                    maxLength: 255
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Email'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        created_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Created At'
+        },
+        updated_at: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Updated At'
+        }
+    },
+    type: 'object',
+    required: ['full_name', 'id'],
+    title: 'PatientPublic',
+    description: 'Public view of a Patient. Includes id and timestamps, excludes user_id linkage.'
+} as const;
+
 export const PrivateUserCreateSchema = {
     properties: {
         email: {
@@ -1410,6 +1621,13 @@ export const ValidationErrorSchema = {
         type: {
             type: 'string',
             title: 'Error Type'
+        },
+        input: {
+            title: 'Input'
+        },
+        ctx: {
+            type: 'object',
+            title: 'Context'
         }
     },
     type: 'object',

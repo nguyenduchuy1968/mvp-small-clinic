@@ -13,6 +13,7 @@ export type AppointmentCreate = {
 
 export type AppointmentPublic = {
     doctor_id: string;
+    patient_id?: (string | null);
     patient_name: string;
     patient_phone: string;
     patient_email?: (string | null);
@@ -204,6 +205,47 @@ export type NewPassword = {
     new_password: string;
 };
 
+export type Patient = {
+    full_name: string;
+    phone?: (string | null);
+    email?: (string | null);
+    id?: string;
+    user_id?: (string | null);
+    created_at?: (string | null);
+    updated_at?: (string | null);
+};
+
+/**
+ * Schema for activating a Patient account (linking to a new User).
+ */
+export type PatientAccountActivate = {
+    phone: string;
+    email: string;
+    password: string;
+    confirm_password: string;
+};
+
+/**
+ * Response after successful patient account activation.
+ */
+export type PatientAccountActivateResponse = {
+    access_token: string;
+    token_type?: string;
+    patient: PatientPublic;
+};
+
+/**
+ * Public view of a Patient. Includes id and timestamps, excludes user_id linkage.
+ */
+export type PatientPublic = {
+    full_name: string;
+    phone?: (string | null);
+    email?: (string | null);
+    id: string;
+    created_at?: (string | null);
+    updated_at?: (string | null);
+};
+
 export type PrivateUserCreate = {
     email: string;
     password: string;
@@ -265,6 +307,10 @@ export type ValidationError = {
     loc: Array<(string | number)>;
     msg: string;
     type: string;
+    input?: unknown;
+    ctx?: {
+        [key: string]: unknown;
+    };
 };
 
 export type Weekday = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -315,6 +361,22 @@ export type AppointmentsReadAppointmentsData = {
 };
 
 export type AppointmentsReadAppointmentsResponse = (AppointmentsPublic);
+
+export type AppointmentsReadMyPatientResponse = ((Patient | null));
+
+export type AppointmentsReadPatientAppointmentsData = {
+    /**
+     * Maximum records to return
+     */
+    limit?: number;
+    patientId: string;
+    /**
+     * Number of records to skip
+     */
+    skip?: number;
+};
+
+export type AppointmentsReadPatientAppointmentsResponse = (AppointmentsPublic);
 
 export type AppointmentsReadAppointmentData = {
     appointmentId: string;
@@ -457,6 +519,12 @@ export type LoginRecoverPasswordHtmlContentData = {
 
 export type LoginRecoverPasswordHtmlContentResponse = (string);
 
+export type PatientAccountsActivatePatientAccountData = {
+    requestBody: PatientAccountActivate;
+};
+
+export type PatientAccountsActivatePatientAccountResponse = (PatientAccountActivateResponse);
+
 export type PrivateCreateUserData = {
     requestBody: PrivateUserCreate;
 };
@@ -475,6 +543,12 @@ export type UsersCreateUserData = {
 };
 
 export type UsersCreateUserResponse = (UserPublic);
+
+export type UsersRegisterUserData = {
+    requestBody: UserCreate;
+};
+
+export type UsersRegisterUserResponse = (UserPublic);
 
 export type UsersReadUserMeResponse = (UserPublic);
 

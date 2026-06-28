@@ -14,6 +14,7 @@ import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as BookingRouteImport } from './routes/booking'
+import { Route as ActivateAccountRouteImport } from './routes/activate-account'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BookingConfirmationRouteImport } from './routes/booking/confirmation'
@@ -55,6 +56,11 @@ const DoctorsRoute = DoctorsRouteImport.update({
 const BookingRoute = BookingRouteImport.update({
   id: '/booking',
   path: '/booking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActivateAccountRoute = ActivateAccountRouteImport.update({
+  id: '/activate-account',
+  path: '/activate-account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LayoutRoute = LayoutRouteImport.update({
@@ -145,6 +151,7 @@ const LayoutAvailabilityIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/activate-account': typeof ActivateAccountRoute
   '/booking': typeof BookingRouteWithChildren
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/login': typeof LoginRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/activate-account': typeof ActivateAccountRoute
   '/booking': typeof BookingRouteWithChildren
   '/doctors': typeof LayoutDoctorsRouteWithChildren
   '/login': typeof LoginRoute
@@ -190,6 +198,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_layout': typeof LayoutRouteWithChildren
+  '/activate-account': typeof ActivateAccountRoute
   '/booking': typeof BookingRouteWithChildren
   '/doctors': typeof DoctorsRoute
   '/login': typeof LoginRoute
@@ -215,6 +224,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/activate-account'
     | '/booking'
     | '/doctors'
     | '/login'
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/activate-account'
     | '/booking'
     | '/doctors'
     | '/login'
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_layout'
+    | '/activate-account'
     | '/booking'
     | '/doctors'
     | '/login'
@@ -284,6 +296,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRouteWithChildren
+  ActivateAccountRoute: typeof ActivateAccountRoute
   BookingRoute: typeof BookingRouteWithChildren
   DoctorsRoute: typeof DoctorsRoute
   LoginRoute: typeof LoginRoute
@@ -326,6 +339,13 @@ declare module '@tanstack/react-router' {
       path: '/booking'
       fullPath: '/booking'
       preLoaderRoute: typeof BookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/activate-account': {
+      id: '/activate-account'
+      path: '/activate-account'
+      fullPath: '/activate-account'
+      preLoaderRoute: typeof ActivateAccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_layout': {
@@ -539,6 +559,7 @@ const BookingRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LayoutRoute: LayoutRouteWithChildren,
+  ActivateAccountRoute: ActivateAccountRoute,
   BookingRoute: BookingRouteWithChildren,
   DoctorsRoute: DoctorsRoute,
   LoginRoute: LoginRoute,

@@ -33,7 +33,7 @@ def create_test_doctor(
         "specialty": "Cardiology",
         "experience_years": 10,
         "bio": "Experienced cardiologist",
-        "phone": "+380501234567",
+        "phone": "+84912345678",
         "consultation_duration": 30,
         "is_active": True,
     }
@@ -64,7 +64,7 @@ class TestCreateDoctor:
             "specialty": "Cardiology",
             "experience_years": 15,
             "bio": "Senior cardiologist",
-            "phone": "+380501234568",
+            "phone": "+84912345679",
             "consultation_duration": 30,
             "is_active": True,
         }
@@ -82,7 +82,7 @@ class TestCreateDoctor:
         assert created["specialty"] == "Cardiology"
         assert created["experience_years"] == 15
         assert created["bio"] == "Senior cardiologist"
-        assert created["phone"] == "+380501234568"
+        assert created["phone"] == "+84912345679"
         assert created["consultation_duration"] == 30
         assert created["is_active"] is True
         assert "id" in created
@@ -861,7 +861,7 @@ class TestDeleteDoctor:
         appointment = Appointment(
             doctor_id=doctor_id,
             patient_name="Test Patient",
-            patient_phone="+380501234569",
+            patient_phone="+84912345670",
             contact_method=ContactMethod.PHONE,
             appointment_date=future_date,
             appointment_time="10:00",
@@ -911,7 +911,7 @@ class TestDeleteDoctor:
         appointment = Appointment(
             doctor_id=doctor_id,
             patient_name="Test Patient",
-            patient_phone="+380501234569",
+            patient_phone="+84912345670",
             contact_method=ContactMethod.PHONE,
             appointment_date=future_date,
             appointment_time="10:00",

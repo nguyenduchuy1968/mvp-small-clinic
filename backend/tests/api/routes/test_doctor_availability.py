@@ -30,7 +30,7 @@ def _create_doctor_via_api(
         "full_name": "Test Doctor",
         "specialization": "Cardiology",
         "experience_years": 10,
-        "phone": "+380501234567",
+        "phone": "+84912345678",
         "consultation_duration": 30,
         "is_active": True,
     }
@@ -55,7 +55,7 @@ def _create_doctor_user_token(
         "full_name": "Dr. Own",
         "specialization": "Cardiology",
         "experience_years": 5,
-        "phone": "+380501234568",
+        "phone": "+84912345679",
         "consultation_duration": 30,
         "is_active": True,
     }

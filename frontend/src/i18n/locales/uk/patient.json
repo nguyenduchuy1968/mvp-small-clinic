@@ -1,0 +1,69 @@
+{
+  "nav": {
+    "dashboard": "Панель керування",
+    "myAppointments": "Мої записи",
+    "history": "Історія записів",
+    "profile": "Профіль"
+  },
+  "placeholder": {
+    "title": "Незабаром",
+    "description": "Ця сторінка буде реалізована в наступному етапі."
+  },
+  "dashboard": {
+    "pageTitle": "Панель керування",
+    "pageDescription": "Ласкаво просимо до порталу пацієнта. Керуйте своїми записами та інформацією про здоров'я.",
+    "welcome": {
+      "morning": "Доброго ранку",
+      "afternoon": "Добрий день",
+      "evening": "Добрий вечір",
+      "subtitle": "Ласкаво просимо до порталу пацієнта. Ось короткий огляд ваших майбутніх візитів.",
+      "badge": "Портал пацієнта",
+      "ariaLabel": "Розділ вітання"
+    },
+    "nextAppointment": {
+      "title": "Наступний запис",
+      "bookingNumber": "Бронювання #{{number}}",
+      "noAppointment": "Немає майбутніх записів",
+      "noAppointmentDesc": "У вас немає запланованих візитів. Запишіться зараз!",
+      "viewDetails": "Деталі",
+      "cancel": "Скасувати",
+      "cancelInfo": "Не можете прийти на цей прийом? Натисніть «Скасувати» нижче.",
+      "statusConfirmed": "Підтверджено",
+      "statusPending": "Очікує",
+      "statusCancelled": "Скасовано",
+      "statusCompleted": "Завершено",
+      "labelDate": "Дата",
+      "labelTime": "Час",
+      "labelLocation": "Місце",
+      "labelBooking": "Бронювання #",
+      "ariaViewDetails": "Деталі запису до {{doctorName}}",
+      "ariaCancel": "Скасувати запис до {{doctorName}}"
+    },
+    "quickActions": {
+      "title": "Швидкі дії",
+      "bookAppointment": "Записатися",
+      "bookAppointmentDesc": "Заплануйте новий візит до одного з наших лікарів",
+      "myAppointments": "Мої записи",
+      "myAppointmentsDesc": "Переглядайте та керуйте своїми майбутніми записами",
+      "myProfile": "Мій профіль",
+      "myProfileDesc": "Оновіть особисту інформацію та налаштування",
+      "ariaLabel": "Швидкі дії"
+    },
+    "upcomingAppointments": {
+      "title": "Майбутні записи",
+      "empty": "Немає майбутніх записів",
+      "emptyDesc": "У вас немає запланованих візитів. Запишіться на прийом сьогодні.",
+      "viewAll": "Переглянути всі",
+      "viewDetails": "Деталі",
+      "ariaLabel": "Майбутні записи"
+    },
+    "skeleton": {
+      "loading": "Завантаження панелі керування..."
+    },
+    "error": {
+      "title": "Щось пішло не так",
+      "description": "Не вдалося завантажити дані панелі керування. Будь ласка, спробуйте ще раз.",
+      "retry": "Повторити"
+    }
+  }
+}

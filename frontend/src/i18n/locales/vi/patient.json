@@ -1,0 +1,69 @@
+{
+  "nav": {
+    "dashboard": "Bảng điều khiển",
+    "myAppointments": "Lịch hẹn của tôi",
+    "history": "Lịch sử hẹn",
+    "profile": "Hồ sơ"
+  },
+  "placeholder": {
+    "title": "Sắp ra mắt",
+    "description": "Trang này sẽ được triển khai trong giai đoạn tiếp theo."
+  },
+  "dashboard": {
+    "pageTitle": "Bảng điều khiển",
+    "pageDescription": "Chào mừng bạn đến với Cổng thông tin Bệnh nhân. Quản lý lịch hẹn và thông tin sức khỏe của bạn.",
+    "welcome": {
+      "morning": "Chào buổi sáng",
+      "afternoon": "Chào buổi chiều",
+      "evening": "Chào buổi tối",
+      "subtitle": "Chào mừng bạn đến với Cổng thông tin Bệnh nhân. Dưới đây là tổng quan nhanh về các lịch hẹn sắp tới của bạn.",
+      "badge": "Cổng thông tin Bệnh nhân",
+      "ariaLabel": "Phần chào mừng"
+    },
+    "nextAppointment": {
+      "title": "Lịch hẹn tiếp theo",
+      "bookingNumber": "Mã đặt #{{number}}",
+      "noAppointment": "Không có lịch hẹn sắp tới",
+      "noAppointmentDesc": "Bạn chưa có lịch hẹn nào. Đặt lịch ngay!",
+      "viewDetails": "Xem chi tiết",
+      "cancel": "Hủy",
+      "cancelInfo": "Không thể đến lịch hẹn này? Nhấn \"Hủy\" bên dưới để hủy lịch hẹn.",
+      "statusConfirmed": "Đã xác nhận",
+      "statusPending": "Chờ xác nhận",
+      "statusCancelled": "Đã hủy",
+      "statusCompleted": "Đã hoàn thành",
+      "labelDate": "Ngày",
+      "labelTime": "Giờ",
+      "labelLocation": "Địa điểm",
+      "labelBooking": "Mã đặt #",
+      "ariaViewDetails": "Xem chi tiết lịch hẹn với {{doctorName}}",
+      "ariaCancel": "Hủy lịch hẹn với {{doctorName}}"
+    },
+    "quickActions": {
+      "title": "Thao tác nhanh",
+      "bookAppointment": "Đặt lịch hẹn",
+      "bookAppointmentDesc": "Lên lịch khám với một trong các bác sĩ của chúng tôi",
+      "myAppointments": "Lịch hẹn của tôi",
+      "myAppointmentsDesc": "Xem và quản lý lịch hẹn sắp tới của bạn",
+      "myProfile": "Hồ sơ của tôi",
+      "myProfileDesc": "Cập nhật thông tin cá nhân và tùy chọn của bạn",
+      "ariaLabel": "Thao tác nhanh"
+    },
+    "upcomingAppointments": {
+      "title": "Lịch hẹn sắp tới",
+      "empty": "Không có lịch hẹn sắp tới",
+      "emptyDesc": "Bạn không có lịch hẹn nào sắp tới. Đặt lịch khám hôm nay.",
+      "viewAll": "Xem tất cả",
+      "viewDetails": "Xem chi tiết",
+      "ariaLabel": "Lịch hẹn sắp tới"
+    },
+    "skeleton": {
+      "loading": "Đang tải bảng điều khiển..."
+    },
+    "error": {
+      "title": "Đã xảy ra lỗi",
+      "description": "Không thể tải dữ liệu bảng điều khiển. Vui lòng thử lại.",
+      "retry": "Thử lại"
+    }
+  }
+}

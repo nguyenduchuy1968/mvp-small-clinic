@@ -1,0 +1,69 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "myAppointments": "My Appointments",
+    "history": "Appointment History",
+    "profile": "Profile"
+  },
+  "placeholder": {
+    "title": "Coming Soon",
+    "description": "This page will be implemented in a future phase."
+  },
+  "dashboard": {
+    "pageTitle": "Dashboard",
+    "pageDescription": "Welcome to your Patient Portal. Manage your appointments and health information.",
+    "welcome": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening",
+      "subtitle": "Welcome to your Patient Portal. Here's a quick overview of your upcoming visits.",
+      "badge": "Patient Portal",
+      "ariaLabel": "Welcome section"
+    },
+    "nextAppointment": {
+      "title": "Next Appointment",
+      "bookingNumber": "Booking #{{number}}",
+      "noAppointment": "No upcoming appointments",
+      "noAppointmentDesc": "You don't have any scheduled appointments. Book one now!",
+      "viewDetails": "View Details",
+      "cancel": "Cancel",
+      "cancelInfo": "Can't attend this appointment? Click \"Cancel\" below to cancel your appointment.",
+      "statusConfirmed": "Confirmed",
+      "statusPending": "Pending",
+      "statusCancelled": "Cancelled",
+      "statusCompleted": "Completed",
+      "labelDate": "Date",
+      "labelTime": "Time",
+      "labelLocation": "Location",
+      "labelBooking": "Booking #",
+      "ariaViewDetails": "View details for appointment with {{doctorName}}",
+      "ariaCancel": "Cancel appointment with {{doctorName}}"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "bookAppointment": "Book Appointment",
+      "bookAppointmentDesc": "Schedule a new visit with one of our doctors",
+      "myAppointments": "My Appointments",
+      "myAppointmentsDesc": "View and manage your upcoming appointments",
+      "myProfile": "My Profile",
+      "myProfileDesc": "Update your personal information and preferences",
+      "ariaLabel": "Quick actions"
+    },
+    "upcomingAppointments": {
+      "title": "Upcoming Appointments",
+      "empty": "No upcoming appointments",
+      "emptyDesc": "You have no upcoming appointments scheduled. Book your next visit today.",
+      "viewAll": "View All",
+      "viewDetails": "View Details",
+      "ariaLabel": "Upcoming appointments"
+    },
+    "skeleton": {
+      "loading": "Loading your dashboard..."
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "We couldn't load your dashboard data. Please try again.",
+      "retry": "Retry"
+    }
+  }
+}

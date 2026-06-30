@@ -1,51 +1,70 @@
-import { useSuspenseQuery } from "@tanstack/react-query"
-import { createFileRoute, redirect } from "@tanstack/react-router"
-import { Suspense } from "react"
-import { useTranslation } from "react-i18next"
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import type { QueryClient } from '@tanstack/react-query';
+import { Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { type UserPublic, UsersService } from "@/client"
-import AddUser from "@/components/Admin/AddUser"
-import { columns, type UserTableData } from "@/components/Admin/columns"
-import { DataTable } from "@/components/Common/DataTable"
-import PendingUsers from "@/components/Pending/PendingUsers"
-import useAuth from "@/hooks/useAuth"
+import { type UserPublic, UsersService } from '@/client';
+import AddUser from '@/components/Admin/AddUser';
+import { columns, type UserTableData } from '@/components/Admin/columns';
+import { DataTable } from '@/components/Common/DataTable';
+import PendingUsers from '@/components/Pending/PendingUsers';
+import useAuth from '@/hooks/useAuth';
+import { isAdmin } from '@/utils/authorization';
 
 function getUsersQueryOptions() {
   return {
     queryFn: () => UsersService.readUsers({ skip: 0, limit: 100 }),
-    queryKey: ["users"],
-  }
+    queryKey: ['users'],
+  };
 }
 
-export const Route = createFileRoute("/_layout/admin")({
+export const Route = createFileRoute('/_layout/admin')({
   component: Admin,
-  beforeLoad: async () => {
-    const user = await UsersService.readUserMe()
-    if (!user.is_superuser) {
+  beforeLoad: async (ctx) => {
+    const context = ctx.context as { queryClient: QueryClient };
+
+    // Read from React Query cache first to avoid redundant API calls
+    const queryClient: QueryClient = context.queryClient;
+    let user = queryClient.getQueryData<UserPublic>(['currentUser']);
+
+    if (!user) {
+      // Cache miss — prefetch once
+      try {
+        user = await queryClient.fetchQuery({
+          queryKey: ['currentUser'],
+          queryFn: UsersService.readUserMe,
+        });
+      } catch {
+        throw redirect({ to: '/' });
+      }
+    }
+
+    if (!isAdmin(user)) {
       throw redirect({
-        to: "/",
-      })
+        to: '/',
+      });
     }
   },
   head: () => ({
     meta: [
       {
-        title: "Admin",
+        title: 'Admin',
       },
     ],
   }),
-})
+});
 
 function UsersTableContent() {
-  const { user: currentUser } = useAuth()
-  const { data: users } = useSuspenseQuery(getUsersQueryOptions())
+  const { user: currentUser } = useAuth();
+  const { data: users } = useSuspenseQuery(getUsersQueryOptions());
 
   const tableData: UserTableData[] = users.data.map((user: UserPublic) => ({
     ...user,
     isCurrentUser: currentUser?.id === user.id,
-  }))
+  }));
 
-  return <DataTable columns={columns} data={tableData} />
+  return <DataTable columns={columns} data={tableData} />;
 }
 
 function UsersTable() {
@@ -53,26 +72,26 @@ function UsersTable() {
     <Suspense fallback={<PendingUsers />}>
       <UsersTableContent />
     </Suspense>
-  )
+  );
 }
 
 function Admin() {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation('common');
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            {t("nav.admin")}
+            {t('nav.admin')}
           </h1>
           <p className="text-muted-foreground">
-            {t("users.manageDescription")}
+            {t('users.manageDescription')}
           </p>
         </div>
         <AddUser />
       </div>
       <UsersTable />
     </div>
-  )
+  );
 }

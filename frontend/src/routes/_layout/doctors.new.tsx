@@ -1,11 +1,35 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router"
+import type { QueryClient } from "@tanstack/react-query"
 import { ArrowLeft } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import CreateDoctor from "@/components/Doctors/CreateDoctor"
 import { Button } from "@/components/ui/button"
+import { UsersService } from "@/client"
+import type { UserPublic } from "@/client"
+import { canEditDoctors } from "@/utils/authorization"
 
 export const Route = createFileRoute("/_layout/doctors/new")({
   component: RouteComponent,
+  beforeLoad: async (ctx) => {
+    const context = ctx.context as { queryClient: QueryClient }
+    const queryClient: QueryClient = context.queryClient
+    let user = queryClient.getQueryData<UserPublic>(["currentUser"])
+
+    if (!user) {
+      try {
+        user = await queryClient.fetchQuery({
+          queryKey: ["currentUser"],
+          queryFn: UsersService.readUserMe,
+        })
+      } catch {
+        throw redirect({ to: "/" })
+      }
+    }
+
+    if (!canEditDoctors(user)) {
+      throw redirect({ to: "/" })
+    }
+  },
   head: () => ({
     meta: [
       {

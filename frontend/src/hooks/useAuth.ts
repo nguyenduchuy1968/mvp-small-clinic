@@ -1,57 +1,58 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { useNavigate } from "@tanstack/react-router"
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 
 import {
   type Body_login_login_access_token as AccessToken,
   LoginService,
   type UserPublic,
   UsersService,
-} from "@/client"
-import { handleError } from "@/utils"
-import { resolveDashboardRoute } from "@/utils/auth"
-import useCustomToast from "./useCustomToast"
+} from '@/client';
+import { handleError } from '@/utils';
+import { resolveDashboardRoute } from '@/utils/auth';
+import useCustomToast from './useCustomToast';
 
 const isLoggedIn = () => {
-  return localStorage.getItem("access_token") !== null
-}
+  return localStorage.getItem('access_token') !== null;
+};
 
 const useAuth = () => {
-  const navigate = useNavigate()
-  const { showErrorToast } = useCustomToast()
+  const navigate = useNavigate();
+  const { showErrorToast } = useCustomToast();
 
   const { data: user } = useQuery<UserPublic | null, Error>({
-    queryKey: ["currentUser"],
+    queryKey: ['currentUser'],
     queryFn: UsersService.readUserMe,
     enabled: isLoggedIn(),
-  })
+    staleTime: 5 * 60 * 1000, // 5 minutes — role doesn't change mid-session
+  });
 
   const login = async (data: AccessToken) => {
     const response = await LoginService.loginAccessToken({
       formData: data,
-    })
-    localStorage.setItem("access_token", response.access_token)
-  }
+    });
+    localStorage.setItem('access_token', response.access_token);
+  };
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: async () => {
-      const destination = await resolveDashboardRoute()
-      navigate({ to: destination })
+      const destination = await resolveDashboardRoute();
+      navigate({ to: destination });
     },
     onError: handleError.bind(showErrorToast),
-  })
+  });
 
   const logout = () => {
-    localStorage.removeItem("access_token")
-    navigate({ to: "/login" })
-  }
+    localStorage.removeItem('access_token');
+    navigate({ to: '/login' });
+  };
 
   return {
     loginMutation,
     logout,
     user,
-  }
-}
+  };
+};
 
-export { isLoggedIn }
-export default useAuth
+export { isLoggedIn };
+export default useAuth;

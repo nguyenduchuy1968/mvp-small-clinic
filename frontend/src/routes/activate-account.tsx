@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { PasswordInput } from '@/components/ui/password-input';
 import useAuth, { isLoggedIn } from '@/hooks/useAuth';
+import { resolveDashboardRoute } from '@/utils/auth';
 import { CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 
@@ -54,8 +55,9 @@ export const Route = createFileRoute('/activate-account')({
   component: ActivateAccount,
   beforeLoad: async () => {
     if (isLoggedIn()) {
+      const destination = await resolveDashboardRoute();
       throw redirect({
-        to: '/dashboard',
+        to: destination,
       });
     }
   },
@@ -135,7 +137,10 @@ function ActivateAccount() {
             </p>
           </div>
           <LoadingButton
-            onClick={() => navigate({ to: '/dashboard' })}
+            onClick={async () => {
+              const destination = await resolveDashboardRoute();
+              navigate({ to: destination });
+            }}
             className="w-full"
           >
             {t('activateAccount.goToDashboard')}

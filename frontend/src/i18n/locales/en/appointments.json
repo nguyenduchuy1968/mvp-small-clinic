@@ -29,7 +29,8 @@
   "status": {
     "pending": "Pending",
     "confirmed": "Confirmed",
-    "cancelled": "Cancelled"
+    "cancelled": "Cancelled",
+    "completed": "Completed"
   },
   "actions": {
     "viewDetails": "View Details",

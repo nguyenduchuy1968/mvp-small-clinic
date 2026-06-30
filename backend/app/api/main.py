@@ -4,11 +4,18 @@
 
 # uv run python -u -m app.initial_data   (створювати нового admin.)
 
-# username: nguyenduchuy1968@gmail.com
-# password: Admin123456
 
-
-from app.api.routes import appointments, availability, blocked_dates, doctors, login, patient_accounts, private, users, utils
+from app.api.routes import (
+    appointments,
+    availability,
+    blocked_dates,
+    doctors,
+    login,
+    patient_accounts,
+    private,
+    users,
+    utils,
+)
 from app.core.config import settings
 from fastapi import APIRouter
 

@@ -9,7 +9,11 @@
     "doctors": "Bác Sĩ",
     "about": "Giới Thiệu",
     "contact": "Liên Hệ",
-    "bookAppointment": "Đặt Lịch Khám"
+    "bookAppointment": "Đặt Lịch Khám",
+    "patientLogin": "Đăng nhập",
+    "myPortal": "Cổng bệnh nhân",
+    "noAccountRequired": "Bạn không cần tài khoản để đặt lịch khám.",
+    "portalBenefits": "Hãy tạo tài khoản miễn phí để xem lịch sử khám, quản lý các cuộc hẹn và thông tin cá nhân của bạn."
   },
   "hero": {
     "title": "Phòng Khám Đa Khoa Sức Khỏe",

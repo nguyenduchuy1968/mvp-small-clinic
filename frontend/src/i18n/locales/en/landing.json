@@ -9,7 +9,11 @@
     "doctors": "Doctors",
     "about": "About",
     "contact": "Contact",
-    "bookAppointment": "Book Appointment"
+    "bookAppointment": "Book Appointment",
+    "patientLogin": "Patient Login",
+    "myPortal": "My Portal",
+    "noAccountRequired": "No account is required to book an appointment.",
+    "portalBenefits": "Create your free Patient Portal account anytime to view your appointment history, manage upcoming appointments, and access your personal information."
   },
   "hero": {
     "title": "Health Polyclinic",

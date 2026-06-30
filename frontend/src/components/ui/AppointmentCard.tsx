@@ -1,34 +1,16 @@
 import { Calendar, Clock, MapPin } from 'lucide-react';
 import type { ReactNode } from 'react';
 
+import {
+  AppointmentStatusBadge,
+  type AppointmentStatus,
+} from '@/components/Appointments/AppointmentStatusBadge';
 import { Avatar } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { formatDateLong } from '@/utils/date';
 
-export type AppointmentStatus = 'pending' | 'confirmed' | 'cancelled';
-
-/**
- * Semantic status badge colors:
- * - confirmed → green (success)
- * - pending → orange (warning/attention)
- * - cancelled → red (destructive)
- */
-const statusColorMap: Record<AppointmentStatus, string> = {
-  confirmed:
-    'bg-green-100 text-gray-900 border-green-300 dark:bg-green-900/40 dark:text-gray-100 dark:border-green-700',
-  pending:
-    'bg-orange-100 text-gray-900 border-orange-300 dark:bg-orange-900/40 dark:text-gray-100 dark:border-orange-700',
-  cancelled:
-    'bg-red-100 text-gray-900 border-red-300 dark:bg-red-900/40 dark:text-gray-100 dark:border-red-700',
-};
-
-const statusLabelMap: Record<AppointmentStatus, string> = {
-  confirmed: 'Confirmed',
-  pending: 'Pending',
-  cancelled: 'Cancelled',
-};
+export type { AppointmentStatus };
 
 interface AppointmentCardProps {
   /** Doctor's full name */
@@ -98,10 +80,6 @@ export function AppointmentCard({
   children,
   className,
 }: AppointmentCardProps) {
-  const statusKey = status ?? 'pending';
-  const badgeColor = statusColorMap[statusKey] ?? statusColorMap.pending;
-  const statusLabel = statusLabelMap[statusKey];
-
   return (
     <Card
       className={cn(
@@ -134,12 +112,7 @@ export function AppointmentCard({
                 </p>
               )}
             </div>
-            <Badge
-              variant="outline"
-              className={cn('shrink-0 font-semibold px-3 py-1 text-[13px] leading-none min-h-8 inline-flex items-center', badgeColor)}
-            >
-              {statusLabel}
-            </Badge>
+            <AppointmentStatusBadge status={status ?? 'pending'} />
           </div>
 
           {/* Date & Time */}

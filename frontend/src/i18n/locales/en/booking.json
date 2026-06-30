@@ -1,4 +1,8 @@
 {
+  "breadcrumb": {
+    "home": "Home",
+    "booking": "Book Appointment"
+  },
   "title": "Book Appointment",
   "steps": {
     "selectDoctor": "Select Doctor",
@@ -54,7 +58,15 @@
     "newBooking": "Book Another Appointment",
     "copyTooltip": "Copy booking number",
     "copySuccess": "Booking number copied!",
-    "print": "Print Confirmation"
+    "print": "Print Confirmation",
+    "home": "Home",
+    "createAccount": "Create Free Patient Account",
+    "myAppointments": "My Appointments",
+    "whatsNext": "What's next?",
+    "whatsNextEmail": "A confirmation email has been sent.",
+    "whatsNextArrive": "Please arrive 10–15 minutes before your appointment.",
+    "whatsNextReference": "Keep your booking reference.",
+    "whatsNextPortal": "If you create a Patient Portal account, you can view and manage your appointments online."
   },
   "errors": {
     "slotAlreadyBooked": "This slot was just booked. Please select another time.",

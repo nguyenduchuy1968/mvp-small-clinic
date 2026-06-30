@@ -1,17 +1,23 @@
+import { useNavigate } from '@tanstack/react-router';
 import {
   AlertTriangle,
   Calendar,
+  CalendarCheck,
   CheckCircle2,
   Clock,
   Copy,
+  Home,
   User,
+  UserPlus,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { BookingBreadcrumb } from '@/components/Booking/BookingBreadcrumb';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { isLoggedIn } from '@/hooks/useAuth';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { formatDateLong } from '@/utils/date';
 
@@ -49,6 +55,7 @@ export function BookingConfirmation({
   onNewBooking,
 }: BookingConfirmationProps) {
   const { t, i18n } = useTranslation('booking');
+  const navigate = useNavigate();
   const [, copy] = useCopyToClipboard();
 
   const handleCopyBookingNumber = async () => {
@@ -67,8 +74,16 @@ export function BookingConfirmation({
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
+      {/* Breadcrumb navigation — always visible on confirmation */}
+      <BookingBreadcrumb
+        items={[
+          { label: t('breadcrumb.home'), href: '/' },
+          { label: t('breadcrumb.booking') },
+        ]}
+      />
+
       {/* Section 1: Premium Success Card */}
-      <Card className="rounded-2xl border-green-200 bg-gradient-to-b from-green-50 to-white shadow-lg overflow-hidden">
+      <Card className="rounded-2xl border-green-200 bg-linear-to-b from-green-50 to-white shadow-lg overflow-hidden">
         <CardContent className="p-8 sm:p-10">
           <div className="flex flex-col items-center gap-4 text-center">
             {/* Large success icon */}
@@ -194,24 +209,79 @@ export function BookingConfirmation({
         </div>
       </Alert>
 
-      {/* Section 3: Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+      {/* Section 3: What's Next — Info Box */}
+      <Card className="rounded-2xl border-blue-200 bg-blue-50/50 shadow-sm">
+        <CardContent className="p-6 sm:p-8">
+          <h3 className="text-[16px] font-semibold text-gray-800 mb-4">
+            {t('confirmation.whatsNext')}
+          </h3>
+          <ul className="space-y-3 text-[14px] text-gray-600">
+            <li className="flex items-start gap-2">
+              <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />
+              <span>{t('confirmation.whatsNextEmail')}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />
+              <span>{t('confirmation.whatsNextArrive')}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />
+              <span>{t('confirmation.whatsNextReference')}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />
+              <span>{t('confirmation.whatsNextPortal')}</span>
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
+
+      {/* Section 4: Navigation Buttons */}
+      <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
+        {/* Home — secondary */}
+        <Button
+          variant="outline"
+          size="lg"
+          className="rounded-xl border-gray-300 px-8 py-3 text-[16px] font-semibold hover:bg-gray-50 hover:border-teal-400 transition-all"
+          onClick={() => navigate({ to: '/' })}
+        >
+          <Home className="mr-2 h-5 w-5" />
+          {t('confirmation.home')}
+        </Button>
+
+        {/* Book Another Appointment — primary */}
         <Button
           variant="default"
           size="lg"
           className="rounded-xl bg-teal-600 px-8 py-3 text-[16px] font-semibold hover:bg-teal-700 shadow-md shadow-teal-600/20 hover:shadow-lg hover:shadow-teal-600/30 transition-all"
           onClick={handleNewBooking}
         >
+          <Calendar className="mr-2 h-5 w-5" />
           {t('confirmation.newBooking')}
         </Button>
-        <Button
-          variant="outline"
-          size="lg"
-          className="rounded-xl border-gray-300 px-8 py-3 text-[16px] font-semibold hover:bg-gray-50 hover:border-teal-400 transition-all"
-          onClick={() => window.print()}
-        >
-          {t('confirmation.print')}
-        </Button>
+
+        {/* Conditional: Create Free Account (guest) or My Appointments (logged in) */}
+        {isLoggedIn() ? (
+          <Button
+            variant="outline"
+            size="lg"
+            className="rounded-xl border-teal-600 px-8 py-3 text-[16px] font-semibold text-teal-700 hover:bg-teal-50 hover:text-teal-800 transition-all"
+            onClick={() => navigate({ to: '/patient/appointments' })}
+          >
+            <CalendarCheck className="mr-2 h-5 w-5" />
+            {t('confirmation.myAppointments')}
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            size="lg"
+            className="rounded-xl border-teal-600 px-8 py-3 text-[16px] font-semibold text-teal-700 hover:bg-teal-50 hover:text-teal-800 transition-all"
+            onClick={() => navigate({ to: '/activate-account' })}
+          >
+            <UserPlus className="mr-2 h-5 w-5" />
+            {t('confirmation.createAccount')}
+          </Button>
+        )}
       </div>
     </div>
   );

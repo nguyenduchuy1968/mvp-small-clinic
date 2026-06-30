@@ -1,4 +1,8 @@
 {
+  "breadcrumb": {
+    "home": "Trang chủ",
+    "booking": "Đặt lịch khám"
+  },
   "title": "Đặt lịch hẹn",
   "steps": {
     "selectDoctor": "Chọn bác sĩ",
@@ -54,7 +58,15 @@
     "newBooking": "Đặt lịch hẹn khác",
     "copyTooltip": "Sao chép mã đặt lịch",
     "copySuccess": "Đã sao chép mã đặt lịch!",
-    "print": "In xác nhận"
+    "print": "In xác nhận",
+    "home": "Trang chủ",
+    "createAccount": "Tạo tài khoản miễn phí",
+    "myAppointments": "Lịch hẹn của tôi",
+    "whatsNext": "Tiếp theo là gì?",
+    "whatsNextEmail": "Email xác nhận đã được gửi.",
+    "whatsNextArrive": "Vui lòng đến trước 10–15 phút trước lịch hẹn.",
+    "whatsNextReference": "Giữ mã đặt lịch của bạn.",
+    "whatsNextPortal": "Nếu bạn tạo tài khoản, bạn có thể xem và quản lý lịch hẹn trực tuyến."
   },
   "errors": {
     "slotAlreadyBooked": "Khung giờ này vừa được đặt. Vui lòng chọn thời gian khác.",

@@ -7,6 +7,7 @@ import type {
   AppointmentPublic,
   DoctorPublic,
 } from '@/client';
+import { BookingBreadcrumb } from '@/components/Booking/BookingBreadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingButton } from '@/components/ui/loading-button';
@@ -255,7 +256,7 @@ export function BookingWizard({
               </div>
             ) : !doctorsData || doctorsData.data.length === 0 ? (
               <div
-                className="flex flex-col items-center gap-4 rounded-2xl border-2 border-blue-200 bg-gradient-to-b from-blue-50 to-white p-8 sm:p-10 text-center shadow-sm"
+                className="flex flex-col items-center gap-4 rounded-2xl border-2 border-blue-200 bg-linear-to-b from-blue-50 to-white p-8 sm:p-10 text-center shadow-sm"
                 role="status"
               >
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm">
@@ -375,6 +376,14 @@ export function BookingWizard({
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
+      {/* Breadcrumb navigation — always visible during booking */}
+      <BookingBreadcrumb
+        items={[
+          { label: t('breadcrumb.home'), href: '/' },
+          { label: t('breadcrumb.booking') },
+        ]}
+      />
+
       <StepIndicator currentStep={step} steps={steps} />
 
       <Card className="rounded-2xl border border-gray-200 shadow-md overflow-hidden">
@@ -397,11 +406,11 @@ export function BookingWizard({
                     .toUpperCase()}
                 </div>
                 <div className="text-right min-w-0">
-                  <p className="text-[17px] font-bold text-gray-900 leading-tight truncate max-w-[220px]">
+                  <p className="text-[17px] font-bold text-gray-900 leading-tight truncate max-w-55">
                     {bookingState.doctor.full_name}
                   </p>
                   {bookingState.doctor.specialty && (
-                    <p className="text-[14px] text-teal-600 font-semibold leading-tight mt-0.5 truncate max-w-[220px]">
+                    <p className="text-[14px] text-teal-600 font-semibold leading-tight mt-0.5 truncate max-w-55">
                       {bookingState.doctor.specialty}
                     </p>
                   )}

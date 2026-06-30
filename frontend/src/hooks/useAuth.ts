@@ -8,6 +8,7 @@ import {
   UsersService,
 } from "@/client"
 import { handleError } from "@/utils"
+import { resolveDashboardRoute } from "@/utils/auth"
 import useCustomToast from "./useCustomToast"
 
 const isLoggedIn = () => {
@@ -33,8 +34,9 @@ const useAuth = () => {
 
   const loginMutation = useMutation({
     mutationFn: login,
-    onSuccess: () => {
-      navigate({ to: "/dashboard" })
+    onSuccess: async () => {
+      const destination = await resolveDashboardRoute()
+      navigate({ to: destination })
     },
     onError: handleError.bind(showErrorToast),
   })

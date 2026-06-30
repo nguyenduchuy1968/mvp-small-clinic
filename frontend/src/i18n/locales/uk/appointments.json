@@ -29,7 +29,8 @@
   "status": {
     "pending": "Очікує підтвердження",
     "confirmed": "Підтверджено",
-    "cancelled": "Скасовано"
+    "cancelled": "Скасовано",
+    "completed": "Завершено"
   },
   "actions": {
     "viewDetails": "Переглянути деталі",

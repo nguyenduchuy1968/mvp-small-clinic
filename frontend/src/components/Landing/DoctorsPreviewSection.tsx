@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingCard } from '@/components/ui/LoadingCard';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { useDoctorsPublic } from '@/hooks/useDoctorsPublic';
+import { localizeSpecialty } from '@/hooks/useLocalizedSpecialty';
 
 export function DoctorsPreviewSection() {
   const { t } = useTranslation('landing');
@@ -42,7 +43,7 @@ export function DoctorsPreviewSection() {
                 <DoctorCard
                   key={doctor.id}
                   name={doctor.full_name}
-                  specialty={doctor.specialty ?? undefined}
+                  specialty={localizeSpecialty(doctor.specialty, t) ?? undefined}
                   experience={doctor.experience_years ?? undefined}
                   experienceLabel={
                     doctor.experience_years != null

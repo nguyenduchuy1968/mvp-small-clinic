@@ -117,6 +117,7 @@
     "previousDay": "◀ Ngày trước",
     "nextDay": "Ngày sau ▶"
   },
+  "changeDate": "Đổi ngày",
   "datePicker": {
     "today": "Hôm nay",
     "tomorrow": "Ngày mai",
@@ -127,5 +128,27 @@
   "clinicInfo": {
     "weekday": "Thứ Hai – Thứ Sáu",
     "saturday": "Thứ Bảy"
+  },
+  "specialties": {
+    "internal_medicine": "BS Nội khoa",
+    "cardiology": "Tim mạch",
+    "pediatrics": "Nhi khoa",
+    "neurology": "Thần kinh",
+    "therapist": "Trị liệu",
+    "dermatology": "Da liễu",
+    "general_consultation": "Khám tổng quát",
+    "preventive_care": "Chăm sóc dự phòng",
+    "orthopedics": "Chấn thương chỉnh hình",
+    "ophthalmology": "Nhãn khoa",
+    "ent": "Tai Mũi Họng",
+    "gastroenterology": "Tiêu hóa",
+    "endocrinology": "Nội tiết",
+    "psychiatry": "Tâm thần",
+    "radiology": "Chẩn đoán hình ảnh",
+    "anesthesiology": "Gây mê hồi sức",
+    "emergency_medicine": "Cấp cứu",
+    "family_medicine": "Y học gia đình",
+    "surgery": "Ngoại khoa",
+    "urology": "Tiết niệu"
   }
 }

@@ -1,17 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Building2,
-  FileText,
-  Mail,
-  MessageSquare,
-  Phone,
-  User,
-} from 'lucide-react';
+import { FileText, Mail, MessageSquare, Phone, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
-import type { AppointmentCreate, ContactMethod, DoctorPublic } from '@/client';
+import type { AppointmentCreate, ContactMethod } from '@/client';
 import {
   Form,
   FormControl,
@@ -29,9 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { clinicConfig } from '@/config/clinic';
 import { cn } from '@/lib/utils';
-import { formatDateForDisplay } from '@/utils/date';
 
 const CONTACT_METHODS: ContactMethod[] = [
   'phone',
@@ -85,24 +76,15 @@ interface PatientInfoFormProps {
   onSubmit: (data: AppointmentCreate) => void;
   isPending: boolean;
   defaultValues?: Partial<PatientInfoFormData>;
-  doctor?: DoctorPublic | null;
-  date?: string | null;
-  time?: string | null;
 }
 
 export function PatientInfoForm({
   onSubmit,
   isPending,
   defaultValues,
-  doctor,
-  date,
-  time,
 }: PatientInfoFormProps) {
-  const { t, i18n } = useTranslation('booking');
+  const { t } = useTranslation('booking');
   const formSchema = getFormSchema(t);
-
-  const isVietnamese = i18n.language === 'vi';
-  const clinicName = isVietnamese ? clinicConfig.name : clinicConfig.nameEn;
 
   const form = useForm<PatientInfoFormData>({
     resolver: zodResolver(formSchema),
@@ -132,57 +114,9 @@ export function PatientInfoForm({
     onSubmit(appointmentData);
   };
 
-  const displayTime = time ? (time.length > 5 ? time.slice(0, 5) : time) : null;
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-        {/* ── Premium Booking Summary Card ───────────────────────── */}
-        {doctor && (
-          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6 sm:p-8">
-            <div className="flex items-center gap-4 sm:gap-5">
-              {/* Doctor avatar with gradient background */}
-              <div className="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-500 text-white text-[20px] sm:text-[24px] font-bold shadow-md">
-                {doctor.full_name
-                  .split(/\s+/)
-                  .slice(0, 2)
-                  .map((n) => n.charAt(0))
-                  .join('')
-                  .toUpperCase()}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[20px] sm:text-[22px] font-bold text-gray-900 leading-tight">
-                  {doctor.full_name}
-                </p>
-                {doctor.specialty && (
-                  <p className="text-[15px] text-teal-600 font-semibold leading-tight mt-1">
-                    {doctor.specialty}
-                  </p>
-                )}
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2 text-[14px] text-gray-600">
-                  {date && (
-                    <span className="flex items-center gap-1.5">
-                      <span className="inline-block h-2 w-2 rounded-full bg-teal-400" />
-                      {formatDateForDisplay(date, i18n.language)}
-                    </span>
-                  )}
-                  {displayTime && (
-                    <span className="flex items-center gap-1.5">
-                      <span className="inline-block h-2 w-2 rounded-full bg-teal-400" />
-                      {displayTime}
-                    </span>
-                  )}
-                </div>
-                {/* Clinic name */}
-                <div className="flex items-center gap-1.5 mt-2 text-[14px] font-medium text-teal-700">
-                  <Building2 className="h-4 w-4" />
-                  <span>{clinicName}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* ── Section: Personal Information ──────────────────────── */}
         <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden p-6 sm:p-8 space-y-6">
           <div className="flex items-center gap-3 pb-1">

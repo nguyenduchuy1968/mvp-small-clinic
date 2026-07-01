@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingCard } from '@/components/ui/LoadingCard';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { useDoctorsPublic } from '@/hooks/useDoctorsPublic';
+import { localizeSpecialty } from '@/hooks/useLocalizedSpecialty';
 
 const DOCTORS_PER_PAGE = 9;
 
@@ -214,7 +215,7 @@ export function DoctorsDirectoryPage() {
                 <DoctorCard
                   key={doctor.id}
                   name={doctor.full_name}
-                  specialty={doctor.specialty ?? undefined}
+                  specialty={localizeSpecialty(doctor.specialty, t) ?? undefined}
                   experience={doctor.experience_years ?? undefined}
                   experienceLabel={
                     doctor.experience_years != null

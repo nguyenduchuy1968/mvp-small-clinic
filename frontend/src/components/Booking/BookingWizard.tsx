@@ -1,3 +1,4 @@
+import { Building2, Calendar } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -12,11 +13,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { clinicConfig } from '@/config/clinic';
+import { cn } from '@/lib/utils';
 import { useAvailableSlots } from '@/hooks/useAvailableSlots';
 import { useCreateAppointment } from '@/hooks/useCreateAppointment';
 import { useDoctorsPublic } from '@/hooks/useDoctorsPublic';
-import { cn } from '@/lib/utils';
-import { getClinicTodayString } from '@/utils/date';
+import { useLocalizedSpecialty } from '@/hooks/useLocalizedSpecialty';
+import { formatDateForDisplay, getClinicTodayString } from '@/utils/date';
 
 import { DatePicker } from './DatePicker';
 import { DoctorCard } from './DoctorCard';
@@ -39,7 +42,7 @@ export function BookingWizard({
   onConfirmed,
   onSlotAlreadyBooked,
 }: BookingWizardProps) {
-  const { t } = useTranslation('booking');
+  const { t, i18n } = useTranslation('booking');
   const [step, setStep] = useState(1);
   const [bookingState, setBookingState] = useState<BookingState>({
     doctor: null,
@@ -47,6 +50,9 @@ export function BookingWizard({
     time: null,
   });
   const autoSelectApplied = useRef(false);
+  const doctorSpecialty = useLocalizedSpecialty(bookingState.doctor?.specialty);
+  const isVietnamese = i18n.language === 'vi';
+  const clinicName = isVietnamese ? clinicConfig.name : clinicConfig.nameEn;
 
   const { data: doctorsData, isLoading: isLoadingDoctors } = useDoctorsPublic();
   const { data: slotsData, isLoading: isLoadingSlots } = useAvailableSlots(
@@ -207,6 +213,11 @@ export function BookingWizard({
     return `${y}-${m}-${day}`;
   })();
 
+  const handleChangeDate = () => {
+    setBookingState((prev) => ({ ...prev, time: null }));
+    setStep(2);
+  };
+
   const quickOptions = [
     { label: t('datePicker.today'), value: todayStr },
     { label: t('datePicker.tomorrow'), value: tomorrowStr },
@@ -301,12 +312,7 @@ export function BookingWizard({
                     bookingState.date === option.value ? 'default' : 'outline'
                   }
                   onClick={() => handleQuickDate(option.value)}
-                  className={cn(
-                    'flex-1 sm:flex-none rounded-xl px-6 py-3 text-[15px] font-semibold transition-all duration-200',
-                    bookingState.date === option.value
-                      ? 'bg-teal-600 border-teal-600 text-white shadow-lg'
-                      : 'border-teal-200 bg-teal-50/60 text-teal-700 hover:bg-teal-100 hover:border-teal-300 hover:shadow-md'
-                  )}
+                  className="flex-1 sm:flex-none rounded-xl px-6 py-3 min-h-[44px] text-[15px] font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
                 >
                   {option.label}
                 </Button>
@@ -322,8 +328,16 @@ export function BookingWizard({
       case 3:
         return (
           <div className="space-y-6">
-            {/* Today / Tomorrow quick actions — always visible */}
+            {/* Quick actions: Change Date, Today, Tomorrow */}
             <div className="flex flex-wrap gap-3">
+              <Button
+                variant="outline"
+                onClick={handleChangeDate}
+                className="flex-1 sm:flex-none rounded-xl px-6 py-3 min-h-[44px] text-[15px] font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                {t('changeDate')}
+              </Button>
               {quickOptions.map((option) => (
                 <Button
                   key={option.value}
@@ -331,12 +345,7 @@ export function BookingWizard({
                     bookingState.date === option.value ? 'default' : 'outline'
                   }
                   onClick={() => handleQuickDate(option.value)}
-                  className={cn(
-                    'flex-1 sm:flex-none rounded-xl px-6 py-3 text-[15px] font-semibold transition-all duration-200',
-                    bookingState.date === option.value
-                      ? 'bg-teal-600 border-teal-600 text-white shadow-lg'
-                      : 'border-teal-200 bg-teal-50/60 text-teal-700 hover:bg-teal-100 hover:border-teal-300 hover:shadow-md'
-                  )}
+                  className="flex-1 sm:flex-none rounded-xl px-6 py-3 min-h-[44px] text-[15px] font-semibold transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
                 >
                   {option.label}
                 </Button>
@@ -360,9 +369,6 @@ export function BookingWizard({
           <PatientInfoForm
             onSubmit={handlePatientInfoSubmit}
             isPending={createAppointment.isPending}
-            doctor={bookingState.doctor}
-            date={bookingState.date}
-            time={bookingState.time}
           />
         );
 
@@ -387,14 +393,41 @@ export function BookingWizard({
       <StepIndicator currentStep={step} steps={steps} />
 
       <Card className="rounded-2xl border border-gray-200 shadow-md overflow-hidden">
-        <CardHeader className="flex-row items-center justify-between gap-4 flex-wrap sm:flex-nowrap border-b border-gray-100 bg-white pb-5 px-6 sm:px-8 pt-7 sm:pt-8">
-          <div className="flex items-center gap-3 min-w-0">
-            <CardTitle className="shrink-0 text-[22px] sm:text-[24px] font-bold text-gray-900 tracking-tight">
-              {steps[step - 1]?.label}
-            </CardTitle>
-          </div>
+        <CardHeader
+          className={cn(
+            'border-b border-gray-100 bg-white px-6 sm:px-8 pt-7 sm:pt-8',
+            step === 4 && bookingState.doctor
+              ? 'flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between pb-6 sm:pb-6'
+              : 'flex-row items-center justify-between gap-4 flex-wrap sm:flex-nowrap pb-5'
+          )}
+        >
+          {/* ── Left column: Title + Change Date (Step 4) ──────────────── */}
+          {step === 4 && bookingState.doctor ? (
+            <div className="flex flex-col gap-3 min-w-0">
+              <CardTitle className="text-[22px] sm:text-[24px] font-bold text-gray-900 tracking-tight">
+                {steps[step - 1]?.label}
+              </CardTitle>
+              <Button
+                type="button"
+                variant="default"
+                onClick={handleChangeDate}
+                className="self-start rounded-xl px-5 py-2.5 text-[14px] font-semibold min-h-[40px] shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                {t('changeDate')}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 min-w-0">
+              <CardTitle className="shrink-0 text-[22px] sm:text-[24px] font-bold text-gray-900 tracking-tight">
+                {steps[step - 1]?.label}
+              </CardTitle>
+            </div>
+          )}
+
+          {/* ── Right column: Doctor preview (steps 2-3) / Appointment Summary (step 4) ── */}
           <div className="flex items-center gap-3 shrink-0">
-            {bookingState.doctor && step >= 2 && step <= 4 && (
+            {bookingState.doctor && step >= 2 && step <= 3 && (
               <div className="flex items-center gap-3 shrink-0">
                 {/* Doctor avatar initials */}
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-700 text-[16px] font-bold shadow-sm ring-2 ring-teal-500/10">
@@ -409,11 +442,61 @@ export function BookingWizard({
                   <p className="text-[17px] font-bold text-gray-900 leading-tight truncate max-w-55">
                     {bookingState.doctor.full_name}
                   </p>
-                  {bookingState.doctor.specialty && (
+                  {doctorSpecialty && (
                     <p className="text-[14px] text-teal-600 font-semibold leading-tight mt-0.5 truncate max-w-55">
-                      {bookingState.doctor.specialty}
+                      {doctorSpecialty}
                     </p>
                   )}
+                </div>
+              </div>
+            )}
+            {/* Appointment Summary — Step 4 only */}
+            {step === 4 && bookingState.doctor && (
+              <div className="w-full sm:w-auto sm:min-w-[320px] rounded-xl border border-gray-200 bg-gradient-to-br from-teal-50/60 to-white p-4 sm:p-5 shadow-sm">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  {/* Doctor avatar */}
+                  <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-500 text-white text-[15px] sm:text-[17px] font-bold shadow-sm">
+                    {bookingState.doctor.full_name
+                      .split(/\s+/)
+                      .slice(0, 2)
+                      .map((n) => n.charAt(0))
+                      .join('')
+                      .toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[16px] sm:text-[17px] font-bold text-gray-900 leading-tight">
+                      {bookingState.doctor.full_name}
+                    </p>
+                    {doctorSpecialty && (
+                      <p className="text-[13px] text-teal-600 font-semibold leading-tight mt-0.5">
+                        {doctorSpecialty}
+                      </p>
+                    )}
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-[13px] text-gray-600">
+                      {bookingState.date && (
+                        <span className="flex items-center gap-1">
+                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-teal-400" />
+                          {formatDateForDisplay(
+                            bookingState.date,
+                            i18n.language
+                          )}
+                        </span>
+                      )}
+                      {bookingState.time && (
+                        <span className="flex items-center gap-1">
+                          <span className="inline-block h-1.5 w-1.5 rounded-full bg-teal-400" />
+                          {bookingState.time.length > 5
+                            ? bookingState.time.slice(0, 5)
+                            : bookingState.time}
+                        </span>
+                      )}
+                    </div>
+                    {/* Clinic name */}
+                    <div className="flex items-center gap-1 mt-1.5 text-[13px] font-medium text-teal-700">
+                      <Building2 className="h-3.5 w-3.5" />
+                      <span>{clinicName}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

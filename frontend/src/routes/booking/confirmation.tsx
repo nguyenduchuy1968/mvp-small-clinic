@@ -85,7 +85,8 @@ function BookingConfirmationPage() {
         <BookingBreadcrumb
           items={[
             { label: t('breadcrumb.home'), href: '/' },
-            { label: t('breadcrumb.booking') },
+            { label: t('breadcrumb.booking'), href: '/booking' },
+            { label: t('breadcrumb.confirmation') },
           ]}
         />
       </header>

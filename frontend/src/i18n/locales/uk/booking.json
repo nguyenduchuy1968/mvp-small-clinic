@@ -117,6 +117,7 @@
     "previousDay": "◀ Попередній день",
     "nextDay": "Наступний день ▶"
   },
+  "changeDate": "Змінити дату",
   "datePicker": {
     "today": "Сьогодні",
     "tomorrow": "Завтра",
@@ -127,5 +128,27 @@
   "clinicInfo": {
     "weekday": "Пн – Пт",
     "saturday": "Сб"
+  },
+  "specialties": {
+    "internal_medicine": "Лікар внутрішньої медицини",
+    "cardiology": "Кардіолог",
+    "pediatrics": "Педіатр",
+    "neurology": "Невролог",
+    "therapist": "Терапевт",
+    "dermatology": "Дерматолог",
+    "general_consultation": "Загальна консультація",
+    "preventive_care": "Профілактична медицина",
+    "orthopedics": "Ортопед",
+    "ophthalmology": "Офтальмолог",
+    "ent": "ЛОР",
+    "gastroenterology": "Гастроентеролог",
+    "endocrinology": "Ендокринолог",
+    "psychiatry": "Психіатр",
+    "radiology": "Рентгенолог",
+    "anesthesiology": "Анестезіолог",
+    "emergency_medicine": "Невідкладна медицина",
+    "family_medicine": "Сімейний лікар",
+    "surgery": "Хірург",
+    "urology": "Уролог"
   }
 }

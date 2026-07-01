@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import type { DoctorPublic } from '@/client';
 import { DoctorCard as UiDoctorCard } from '@/components/ui/DoctorCard';
+import { useLocalizedSpecialty } from '@/hooks/useLocalizedSpecialty';
 import { cn } from '@/lib/utils';
 
 interface DoctorCardProps {
@@ -22,6 +23,7 @@ interface DoctorCardProps {
  */
 export function DoctorCard({ doctor, selected, onSelect }: DoctorCardProps) {
   const { t } = useTranslation('booking');
+  const localizedSpecialty = useLocalizedSpecialty(doctor.specialty);
 
   const experienceLabel =
     doctor.experience_years != null
@@ -47,7 +49,7 @@ export function DoctorCard({ doctor, selected, onSelect }: DoctorCardProps) {
     >
       <UiDoctorCard
         name={doctor.full_name}
-        specialty={doctor.specialty ?? undefined}
+        specialty={localizedSpecialty ?? undefined}
         experience={doctor.experience_years ?? undefined}
         experienceLabel={experienceLabel}
         bio={doctor.bio ?? undefined}

@@ -117,6 +117,7 @@
     "previousDay": "◀ Previous Day",
     "nextDay": "Next Day ▶"
   },
+  "changeDate": "Change Date",
   "datePicker": {
     "today": "Today",
     "tomorrow": "Tomorrow",
@@ -127,5 +128,27 @@
   "clinicInfo": {
     "weekday": "Mon – Fri",
     "saturday": "Sat"
+  },
+  "specialties": {
+    "internal_medicine": "Internal Medicine",
+    "cardiology": "Cardiology",
+    "pediatrics": "Pediatrics",
+    "neurology": "Neurology",
+    "therapist": "Therapist",
+    "dermatology": "Dermatology",
+    "general_consultation": "General Consultation",
+    "preventive_care": "Preventive Care",
+    "orthopedics": "Orthopedics",
+    "ophthalmology": "Ophthalmology",
+    "ent": "Ear, Nose & Throat (ENT)",
+    "gastroenterology": "Gastroenterology",
+    "endocrinology": "Endocrinology",
+    "psychiatry": "Psychiatry",
+    "radiology": "Radiology",
+    "anesthesiology": "Anesthesiology",
+    "emergency_medicine": "Emergency Medicine",
+    "family_medicine": "Family Medicine",
+    "surgery": "Surgery",
+    "urology": "Urology"
   }
 }

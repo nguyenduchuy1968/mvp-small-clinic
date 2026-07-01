@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useLocalizedSpecialty } from '@/hooks/useLocalizedSpecialty';
 import { cn } from '@/lib/utils';
 import { formatDateLong } from '@/utils/date';
 
@@ -104,6 +105,7 @@ export function PatientDashboardNextAppointment({
   className,
 }: PatientDashboardNextAppointmentProps) {
   const { t } = useTranslation('patient');
+  const localizedSpecialty = useLocalizedSpecialty(appointment?.specialty);
 
   if (!appointment) {
     return (
@@ -161,7 +163,7 @@ export function PatientDashboardNextAppointment({
               {appointment.doctorName}
             </h3>
             <p className="text-sm font-medium text-teal-600 dark:text-teal-400">
-              {appointment.specialty}
+              {localizedSpecialty ?? appointment.specialty}
             </p>
           </div>
         </div>

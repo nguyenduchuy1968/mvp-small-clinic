@@ -5,6 +5,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { AppointmentCard } from '@/components/ui/AppointmentCard';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { localizeSpecialty } from '@/hooks/useLocalizedSpecialty';
 import { cn } from '@/lib/utils';
 
 import type { PlaceholderAppointment } from './PatientDashboardNextAppointment';
@@ -42,7 +43,7 @@ export function PatientDashboardUpcomingAppointments({
   isLoading = false,
   className,
 }: PatientDashboardUpcomingAppointmentsProps) {
-  const { t } = useTranslation('patient');
+  const { t } = useTranslation(['patient', 'booking']);
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -96,7 +97,7 @@ export function PatientDashboardUpcomingAppointments({
               key={apt.id}
               doctorName={apt.doctorName}
               doctorPhoto={apt.doctorPhoto}
-              specialty={apt.specialty}
+              specialty={localizeSpecialty(apt.specialty, t) ?? apt.specialty}
               date={apt.date}
               time={apt.time}
               status={apt.status}
